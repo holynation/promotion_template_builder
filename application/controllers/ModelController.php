@@ -615,133 +615,6 @@ class ModelController extends CI_Controller
 		$this->$model->export($condition);
 	}
 
-	private function getSessionSemesterCourse($course,$sessionSemester)
-	{
-		$query="select session_semester_course.ID from session_semester_course join session_semester on session_semester_course.session_semester_id=session_semester.id  where session_semester_course.course_id=? and session_semester.start_date <= (select start_date from session_semester where ID=?) order by session_semester.start_date desc";//select the earliest course here
-		$result =$this->db->query($query,array($course,$sessionSemester));
-		$result =$result->result_array();
-		if ($result) {
-			return $result[0]['ID'];
-		}
-		return false;
-	}
-
-	public function upload_result()
-	{
-		$course = $_POST['courses'];
-		$ss=$_POST['session_semester'];
-		loadClass($this->load,'session_semester');
-		$sessionSem = $this->session_semester->getWhere(array('session_semester.ID'=>$ss),$count,0,null,false);
-		$filePath = 'uploads/result/uploaded/'.str_replace('/', '_', $sessionSem[0]->academic_session->session_name).'_'.$sessionSem[0]->semester->semester_name;
-		loadClass($this->load,'session_semester_course');
-		$this->session_semester_course->ID=$course;
-		$courseCode = $this->session_semester_course->course->course_code;
-		$filePath.='_'.$courseCode.'_'.date('y-m-d h-i-s').'.csv';
-		if ($this->webSessionManager->getCurrentuserProp('user_type')!='admin') {
-			loadClass($this->load,'upload_history');
-			if ($this->upload_history->getWhere(array('session_semester_course_id'=>$course,'approval_status'=>1,'academic_session_id'=>$sessionSem[0]->academic_session_id))) {
-				exit("You can no longer update this course, it has already been approved.");
-			}
-		}
-		$content = $this->loadUploadedFileContent($filePath);
-		$content = trim($content);
-		$array = stringToCsv($content);
-		$header = array_shift($array);
-		$result = array();
-		// $maxCA= $_POST['ca_score'];
-		// $examScore = $_POST['exam_score'];
-		$unsuccessful=array();
-		$insertString='';
-		$level = (isset($_POST['level']) && $_POST['level'])?$_POST['level']:$this->session_semester_course->level_id;
-		$registeredStudent=array();
-		// loadClass($this->load,'session_semester_course');
-		$sessionSemesterCourse=$course;
-		$caIndex=array_search('CA TOTAL', $header);
-		$examIndex= array_search('EXAM TOTAL', $header);
-		$matricIndex = array_search('matric number', $header);
-		$totalIndex = array_search('TOTAL', $header);
-		if ($totalIndex===false || $matricIndex===false || $examIndex===false||$caIndex==false) {
-			exit("invalid template file. go back and download the real template then try again.");
-		}
-		//validate later here
-		loadClass($this->load,'session_semester_course');
-		loadClass($this->load,'student_biodata');
-		foreach ($array as $key => $value) {
-			$matric = $value[$matricIndex];
-			if (!$this->student_biodata->getWhere(array('matric_number'=>$matric),$c,0,null,false)) {
-				continue;
-			}
-			$regCourse = $this->getRegisteredCourse($value[$matricIndex],$sessionSemesterCourse,$ss);
-			$ca = floatval($value[$caIndex]);
-			$exam = floatval($value[$examIndex]);
-			$total = floatval($ca+$exam);
-			$fileTotal = floatval($value[$totalIndex]);
-			if ($total!=$fileTotal) {
-				exit("sorry, score did not add up at row ".($key+1)." please try again");
-			}
-			if ($total >100) {
-				exit("sorry, sorry total score at row ".($key+1)." is greater than 100 please check and  try again");
-			}
-			if ($regCourse) {
-				if ($insertString) {
-					$insertString.=',';
-				}
-				$insertString.=" ('$regCourse','$ca','$exam','$total')";
-			}
-			else{
-				if (isset($_POST['auto-register'])) {
-					if($this->registerStudent($matric,$sessionSemesterCourse,$ss,$sessionSem[0]->academic_session_id,$level)){
-						$regCourse = $this->getRegisteredCourse($value[0],$sessionSemesterCourse,$ss);
-						$registeredStudent[]=$matric;
-						if ($insertString) {
-							$insertString.=',';
-						}
-						$insertString.=" ('$regCourse','$ca','$exam','$total')";
-					}
-					else{
-						$unsuccessful[]=$value[0];
-						continue;
-					}
-				}
-				else{
-					$unsuccessful[]=$value[0];
-					continue;
-				}
-				
-			}
-		}
-		if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
-			$data['canView']=$this->getAdminSidebar();
-		}
-		if ($insertString==false) {
-			$param = array('status'=>false,'message'=>"no data available or student not found to insert <br> course registration not found for the following student <br> ".implode('<br>', $unsuccessful),'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result');
-		$this->load->view('uploadreport',$param);return;
-		}
-		$query ="insert into course_score(student_course_registration_id,ca_score,exam_score,score) values $insertString on duplicate key update ca_score =values(ca_score),score=values(score)+values(ca_score),score=values(score)";
-		$result = $this->db->query($query);
-		$message=' data inserted successfully';
-		if (!$result) {
-			$message=' problem encountered while uploading result';
-		}
-		else{
-		if ($unsuccessful) {
-			$message='the following student records cannot be uploaded(no registration found for student <br/> '.implode(',', $unsuccessful);
-		}
-		if ($registeredStudent) {
-			$message.=" <br/> This courses was registered automatically for this following students <br/> ".implode(',', $registeredStudent);
-		}
-		//insert recored into the upload history
-		$p = array($this->webSessionManager->getCurrentuserProp('ID'),$sessionSem[0]->academic_session_id,$course,$filePath,$this->webSessionManager->getCurrentuserProp('user_type'));
-		$query ="insert into upload_history(user_id,academic_session_id,session_semester_course_id,document_path,user_type) values(?,?,?,?,?)";
-		$this->db->query($query,$p);
-		}
-		$param = array('status'=>$result,'message'=>$message,'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result');
-		if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
-			$param['canView']=$this->getAdminSidebar();
-		}
-		$this->load->view('uploadreport',$param);
-	}
-
 	private function getAdminSidebar()
 	{
 		$this->load->model('custom/adminData');
@@ -753,40 +626,6 @@ class ModelController extends CI_Controller
 		return $this->adminData->getCanViewPages($role);
 	}
 
-	private function registerStudent($matric,$sessionSemesterCourse,$ss,$session,$level)
-	{
-		loadClass($this->load,'student_biodata');
-		$std = $this->student_biodata->getWhere(array('matric_number'=>$matric),$count,0,null,false);
-		$std=$std[0];
-		$level = $std->getStudentRegisteringLevel($session);
-		$courseStatus = $this->session_semester_course->getCourseStatus($matric,$sessionSemesterCourse,$ss,$session,$std);
-		$query="insert ignore into student_course_registration(student_biodata_id,session_semester_course_id,academic_session_id,semester_id,course_status) select (select id from student_biodata where matric_number=?),$sessionSemesterCourse,academic_session_id,semester_id,'$courseStatus' from session_semester where session_semester.id=? ";
-		$this->db->trans_begin();
-		$result = $this->db->query($query,array($matric,$ss));
-		if (!$result) {
-			$this->trans_rollback();
-			return false;
-		}
-		$query="insert ignore into student_session_history(student_biodata_id,academic_session_id,level_id) values(?,?,?)";
-		$result = $this->db->query($query,array($std->ID,$session,$level));
-		if ($result) {
-			$this->db->trans_commit();
-			return $result;
-		}
-		$this->trans_rollback();
-		return $result;
-	}
-
-	private function getRegisteredCourse($matric,$course,$sessionSemester)
-	{
-		$query='select student_course_registration.id from student_course_registration join student_biodata on student_biodata.ID=student_course_registration.student_biodata_id  join session_semester on session_semester.semester_id=student_course_registration.semester_id and student_course_registration.academic_session_id=session_semester.academic_session_id where student_biodata.matric_number=? and session_semester_course_id=? and session_semester.id=?';
-		$result = $this->db->query($query,array($matric,$course,$sessionSemester));
-		$result =$result->result_array();
-		if ($result) {
-			return $result[0]['id'];
-		}
-		return false;
-	}
 // just create a the template function below to generate the needed paramter.
 	function sFile($model){
 		// $special = array('student','lecturer','applicant');
@@ -864,24 +703,6 @@ class ModelController extends CI_Controller
 		$this->load->view('uploadreport',$data);
 	}
 
-	private function updateUserType($model,$param)
-	{
-		$username='';
-		$password='surname';
-		if ($model=='student_biodata') {
-			$username='matric_number';
-		}
-		if ($model=='lecturer') {
-			$username ="staff_no";
-		}
-		if ($model=='admin') {
-			$username ='email';
-			$password= 'lastname';
-		}
-		$query ="insert ignore into user(username,password,user_type,user_table_id) select $username,md5(lower($password)),'$model',ID from $model where ID not in (select user_table_id from user where user_type='$model')";
-		$result =$this->db->query($query);
-		return $result;
-	}
 
 	private function loadUploadedFileContent($filePath=false){
 		$filename = 'bulk-upload';
@@ -907,6 +728,47 @@ class ModelController extends CI_Controller
 		// }
 		// show_404();
 		// exit;
+	}
+
+	public function insert_academic(){
+		if(isset($_POST)){
+			$lecturer_id = $this->input->post('lecturer_id',true);
+			$course_code = $this->input->post('course_code',true);
+			$course_title = $this->input->post('course_title',true);
+			$session_name = $this->input->post('session_name',true);
+			$total_person = $this->input->post('total_person',true);
+			$category = $this->input->post('category',true);
+
+			if (!isNotEmpty($course_code,$course_title,$session_name,$total_person,$category)) {
+					echo "empty field detected . please fill all required field and try again";
+					return;
+				}
+			}
+			$sessionJoin='';
+			sort($session_name);
+			$count = count($session_name);
+			foreach($session_name as $key => $val){
+				$sessionJoin.= $val;
+				if(($key+1) != $count){
+					$sessionJoin.= " ,";
+				}
+			}
+			$sessionJoin = $sessionJoin;
+			// echo $sessionJoin;exit;
+
+			$query = "insert ignore into teaching_experience(lecturer_id,course_code,course_title,session_name,total_person,category) values(?,?,?,?,?,?)";
+			$result = $this->db->query($query,array($lecturer_id,$course_code,$course_title,$sessionJoin,$total_person,$category));
+			if ($result) {
+				$this->db->trans_commit();
+				echo createJsonMessage('status',true,'message','Operation was successfully');
+				exit;
+			}else{
+				$this->trans_rollback();
+				echo createJsonMessage('status',false,'message','Error occured while performing the operation');
+				return false;
+			}
+			
+
 	}
 
 

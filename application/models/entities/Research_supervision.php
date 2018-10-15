@@ -10,7 +10,7 @@ class Research_supervision extends Crud {
 
 protected static $tablename = "Research_supervision"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('phd_total','date_created');
+static $nullArray = array('phd_total','msc_total','date_created');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 

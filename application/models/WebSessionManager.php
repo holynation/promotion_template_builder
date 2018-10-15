@@ -131,13 +131,21 @@ class WebSessionManager extends CI_Model
          if (!$temp) {
             return false;
          }
-         $st= $this->getCurrentUserProp('ID');
+         $st= $this->getCurrentUserProp('user_table_id');
          loadClass($this->load,$userType);
          $className = ucfirst($userType);
          $result = new $className(array('ID'=>$st));
          $result->load();
          return $result;
    	}
+
+      function getNameInitial(){
+         $user = $this->isCurrentUserType('lecturer');
+         $surname = ucfirst($user->surname);
+         $firstname = ucfirst(getFirstString($user->firstname));
+         $middlename = ucfirst(getFirstString($user->middlename));
+         return $surname .", ".$firstname .". ".$middlename.".";
+      }
 
    	function getUserDisplayName(){
          return $this->getCurrentUserProp('firstname').' '.$this->getCurrentUserProp('lastname');

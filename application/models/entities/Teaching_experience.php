@@ -15,11 +15,11 @@ static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
-static $uniqueArray = array();
+static $uniqueArray = array('course_code');
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','course_title' => 'varchar','course_name' => 'varchar','session_name' => 'varchar','total_person' => 'varchar','category' => 'varchar','pg_courses_qualify' => 'varchar','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','course_code' => 'varchar','course_title' => 'varchar','session_name' => 'varchar','total_person' => 'varchar','category' => 'varchar','pg_courses_qualify' => 'varchar','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','lecturer_id' => '','course_title' => '','course_name' => '','session_name' => 'Academic Session','total_person' => '','category' => '','pg_courses_qualify' => '','date_created' => '');
+static $labelArray = array('ID' => '','lecturer_id' => '','course_title' => '','course_code' => '','session_name' => 'Academic Session','total_person' => '','category' => '','pg_courses_qualify' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array('date_created' => 'current_timestamp()');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
@@ -36,10 +36,10 @@ function __construct($array = array())
 function getLecturer_idFormField($value = ''){
 	return getLecturerOption($value);
 }
- function getCourse_nameFormField($value = ''){
+ function getCourse_codeFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='course_name'>Course Name</label>
-				<input type='text' name='course_name' id='course_name' value='$value' class='form-control' required />
+				<label for='course_code'>Course Name</label>
+				<input type='text' name='course_code' id='course_code' value='$value' class='form-control' required />
 			</div>";
 } 
  function getCourse_titleFormField($value = ''){
@@ -49,15 +49,10 @@ function getLecturer_idFormField($value = ''){
 			</div>";
 }
  function getSession_nameFormField($value = ''){
-	$result = "<div class='form-group'>
-				<label for='session_name'>Academic Session</label>";
-			$option = getDropDownYear($value);
-	$result.="<select name='session_name' id='session_name' class='form-control'>
-			<option value=''>..choose....</option>
-					 $option
-				</select>";
-	$result.="</div>";
-	return $result;
+	return "<div class='form-group'>
+				<label for='session_name'>Academic Session Name</label>
+				<input type='text' name='session_name' id='session_name' value='$value' class='form-control' />
+			</div>";
 } 
  function getTotal_personFormField($value = ''){
 	return "<div class='form-group'>

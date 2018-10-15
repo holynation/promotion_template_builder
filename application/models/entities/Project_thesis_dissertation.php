@@ -54,14 +54,12 @@ function getLecturer_idFormField($value = ''){
 			</div>";
 } 
  function getResearch_categoryFormField($value = ''){
- 	$arr =array('MSc Project','MPhil Dissertation','PhD Thesis');
-	$option = buildOptionUnassoc($arr,$value);
-	return "<div class='form-group'>
-	<label for='research_category' >Research Category</label>
-		<select  name='research_category' id='research_category'  class='form-control' required>
-		$option
-		</select>
-</div> ";
+ 	// $arr =array('MSc Project','MPhil Dissertation','PhD Thesis');
+	// $option = buildOptionUnassoc($arr,$value);
+return "<div class='form-group'>
+		<label for='research_category'>Research Category</label>
+		<textarea name='research_category' id='research_category' class='form-control' placeholder='MPhil Dissertation,MSc project, PhD Thesis' required>$value</textarea>
+		</div>";
 } 
  function getSch_of_researchFormField($value = ''){
 	return "<div class='form-group'>

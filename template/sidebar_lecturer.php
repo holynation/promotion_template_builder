@@ -113,7 +113,7 @@
                 <a class="nav-link" href="<?php echo base_url('vc/add/work_experience'); ?>">Work Experience</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('vc/lecturer/teaching_exp'); ?>">Teaching Experience</a>
+                <a class="nav-link" href="<?php echo base_url('vc/lecturer/teaching_experience'); ?>">Teaching Experience</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('vc/add/research_supervision'); ?>">Research Supervision</a>

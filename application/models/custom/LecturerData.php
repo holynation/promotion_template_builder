@@ -37,6 +37,11 @@ class LecturerData extends CI_Model
 		$result['honours'] = $this->lecturer->getFromDbClass('honours_distinctions','order by date_awarded asc');
 		$result['memberships'] = $this->lecturer->getFromDbClass('memberships','order by start_date asc');
 		$result['experiences'] = $this->lecturer->getFromDbClass('work_experience','order by start_date asc');
+		$result['teachings'] = $this->lecturer->getFromDbClass('teaching_experience','order by course_code asc');
+		$result['supervision'] = $this->lecturer->getFromDbClass('research_supervision','order by category asc');
+		$result['research_com'] = $this->lecturer->getFromDbClass('research_completed','order by topic_name asc');
+		$result['research_in'] = $this->lecturer->getFromDbClass('research_inprogress','order by topic_name asc');
+		$result['project_thesis'] = $this->lecturer->getFromDbClass('project_thesis_dissertation','order by year_research asc');
 
 		return $result;
 	}

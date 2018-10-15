@@ -681,18 +681,6 @@ public function getFromDbClass($class,$order='order by id'){
 	return $result;
 }
 
-public function getHonourMember(){
-	$query = "select hd.* from honours_distinctions hd join memberships on memberships.lecturer_id = hd.lecturer_id where hd.lecturer_id = ?";
-	$result = $this->query($query,array($this->ID));
-	if ($result==false) {
-		return false;
-	}
-
-	include_once('honours_distinctions.php');
-	$result = new Honours_distinctions($result);
-	print_r($result);exit;
-	return $result;
-}
 
 }
 ?>

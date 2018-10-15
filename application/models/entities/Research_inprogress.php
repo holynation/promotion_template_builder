@@ -17,7 +17,7 @@ static $uploadDependency = array();
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array();
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','topic_name' => 'varchar','importance' => 'text','current_doing' => 'text','significance' => 'text','progress_of_research' => 'text','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','topic_name' => 'text','importance' => 'text','current_doing' => 'text','significance' => 'text','progress_of_research' => 'text','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
 static $labelArray = array('ID' => '','lecturer_id' => '','topic_name' => '','importance' => '','current_doing' => '','significance' => '','progress_of_research' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
