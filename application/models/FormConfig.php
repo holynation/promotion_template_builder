@@ -65,15 +65,23 @@ class FormConfig extends CI_Model
 				'page_hint' => 'This page is for Scholarships, Fellowships and Prizes (with dates) in respect of Undergraduate and Postgraduate work only',
 				'form_hint' => 'Please enter your information in a chronological order'
 			),
+			'book_published' =>array
+			(
+				'form_hint' => 'Names must be in the same orders as in the book.'
+			),
 			'chapter_in_book_published' => array
 			(
-				'table_action' => array('editor' => 'extra/editors/chapter_in_book_published','delete' => 'delete/chapter_in_book_published', 'edit' => 'edit/chapter_in_book_published'),
-				'extra_form' => 'editors'
+				'table_action' => array('delete' => 'delete/chapter_in_book_published', 'edit' => 'edit/chapter_in_book_published')
 			),
 			'article_in_conference' => array
 			(
-				'table_action' => array('editor' => 'extra/editors/article_in_conference','delete' => 'delete/article_in_conference', 'edit' => 'edit/article_in_conference'),
-				'extra_form' => 'editors'
+				// 'table_action' => array('editor' => 'extra/editors/article_in_conference','delete' => 'delete/article_in_conference', 'edit' => 'edit/article_in_conference')
+				'table_action' => array('delete' => 'delete/article_in_conference', 'edit' => 'edit/article_in_conference'),
+				'page_hint' => 'This page is for Articles that have Already Appeared in Refereed Conference Proceedings'
+			),
+			'article_appear_in_journal' => array
+			(
+				'page_hint' => 'This page is for Articles that have already appeared in learned journals'
 			),
 			'accepted_books' => array
 			(

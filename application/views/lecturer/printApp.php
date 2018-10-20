@@ -378,7 +378,6 @@ include "template/sidebar_lecturer.php";
 																	 </td>
 																</tr>
 																</table>
-					    									  
 															</li> 
 					    								<?php } ?>
 													
@@ -511,65 +510,124 @@ include "template/sidebar_lecturer.php";
 			    						<p>Books already published:</p>
 			    						<ul style="list-style-type: lower-roman;">
 			    						<?php
-				    						// if(!empty($research_com)){
-				    							// foreach($research_com as $complete){
+				    						if(!empty($book_publish)){
+				    							foreach($book_publish as $bp){
 				    						?>
-											<!-- <li id="listSub"><p><?php //echo ucfirst($complete->topic_name); ?></p></li>  -->
-										<?php //} }else{ ?>
+											<li id="listSub">
+												<p>
+												<?php echo $bp->author_names ;?> 
+												<?php echo punctuateStr(addParenthesis($bp->year_of_publication,'(',')')); ?>
+												<?php echo "<i>". punctuateStr($bp->title_of_book,'.') ."</i>"; ?>
+												<?php echo punctuateStr($bp->city_of_publication,':') ?>
+												<?php echo punctuateStr($bp->publish_company_name,'.') ?>
+												<?php echo punctuateStr(appendAtEnd($bp->total_no_pages,'pp'),'.') ?>
+												<?php echo punctuateStr(appendAtFront($bp->isbn_no,'isbn'),'.'); ?>
+												<?php echo addParenthesis($bp->country_publish,'(',')'); ?>
+												<?php echo punctuateStr(addParenthesis($bp->contribution,'(Contribution: ','%)'),'.'); ?>
+												</p>
+											</li> 
+										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
-										<?php //}  ?>
+										<?php }  ?>
 										</ul>
 	    							</li>
 	    							<li>
 			    						<p>Chapters in books already published:</p>
 			    						<ul style="list-style-type: lower-roman;">
 			    						<?php
-				    						// if(!empty($research_com)){
-				    							// foreach($research_com as $complete){
+				    						 if(!empty($chapters_books)){
+				    							foreach($chapters_books as $chapters){
 				    						?>
-											<!-- <li id="listSub"><p><?php //echo ucfirst($complete->topic_name); ?></p></li>  -->
-										<?php //} }else{ ?>
+											 <li id="listSub">
+											 	<p>
+											 	<?php echo ucfirst($chapters->author_names); ?>
+											 	<?php echo punctuateStr(addParenthesis($chapters->year_of_publication,'(',')')); ?>
+											 	<?php echo punctuateStr($chapters->title_of_chapter,'.'); ?>
+											 	<?php $editors = "In $chapters->editor_names (Eds.)";
+											 		echo ($editors)?$editors : " ";
+											 	?>
+											 	<?php echo "<i>". punctuateStr($chapters->title_of_book,'.') ."</i>"; ?>
+											 	<?php echo punctuateStr($chapters->city_of_publication,':') ?>
+											 	<?php echo punctuateStr($chapters->publish_company_name,'.') ?>
+											 	<?php echo punctuateStr(appendAtEnd($chapters->chapter_page_range,'pp'),'.') ?>
+											 	<?php echo punctuateStr(appendAtFront($chapters->isbn_no,'isbn'),'.'); ?>
+											 	<?php echo addParenthesis($chapters->country_publish,'(',')'); ?>
+												<?php echo punctuateStr(addParenthesis($chapters->contribution,'(Contribution: ','%)'),'.'); ?>
+											 	</p>
+											 </li>  
+										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
-										<?php //}  ?>
+										<?php }  ?>
 										</ul>
 	    							</li>
 	    							<li>
 			    						<p>Article that have already appeared in refereed conference proceedings:</p>
 			    						<ul style="list-style-type: lower-roman;">
 			    						<?php
-				    						// if(!empty($research_com)){
-				    							// foreach($research_com as $complete){
+				    						if(!empty($article_conf)){
+				    							foreach($article_conf as $conf){
 				    						?>
-											<!-- <li id="listSub"><p><?php //echo ucfirst($complete->topic_name); ?></p></li>  -->
-										<?php //} }else{ ?>
+											<li id="listSub">
+												<p>
+												<?php echo ucfirst($conf->author_names); ?>
+												<?php echo punctuateStr(addParenthesis($conf->year_publish,'(',')'),'.'); ?>
+												<?php echo punctuateStr($conf->article_title); ?>
+												<?php $editors = "In $chapters->editor_names (Eds.).";
+											 		echo ($editors)?$editors : " ";
+											 	?>
+											 	<?php echo "<i>".punctuateStr($conf->conference_theme,':')."</i>"; ?>
+											 	<?php echo "<i>".punctuateStr($conf->name_of_proceedings). "</i>"; ?>
+											 	<?php echo punctuateStr(puncDate($conf->start_date,$conf->end_date,$conf->month,$conf->year_of_conference),'.'); ?>
+											 	<?php echo punctuateStr($conf->city_publish,':'); ?>
+											 	<?php echo punctuateStr($conf->publishing_company,'.'); ?>
+											 	<?php echo punctuateStr(appendAtEnd($conf->page_range,'pp'),'.') ?>
+											 	<?php echo addParenthesis($conf->country,'(',')'); ?>
+												<?php echo punctuateStr(addParenthesis($conf->contribution,'(Contribution: ','%)'),'.'); ?>
+												</p>
+											</li>  
+										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
-										<?php //}  ?>
+										<?php }  ?>
 										</ul>
 	    							</li>
 	    							<li>
 			    						<p>Patents and Copyrights:</p>
 			    						<ul style="list-style-type: lower-roman;">
 			    						<?php
-				    						// if(!empty($research_com)){
-				    							// foreach($research_com as $complete){
+				    						if(!empty($patents)){
+				    							foreach($patents as $patent){
 				    						?>
-											<!-- <li id="listSub"><p><?php //echo ucfirst($complete->topic_name); ?></p></li>  -->
-										<?php //} }else{ ?>
+											<li id="listSub">
+												<p>
+													<?php echo ucfirst($patent->author_names); ?>
+													<?php echo punctuateStr(addParenthesis($patent->patent_year,'(',')'),'.'); ?>	
+													<?php echo "<i>".punctuateStr($patent->title_of_patent,'.')."</i>"; ?>
+													<?php echo punctuateStr($patent->patent_no,'.'); ?>
+													<?php echo addParenthesis($patent->country,'(',')'); ?>
+												<?php echo punctuateStr(addParenthesis($patent->contribution,'(Contribution: ','%)'),'.'); ?>
+												</p>
+											</li> 
+										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
-										<?php //}  ?>
+										<?php }  ?>
 										</ul>
 	    							</li>
 	    							<li>
 			    						<p>Articles that have already appeared in learned journals:</p>
 			    						<ul style="list-style-type: lower-roman;">
 			    						<?php
-				    						// if(!empty($research_com)){
-				    							// foreach($research_com as $complete){
+				    						if(!empty($article_journal)){
+				    							 foreach($article_journal as $journal){
 				    						?>
-											<!-- <li id="listSub"><p><?php //echo ucfirst($complete->topic_name); ?></p></li>  -->
-										<?php //} }else{ ?>
+											<li id="listSub">
+											 	<p>
+											 		<?php echo ucfirst($journal->author_names); ?>
+											 		
+											 	</p>
+											</li> 
+										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
-										<?php //}  ?>
+										<?php }  ?>
 										</ul>
 	    							</li>
     							</div>
@@ -589,6 +647,8 @@ include "template/sidebar_lecturer.php";
 <!-- main-panel ends -->
 
 <!-- note this must not be remove so as to balance the div element -->
+<div class="btn btn-primary float-right print">Print</div>
+</div>
 </div>
 <!-- page-body-wrapper ends -->
 <?php 

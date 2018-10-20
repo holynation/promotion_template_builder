@@ -88,7 +88,7 @@ $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$ta
 	                    <div class="modal-header">
 	                        <h4 class="modal-title">
                             <?php echo removeUnderscore($model);  ?> Entry Form
-                                <label class="text-muted"><?php echo ($form_hint != '') ? $form_hint : ' '; ?></label>
+                            <label class="text-muted" style="font-size: 15px;"><?php echo ($form_hint != '') ? $form_hint : ' '; ?></label>
                           </h4>
 	                  		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	                    		<span aria-hidden="true">&times;</span></button>

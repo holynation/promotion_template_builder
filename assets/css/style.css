@@ -16546,4 +16546,18 @@ ul {
   .error-page .error-page-divider {
     border-left: 3px solid rgba(255, 255, 255, 0.2); } }
 
+/*the printing style css*/
+.print{
+  position: fixed;
+  bottom: 50px;
+  right: 2%;
+  box-shadow: -3px 2px 18px 0px #271010;
+  z-index: 1000;
+  font-size: 1rem;
+  height: auto;
+}
+table{
+  -webkit-print-color-adjust:exact!important;
+}
+
 /*# sourceMappingURL=maps/style.css.map */

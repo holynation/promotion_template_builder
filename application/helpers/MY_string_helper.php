@@ -97,6 +97,74 @@
 		loadClass($obj->load,'lecturer');
 		return $obj->lecturer->getLecturerIdOption($value);
 	}
+	// this function is for the format of printing
+	function appendAtFront($string='',$append='.'){
+		$result='';
+		if($string){
+			$extract = substr(trim($string),0,strlen($append));
+			$append = ($append == strtoupper($append)) ? $append : strtoupper($append);
+			if($extract != $append){
+				$result.= $result ? "$string" : "$append $string";
+			}else{
+				$result = $string;
+			}
+		}
+		return $result;
+	}
+	function appendAtEnd($string='',$append='.'){
+		$result='';
+		if($string){
+			$result=$string;
+			if(substr($string, -strlen($append)) != $append){
+				$result.= " $append";
+			}else{
+				$result = $string;
+			}
+		}
+		return $result;
+	}
+	function punctuateStr($string='',$punctuation='.'){
+		$result='';
+		if($string != ''){
+			$result = $string;
+			if(substr(trim($result), -1) != $punctuation)
+			{
+				$result.= "$punctuation";
+			}else{
+				$result = $string;
+			}
+		}
+		return ucfirst($result);
+	}
+	function addParenthesis($string='',$start='(',$end=')'){
+		$result='';
+		if($string){
+			$str =$string;
+			if(substr($str, 0,1) != $start){
+				$result .= $result ? "$str" : "$start$str";
+			}else{
+				$result = $str;
+			}
+
+			if(substr($str, -1) != $end){
+				$result.= "$end";
+			}else{
+				$result = $str;
+			}
+		}
+		return $result;
+	}
+	function puncDate($start='',$end='',$mnth,$year){
+		$result='';
+		if($start){
+			$end_date = ($end != '') ? $end : "";
+			$result = "$start-$end $mnth, $year";
+		}else{
+			$result=" ";
+		}
+
+		return $result;
+	}
 	//this function returns the json encoded string based on the key pair paremter saved on it.
 	//
 	function createJsonMessage(){

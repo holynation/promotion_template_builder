@@ -415,6 +415,14 @@ class ModelController extends CI_Controller
 			echo createJsonMessage('status',false,'message',$message);
 			return;
 		}
+		//this is to check for the book_published model
+		// if($model == 'book_published'){
+		// 	$arr = $parameter;
+		// 	$result=array();
+		// 	$names = $arr['author_names'];
+			
+		// }
+
 		$this->$model->setArray($parameter);
 		if (!$this->validateModel($model,$message)) {
 			echo createJsonMessage('status',false,'message',$message);

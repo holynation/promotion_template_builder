@@ -135,9 +135,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('vc/add/chapter_in_book_published'); ?>">Chapter in Books</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('vc/add/editors'); ?>">Editors</a>
-              </li>
+              <!-- <li class="nav-item">
+                <a class="nav-link" href="<?php //echo base_url('vc/add/editors'); ?>">Editors</a>
+              </li> -->
               <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('vc/add/article_in_conference'); ?>">Article in Refereed Conference </a>
               </li>
@@ -194,7 +194,6 @@
             </ul>
           </div>
         </li>
-        <a class="btn btn-primary" href="<?php echo base_url('vc/lecturer/printApp'); ?>">Print  <i class="mdi mdi-printer"></i></a>
-        <div class="print btn btn-info">Print</div>
+        <a class="btn btn-primary" href="<?php echo base_url('vc/lecturer/printApp'); ?>">Generate Report  <i class="mdi mdi-printer"></i></a>
       </ul>
   </nav>

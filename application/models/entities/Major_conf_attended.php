@@ -55,9 +55,9 @@ function getLecturer_idFormField($value = ''){
 } 
  function getEnd_dateFormField($value = ''){
  	$result = "<div class='form-group'>
-				<label for='end_date'>End Date (state only if necessary)</label>";
+				<label for='end_date'>End Date (choose only if necessary)</label>";
 				$option = getDropDays($value);
-	$result.="<select name='end_date' id='end_date' class='form-control' required>
+	$result.="<select name='end_date' id='end_date' class='form-control'>
 			<option value=''>..choose....</option>
 				$option
 			</select>";
