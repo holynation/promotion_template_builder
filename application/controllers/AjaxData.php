@@ -18,6 +18,12 @@
 				echo "session expired please re login to continue";
 				exit;
 			}
+			$exclude=array('changePassword','savePermission','approve','disapprove');
+			$page = $this->getMethod($segments);
+			if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin' && in_array($page, $exclude)) {
+				loadClass($this->load,'role');
+				$this->role->checkWritePermission();
+			}
 		}
 
 		private function getMethod(&$allSegment)
@@ -55,6 +61,34 @@
 			$query = "select id,conf_name as value from $table where lecturer_id = ?";
 			return $query;
 		}
+		public function faculty(){
+			$query = "select id, faculty_name as value from faculty";
+			echo $this->returnJsonFromQueryResult($query);
+		}
+		public function department($faculty=''){
+			$qTemp=false;
+			if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+				loadClass($this->load,'role');
+				$currentRole = new Role(array('ID'=>$this->webSessionManager->getCurrentUserProp('role_id')));//exam officer role for testing
+				$currentRole->load();
+				$roleDepartment=$currentRole->getDepartment(true);
+				  if ($roleDepartment) {
+				   $qTemp= combineForInQuery(fetchField($roleDepartment,'department_id'));
+				  }
+			}
+			$where ='';
+			$data = array();
+			if ($faculty) {
+				$where = ' where faculty_ID=?';
+				$data[]= $faculty;
+			}
+			$extra=	'';
+			if ($qTemp) {
+					$extra=$where?" and department.id in $qTemp ":" where department.id in $qTemp ";
+				}	
+			$query = "select id, department_name as value from department $where $extra";
+			echo $this->returnJsonFromQueryResult($query,$data);
+		}
 
 		protected function returnJsonFromQueryResult($query,$data=array(),$message=''){
 			$result = $this->db->query($query,$data);
@@ -72,6 +106,7 @@
 				return "";
 			}
 		}
+
 
 		//function for changing the password for user.
 		function changePassword(){
@@ -97,6 +132,61 @@
 		{
 			$query="select id,level_name as value from level";
 			echo $this->returnJsonFromQueryResult($query);
+		}
+		public function savePermission()
+		{
+			
+			if (isset($_POST['sub'])) {
+				$role = $_POST['role'];
+				if (!$role) {
+					echo createJsonMessage('status',false,'message','error occured while saving permission');
+				}
+				loadClass($this->load,'role');
+				try {
+					$removeList = json_decode($_POST['remove'],true);
+					$updateList = json_decode($_POST['update'],true);
+					$this->role->ID=$role;
+					$result=$this->role->processPermission($updateList,$removeList);
+					echo createJsonMessage('status',$result,'message','permission updated successfully');
+				} catch (Exception $e) {
+					echo createJsonMessage('status',false,'message','error occured while saving permission');
+				}
+				
+			}
+		}
+		public function savePublication(){
+			if(isset($_POST['best_pub'])){
+				$table = $_POST['tableModel'];
+				$userTypeId = $_POST['userId'];
+				loadClass($this->load,'best_publication');
+				
+				try{
+					$updateList = json_decode($_POST['update'],true);
+					if(empty($updateList)){
+						echo createJsonMessage('status',false,'message','You have not chosen any publication');
+						exit;
+					}
+					$result = $this->best_publication->processPublication($table,$userTypeId,$updateList); 
+					echo createJsonMessage('status',$result,'message','Your publication is successfully saved...');
+				}catch(Exception $e){
+					echo createJsonMessage('status',false,'message','error occured while saving best publication');
+				}
+			}
+
+			if(isset($_POST['best_remove_pub'])){
+				$tableModel = $_POST['tableModel'];
+				$userType = $_POST['userType'];
+				loadClass($this->load,'best_publication');
+
+				try{
+					$removeList = json_decode($_POST['remove'],true);
+					$result = $this->best_publication->processPublicationRemove($tableModel,$userType,$removeList);
+					echo createJsonMessage('status',$result,'message','You have successfully remove the publication...');
+				}catch(Exception $e){
+					echo createJsonMessage('status',false,'message','error occured while saving best publication');
+				}
+
+			}
 		}
 	}
  ?>

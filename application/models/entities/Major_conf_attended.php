@@ -19,7 +19,7 @@ static $uniqueArray = array();
 /* this is an associative array containing the fieldname and the type of the field*/ 
 static $typeArray = array('lecturer_id' => 'int','conf_name' => 'varchar','start_date' => 'varchar','end_date' => 'varchar','month' => 'varchar','year_attended' => 'varchar','city_of_conf' => 'varchar','country_of_conf' => 'varchar','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','lecturer_id' => '','conf_name' => '','start_date' => '','end_date' => '','month' => '','year_attended' => '','city_of_conf' => '','country_of_conf' => '','date_created' => '');
+static $labelArray = array('ID' => '','lecturer_id' => '','conf_name' => '','start_date' => '','end_date' => '','month' => '','year_attended' => '','city_of_conf' => 'Location Of Conference','country_of_conf' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array('date_created' => 'current_timestamp()');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
@@ -38,7 +38,7 @@ function getLecturer_idFormField($value = ''){
 }
  function getConf_nameFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='conf_name'>Conf Name</label>
+				<label for='conf_name'>Conference Name</label>
 				<input type='text' name='conf_name' id='conf_name' value='$value' class='form-control' required />
 			</div>";
 } 
@@ -87,7 +87,7 @@ function getLecturer_idFormField($value = ''){
 } 
  function getCity_of_confFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='city_of_conf'>City Of Conf</label>
+				<label for='city_of_conf'>Location Of Conference</label>
 				<input type='text' name='city_of_conf' id='city_of_conf' value='$value' class='form-control' required />
 			</div>";
 } 

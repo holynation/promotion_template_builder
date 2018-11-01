@@ -34,6 +34,7 @@ class ViewController extends CI_Controller{
     {
       show_404();
     }
+
     $defaultArgNum =3;
     $tempTitle = removeUnderscore($model);
     $title = $page=='index'?$tempTitle:ucfirst($page)." $tempTitle";
@@ -44,9 +45,9 @@ class ViewController extends CI_Controller{
       $this->loadExtraArgs($data,$args,$defaultArgNum);
     }
 
-    if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
-      //check for the permission for the admin here
-    }
+    // if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+    //   //check for the permission for the admin here
+    // }
 
     $exceptions = array();//pages that does not need active session
     if (!in_array($page, $exceptions)) {
@@ -75,11 +76,57 @@ class ViewController extends CI_Controller{
 
   private function admin($page,&$data)
   {
-      $this->load->model('custom/adminData');
+    $role_id=$this->webSessionManager->getCurrentUserProp('role_id');
+    if (!$role_id) {
+      show_404();
+    }
+
+    $this->load->model('custom/adminData');
+    $role=false;
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='lecturer') {
+      loadClass($this->load,'lecturer');
+      $this->lecturer->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
+      $this->lecturer->load();
+      $data['lecturer']=$this->lecturer;
+      $role = $data['lecturer']->role;
+    }else {
       loadClass($this->load,'admin');
       $this->admin->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
       $this->admin->load();
       $data['admin']=$this->admin;
+      $role = $this->admin->role;
+    }
+    $data['currentRole']=$role;
+    if (!$role) {
+      show_404();exit;
+    }
+    $path ='vc/admin/'.$page;
+    if($page=='permission' || $page=='role_department') {
+      $path ='vc/add/role';
+    }
+
+    if (!$role->canView($path)) {
+      show_access_denied();exit;
+    }
+    $sidebarContent=$this->adminData->getCanViewPages($role);
+    // print_r($sidebarContent);exit;
+    $data['canView']=$sidebarContent;
+
+  }
+
+  private function adminPermission(&$data)
+  {
+    if (!isset($data['id']) || !$data['id'] || $data['id']==1) {
+      show_404();exit;
+    }
+    $newRole = new Role(array('ID'=>$data['id']));
+    $newRole->load();
+    $data['role']=$newRole;
+    $data['allPages']=$this->adminData->getAdminSidebar();
+    $sidebarContent=$this->adminData->getCanViewPages($data['role']);
+    // print_r($sidebarContent);exit;
+    $data['permitPages']=$sidebarContent;
+    $data['allStates']=$data['role']->getPermissionArray();
   }
 
   private function adminDashboard(&$data)
@@ -93,6 +140,12 @@ class ViewController extends CI_Controller{
     $id = $this->webSessionManager->getCurrentUserProp('user_table_id');
     $this->lecturer = new Lecturer(array('ID'=>$id));
     $this->lecturer->load();
+    if($this->webSessionManager->getCurrentUserProp('role_id')) {
+      $this->load->model('custom/adminData');
+      $role=$this->lecturer->role;
+      $sidebarContent=$this->adminData->getCanViewPages($role);
+      $data['canView']=$sidebarContent;
+    }
     $data['lecturer'] = $this->lecturer;
   }
 
@@ -108,12 +161,19 @@ class ViewController extends CI_Controller{
     $data = array_merge($data,$this->lecturerData->loadAllData());
   }
 
-  //function for loading edit page for generalapplication
+  //function for loading edit page for general application
   function edit($model,$id){
-    $role = true;
-    loadClass($this->load,'admin');
-    $this->admin->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
-    $this->admin->load();
+    $userType=$this->webSessionManager->getCurrentUserProp('user_type');
+    if($userType == 'admin'){
+      loadClass($this->load,'admin');
+      $this->admin->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
+      $this->admin->load();
+      $role = $this->admin->role;
+      $role->checkWritePermission();
+    }else{
+      $role = true;
+    }
+    
     $ref = @$_SERVER['HTTP_REFERER'];
     if ($ref&&!startsWith($ref,base_url())) {
       show_404();
@@ -186,20 +246,35 @@ class ViewController extends CI_Controller{
   public function add($model)
   {
 
+    $role_id=$this->webSessionManager->getCurrentUserProp('role_id');
     $userType=$this->webSessionManager->getCurrentUserProp('user_type');
+    if($userType == 'admin'){
+      if (!$role_id) {
+        show_404();
+      }
+    }
 
-    $role =true;
+    $role =false;
     if ($userType=='lecturer') {
       loadClass($this->load,'lecturer');
       $this->lecturer->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
       $this->lecturer->load();
-    $data['lecturer']=$this->lecturer;
+      // $role = $this->lecturer->role;
+      $role= true;
+      $data['checkExists'] = $this->lecturer->checkLecturerExist();
+      $data['lecturer']=$this->lecturer;
     }
     else{
       loadClass($this->load,'admin');
       $this->admin->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
       $this->admin->load();
+      $role = $this->admin->role;
       $data['admin']=$this->admin;
+      $data['currentRole']=$role;
+      $path ='vc/add/'.$model;
+      if (!$role->canView($path)) {
+        show_access_denied($this->load);exit;
+      }
     }
 
     if (!$this->webSessionManager->isSessionActive()) {
@@ -207,6 +282,12 @@ class ViewController extends CI_Controller{
     }
     if ($model==false) {
       show_404();
+    }
+
+    if($userType == 'admin'){
+      $this->load->model('custom/adminData');
+      $sidebarContent=$this->adminData->getCanViewPages($role);
+      $data['canView']=$sidebarContent;
     }
 
     loadClass($this->load,$model);
@@ -229,7 +310,7 @@ class ViewController extends CI_Controller{
     $id=$this->webSessionManager->getCurrentUserProp('ID');
     $this->load->model('entities/user');
     if(isset($_POST) && count($_POST) > 0 && !empty($_POST)){
-      $curr_password= trim($_POST['data_current_password']);
+      $curr_password = trim($_POST['data_current_password']);
       $new = trim($_POST['data_password']);
       $confirm = trim($_POST['data_confirm_password']);
 

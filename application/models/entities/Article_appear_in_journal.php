@@ -10,16 +10,16 @@ class Article_appear_in_journal extends Crud {
 
 protected static $tablename = "Article_appear_in_journal"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('extra_volume','extra_vol_year','date_of_publication','date_created');
-static $compositePrimaryKey = array();
+static $nullArray = array('extra_volume','extra_vol_year','date_of_publication','date_created','journal_num','page_range','asterisks');
+static $compositePrimaryKey = array('article_title','journal_name');
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
-static $uniqueArray = array();
+static $uniqueArray = array('article_title');
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','journal_year' => 'varchar','article_title' => 'varchar','journal_name' => 'varchar','volume_no' => 'int','journal_num' => 'int','page_range' => 'varchar','country' => 'varchar','contribution' => 'varchar','extra_volume' => 'varchar','extra_vol_year' => 'varchar','date_of_publication' => 'datetime','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','journal_year' => 'varchar','article_title' => 'varchar','journal_name' => 'varchar','volume_no' => 'int','journal_num' => 'int','page_range' => 'varchar','country' => 'varchar','contribution' => 'varchar','asterisks'=>'int','extra_volume' => 'varchar','extra_vol_year' => 'varchar','date_of_publication' => 'datetime','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','lecturer_id' => '','author_names' => '','journal_year' => '','article_title' => '','journal_name' => '','volume_no' => '','journal_num' => '','page_range' => '','country' => '','contribution' => 'Contribution(%)','extra_volume' => '','extra_vol_year' => '','date_of_publication' => '','date_created' => '');
+static $labelArray = array('ID' => '','lecturer_id' => '','author_names' => '','journal_year' => '','article_title' => '','journal_name' => '','volume_no' => '','journal_num' => '','page_range' => '','country' => '','contribution' => 'Contribution(%)','asterisks'=>'','extra_volume' => '','extra_vol_year' => '','date_of_publication' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array('date_created' => 'current_timestamp()');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
@@ -68,25 +68,25 @@ function getLecturer_idFormField($value = ''){
  function getVolume_noFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='volume_no'>Volume No (just state the number)</label>
-				<input type='number' name='volume_no' id='volume_no' value='$value' class='form-control' placeholder='e.g (Vol. 2)' required />
+				<input type='number' name='volume_no' id='volume_no' value='$value' class='form-control' placeholder='e.g Vol. 2' required />
 			</div>";
 } 
  function getJournal_numFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='journal_num'>Journal Num (just state the number)</label>
-				<input type='number' name='journal_num' id='journal_num' value='$value' class='form-control' placeholder='e.g (No. 1)' required />
+				<input type='text' name='journal_num' id='journal_num' value='$value' class='form-control' placeholder='e.g No. 1' />
 			</div>";
 } 
  function getPage_rangeFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='page_range'>Page Range</label>
-				<input type='text' name='page_range' id='page_range' value='$value' class='form-control' placeholder='e.g (23-16)' required />
+				<input type='text' name='page_range' id='page_range' value='$value' class='form-control' placeholder='e.g 23-16' />
 			</div>";
 } 
  function getCountryFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='country'>Country (state in full)</label>
-				<input type='text' name='country' id='country' value='$value' class='form-control' placeholder='e.g (Federal Republic Of Nigeria )' required />
+				<label for='country'>Country (In full)</label>
+				<input type='text' name='country' id='country' value='$value' class='form-control' placeholder='e.g Nigeria ' required />
 			</div>";
 } 
  function getContributionFormField($value = ''){
@@ -95,15 +95,18 @@ function getLecturer_idFormField($value = ''){
 				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' required />
 			</div>";
 } 
+function getAsterisksFormField($value=''){
+	return addAsteriskToPub($value);
+} 
  function getExtra_volumeFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='extra_volume'>Current Volume (State if Low volume(1-3) journals)</label>
+				<label for='extra_volume'>Current Volume (State only if Vol. No written is Low volume(1-3) journals)</label>
 				<input type='text' name='extra_volume' id='extra_volume' value='$value' class='form-control' />
 			</div>";
 } 
  function getExtra_vol_yearFormField($value = ''){
 	$result = "<div class='form-group'>
-				<label for='extra_vol_year'>Current Vol Year (State if Low volume(1-3) journals)</label>";
+				<label for='extra_vol_year'>Current Vol Year (State only if Vol. No written is Low volume(1-3) journals)</label>";
 				$option = getDropDownYear($value);
 	$result.="<select name='extra_vol_year' id='extra_vol_year' class='form-control'>
 			<option value=''>..choose....</option>
@@ -114,7 +117,7 @@ function getLecturer_idFormField($value = ''){
 } 
  function getDate_of_publicationFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='date_of_publication'>Date Of Publication (State if Articles was published in Year of Promotion)</label>
+				<label for='date_of_publication'>Date Of Publication (State only if the Articles was published in Year of Promotion)</label>
 				<input type='date' name='date_of_publication' id='date_of_publication' value='$value' class='form-control'/>
 			</div>";
 } 

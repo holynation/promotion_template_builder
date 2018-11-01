@@ -20,20 +20,11 @@
 			loadClass($this->load,'user');
 			if ($type=='insert') {
 				// this is to update an already user in the user table
-				// if($this->webSessionManager->checkActualUserData()){
-				// 	$param = array('user_table_id' => $data['LAST_INSERT_ID']);
-				// 	$user_id = $this->webSessionManager->getCurrentUserProp('ID');
-				// 	$update = $db->update('user', $param, array('ID' => $user_id));
-				// 	if($update){
-				// 		return true;
-				// 	}
-				// }else{
 					$param = array('user_type'=>'lecturer','username'=>$data['email'],'password'=>$this->hash_created->encode_password($data['staff_no']),'user_table_id'=>$data['LAST_INSERT_ID']);
 					$std = new User($param);
 					if ($std->insert($db,$message)) {
 						return true;
 					}
-				// }
 				echo "$message";exit;
 				return false;
 			}

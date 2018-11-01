@@ -18,6 +18,25 @@ class FormConfig extends CI_Model
 		}
 		
 	}
+	public function getDepartmentQuery()
+	{
+		$roleDepartment=$this->currentRole->getDepartment(true);
+		$qTemp=false;
+		  if ($roleDepartment) {
+		   $qTemp= combineForInQuery(fetchField($roleDepartment,'department_id'));
+		  }
+		  return $qTemp?((isset($_GET['faculty'])&& $_GET['faculty'])?"select id,department_name as value from department where department.faculty_ID='{$_GET['faculty']}' and department.id in $qTemp ":false):((isset($_GET['faculty'])&& $_GET['faculty'])?"select id,department_name as value from department where department.faculty_ID='{$_GET['faculty']}'":false);
+	}
+	private function alternateAction(){
+		$action = array();
+		$userType = $this->webSessionManager->getCurrentUserProp('user_type');
+		if($userType == 'lecturer'){
+			$action = array('edit' => 'edit/lecturer','delete' => 'delete/lecturer');
+		}else{
+			$action = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer');
+		}
+		return $action;
+	}
 
 	/**
 	 * this is the function to change when an entry for a particular entitiy needed to be addded. this is only necessary for entities that has a custom configuration for the form.Each of the key for the form model append insert option is included. This option inculde:
@@ -40,6 +59,7 @@ class FormConfig extends CI_Model
 			'lecturer'=>array
 			(
 				'table_exclude'=>array('img_path','disability','status'),
+				'table_action' => $this->alternateAction(),
 				'submit_label' => 'Save',
 				'table_title' => 'Lecuturer Table',
 				'search'=>array('firstname','surname','middlename','email','phone_number'),
@@ -52,9 +72,11 @@ class FormConfig extends CI_Model
 			),
 			'admin'=>array
 			(
-				'exclude'=> array('role_id'),
 				'table_title' => 'Admin Table',
 				'show_status' => true
+			),
+			'role'=>array(
+				'query'=>'select * from role where ID<>1'
 			),
 			'faculty' => array
 			(
@@ -67,29 +89,41 @@ class FormConfig extends CI_Model
 			),
 			'book_published' =>array
 			(
-				'form_hint' => 'Names must be in the same orders as in the book.'
+				'form_hint' => 'Names must be in the same orders as in the book.',
+				'showAppendForm' => true,
+				'asterisk_info' => true
 			),
 			'chapter_in_book_published' => array
 			(
-				'table_action' => array('delete' => 'delete/chapter_in_book_published', 'edit' => 'edit/chapter_in_book_published')
+				'table_action' => array('delete' => 'delete/chapter_in_book_published', 'edit' => 'edit/chapter_in_book_published'),
+				'showAppendForm' => true,
+				'asterisk_info' => true
 			),
 			'article_in_conference' => array
 			(
 				// 'table_action' => array('editor' => 'extra/editors/article_in_conference','delete' => 'delete/article_in_conference', 'edit' => 'edit/article_in_conference')
 				'table_action' => array('delete' => 'delete/article_in_conference', 'edit' => 'edit/article_in_conference'),
-				'page_hint' => 'This page is for Articles that have Already Appeared in Refereed Conference Proceedings'
+				'page_hint' => 'This page is for Articles that have Already Appeared in Refereed Conference Proceedings',
+				'showAppendForm' => true,
+				'asterisk_info' => true
 			),
 			'article_appear_in_journal' => array
 			(
-				'page_hint' => 'This page is for Articles that have already appeared in learned journals'
+				'page_hint' => 'This page is for Articles that have already appeared in learned journals',
+				'showAppendForm' => true,
+				'asterisk_info' => true
 			),
 			'accepted_books' => array
 			(
-				'page_hint' => 'This page is for Books, Chapters in Books and Articles Already Accepted for Publication'
+				'page_hint' => 'This page is for Books, Chapters in Books and Articles Already Accepted for Publication',
+				'showAppendForm' => true,
+				'asterisk_info' => true
 			),
 			'technical_report' => array
 			(
-				'page_hint' => 'This page is for Technical Reports and Monographs'
+				'page_hint' => 'This page is for Technical Reports and Monographs',
+				'showAppendForm' => true,
+				'asterisk_info' => true
 			),
 			'major_conf_attended' => array
 			(

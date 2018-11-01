@@ -10,16 +10,16 @@ class ModelController extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		//$this->load->model('accessControl');//for authentication authorization validation
+		$this->load->model('accessControl');//for authentication authorization validation
 		// $this->load->model('entities/application_log');
 		$this->load->helper('array');
 		$this->load->model('modelControllerDataValidator');
 		$this->load->model('webSessionManager');
 		$this->load->model('modelControllerCallback');
-		// $this->load->model('entities/role');
-		// if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
-		// 	$this->role->checkWritePermission();
-		// }
+		$this->load->model('entities/role');
+		if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
+			$this->role->checkWritePermission();
+		}
 		
 	}
 
@@ -283,11 +283,12 @@ class ModelController extends CI_Controller
 			}
 			
 			$user = $this->webSessionManager->getCurrentuserProp('user_type').$this->webSessionManager->getCurrentuserProp('ID');
+			$new_name = $this->webSessionManager->getCurrentuserProp('user_table_id').'_'.uniqid();
 			$destination='uploads/'.$destination;
 			if (!is_dir($destination)) {
 				mkdir($destination,0777,true);
 			}
-			$pos = $this->getUploadID($model,$insertType);
+			$pos = $this->getUploadID($model,$insertType) .'_'.$new_name;
 			$destination.="$pos.".$ext;//the test should be replaced by the name of the current user.		
 			if(move_uploaded_file($_FILES[$name]['tmp_name'], $destination)){
 				$message=$destination;

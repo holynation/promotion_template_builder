@@ -1,4 +1,25 @@
 <?php 
+	
+	function addAsteriskToPub($value=''){
+		$alternateValue='';
+		if($value != ''){
+			if($value == 1){
+				$alternateValue = "One Asterisk";
+			}else if($value == 2){
+				$alternateValue = "Two Asterisks";
+			}
+		}
+		$emptyOption = ($value!='')?"<option value=''>....empty value....</option>":"<option value=''>....choose asterisk....</option>";
+		$selected = ($value!='')?"<option selected='selected' value='$value'>$alternateValue</option>$emptyOption":"$emptyOption";
+		return "<div class='form-group'>
+			<label class='form-checkbox'>Add Asterisks</label>
+			<select class='form-control' id='asterisks' name='asterisks'>
+					$selected
+				<option value='1'>One Asterisk</option>
+				<option value='2'>Two Asterisks</option>
+			</select>
+			</div> ";
+	}
 
 	function getDropDownYear($value=''){
 		$result='';
@@ -98,11 +119,16 @@
 		return $obj->lecturer->getLecturerIdOption($value);
 	}
 	// this function is for the format of printing
-	function appendAtFront($string='',$append='.'){
+	function appendAtFront($string='',$append='.',$default=false){
 		$result='';
 		if($string){
 			$extract = substr(trim($string),0,strlen($append));
-			$append = ($append == strtoupper($append)) ? $append : strtoupper($append);
+			if($default){
+				$append = $append;
+			}else{
+				$append = ($append == strtoupper($append)) ? $append : strtoupper($append);
+			}
+			
 			if($extract != $append){
 				$result.= $result ? "$string" : "$append $string";
 			}else{
@@ -115,7 +141,7 @@
 		$result='';
 		if($string){
 			$result=$string;
-			if(substr($string, -strlen($append)) != $append){
+			if(substr(trim($string), -strlen($append)) != $append){
 				$result.= " $append";
 			}else{
 				$result = $string;
@@ -140,16 +166,14 @@
 		$result='';
 		if($string){
 			$str =$string;
-			if(substr($str, 0,1) != $start){
+			if(substr(trim($str), 0,1) != $start){
 				$result .= $result ? "$str" : "$start$str";
 			}else{
 				$result = $str;
 			}
 
-			if(substr($str, -1) != $end){
+			if(substr(trim($str), -1) != $end){
 				$result.= "$end";
-			}else{
-				$result = $str;
 			}
 		}
 		return $result;
@@ -160,13 +184,12 @@
 			$end_date = ($end != '') ? $end : "";
 			$result = "$start-$end $mnth, $year";
 		}else{
-			$result=" ";
+			$result="";
 		}
 
 		return $result;
 	}
 	//this function returns the json encoded string based on the key pair paremter saved on it.
-	//
 	function createJsonMessage(){
 		$argNum = func_num_args();
 		if ($argNum % 2!=0) {
@@ -387,6 +410,11 @@
  		}
  		return false;	
  	}
+ 	function emptyDate($date){
+ 		if(substr($date,0,10) == '0000-00-00'){
+			return true;
+		}
+ 	}
 
 	// function to calculate time ago
 	function timeAgo($time_ago){
@@ -463,40 +491,6 @@
 		echo $content; exit;
 	}
 
-	//function to generate
-	function generateApplicationNumber($db,$application,$program){
-		$format = getFormat($db,$application,$program);
-		$matric = getMatric($db,$format) + 1;
-		return $format['application_number_prefix'].padNumber($format['application_number_min_length'],$matric).$format['application_number_suffix'];
-	}
-	function getMatric($db,$format){
-		$query = "select registration_number from applicant where registration_number like ? order by registration_number desc";
-		$param = array($format['application_number_prefix'].'%'.$format['application_number_suffix']);
-		$result = $db->query($query,$param);
-		$reg =0;
-		if ($result->num_rows() > 0) {
-			$tempResult = $result->result_array();
-			$matric = $tempResult[0];
-			$matric =$matric['registration_number'];
-			$ind1 =  strpos($matric, $format['application_number_prefix']) + strlen($format['application_number_prefix']);
-			$ind2 = strpos($matric, $format['application_number_suffix']);
-			$reg = substr($matric,$ind1, $ind2-$ind1);
-		}
-		return $reg;
-	}
-	function getFormat($db,$application,$program){
-		$query = 'select application_number_prefix,application_number_suffix,application_number_min_length from application_number_gen  join admission_application_program on application_number_gen.admission_application_program_id=admission_application_program.id join program on admission_application_program.program_id= program.id where admission_application_program.admission_application_id=? and program.id=?';
-		$result = $db->query($query,array($application,$program));
-		if ($result->num_rows > 0) {
-			$result = $result->result_array();
-			return $result[0];
-		}
-
-		$query = "select application_number_prefix,application_number_suffix,application_number_min_length from admission_application where id=?";
-		$result = $db->query($query,array($application));
-		$result = $result->result_array();
-		return $result[0];
-	}
 	//function to generate inc number
 	function generateInc($db,$pos,$format){
 		$pos2= $pos + strpos($format, ')',$pos);
@@ -565,8 +559,8 @@
 	//function to get the recent page cookie information
 	function getPageCookie(){
 		$result = array();
-		if (isset($_COOKIE['edu_per'])) {
-			$content = $_COOKIE['edu_per'];
+		if (isset($_COOKIE['edu_cv'])) {
+			$content = $_COOKIE['edu_cv'];
 			$result = explode('-', $content);
 		}
 		return $result;
@@ -575,7 +569,7 @@
 	//function to save the page cookie
 	function sendPageCookie($module,$page){
 		$content = $module.'-'.$page;
-		setcookie('edu_per',$content,0,'/','',false,true);
+		setcookie('edu_cv',$content,0,'/','',false,true);
 	}
 	function show_access_denied(){
 		include_once('application/views/access_denied.php');exit;

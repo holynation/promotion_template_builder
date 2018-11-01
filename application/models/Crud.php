@@ -43,8 +43,14 @@ class Crud extends CI_Model
 		return $result;
 	}
 	//function for getting the name of the table
-	function getTableName(){
-		$tableName = strtolower(static::$tablename);
+	function getTableName($external=''){
+		$tableName='';
+		if($external == ''){
+			$tableName = strtolower(static::$tablename);
+		}else{
+			$tableName = strtolower($external);
+		}
+		
 		return $tableName;
 	}
 	function buildUrl($url){
@@ -635,7 +641,7 @@ class Crud extends CI_Model
 			$current = $array[$i];
 			extract($current);
 			// find a way to get selected boxes when loading update form
-			$result.="<input type='checkbox' name='".$name."list[]' value='$id'>$value</input>";
+			$result.="<input type='checkbox' name='".$name."list[]' value='$id'>$value />";
 		}
 		return $result;
 	}

@@ -11,9 +11,9 @@
 			$this->load->model('crud');
 			$this->load->model('webSessionManager');
 			if ($this->webSessionManager->getCurrentUserprop('user_type')=='admin') {
-				// loadClass($this->load,'role');
-				// $role = new Role();
-				// $role->checkWritePermission();
+				loadClass($this->load,'role');
+				$role = new Role();
+				$role->checkWritePermission();
 			}
 		}
 

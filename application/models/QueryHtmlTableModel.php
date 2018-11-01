@@ -30,7 +30,7 @@
 		 * @param  array   $actionArray  this is an associative array of associative array that contains the information needed to generate action 
 		 * @return [string]                the html table string generated
 		 */
-		public function getHtmlTableWithQuery($query,$queryData=NULL, &$totalLength,$actionArray=array(),$header=null,$paged=true,$lower=0, $length=NULL,$parentModel=null,$excludeArray=array()){
+		public function getHtmlTableWithQuery($query,$queryData=NULL, &$totalLength,$actionArray=array(),$header=null,$paged=true,$lower=0, $length=NULL,$parentModel=null,$excludeArray=array(),$appendForm=array()){
 			if (empty($query)) {
 				throw new Exception("you must specify query to be used.");
 			}
@@ -94,7 +94,7 @@
 				$classname = $this->extractClassnameFromQuery($query);
 				$extra =$this->tableViewModel->generatePagedFooter($totalLength,$lower,$length);
 			}
-			return $this->buildHtmlAndAction($result,$actionArray,$header).$extra;
+			return $this->buildHtmlAndAction($result,$actionArray,$header,$appendForm).$extra;
 		}
 
 		private function buildDataJoinQuery($query,$queryData,$parentModel,$excludeArray=array(),&$onclause,&$foreignTable){
@@ -102,54 +102,58 @@
 				$queryString = '';
 				$data = array();
 				$result = $this->db->query($query,$queryData);
-				$result = $result->result_array();
-				$fields = array_keys($result[0]);
+				$results = $result->result_array();
 				$display='';
 				$foreignVal = '';
-				foreach($fields as $key => $val){
-					if(!empty($excludeArray)){
-						if(in_array($val,$excludeArray)){
+				if($result->num_rows() > 0){
+					$fields = array_keys($results[0]);
+					foreach($fields as $key => $val){
+						if(!empty($excludeArray)){
+							if(in_array($val,$excludeArray)){
+								continue;
+							}
+						}
+
+						if(endsWith($val,$this->foreignKeyEnd)){
+							$tablename = substr($val, 0,strlen($val)-strlen($this->foreignKeyEnd));
+							$tablename = strtolower($tablename);
+							if (!class_exists($tablename)) {
+								$this->load->model("entities/$tablename");
+							}
+							if (isset($tablename::$displayField)) {
+								if (is_array($tablename::$displayField)) {
+									$display="concat_ws(' '";
+									foreach ($tablename::$displayField as $tval) {
+										$display.=",".$tablename.'.'.$tval;
+									}
+									$display.=") as $val";
+								}
+								else{
+									$display = strtolower($tablename::$tablename).'.'.$tablename::$displayField.' as '.$val;
+									// $display =$tablename::$displayField.' as '.$val;
+								}
+								$foreignTable[]=$tablename;
+								$temp = $parentModel.'.'.$tablename.$this->foreignKeyEnd;
+								$usse = isset($tablename::$joinField)?$tablename.'.'.$tablename::$joinField :"$tablename.ID";
+								$onclause.=" left join $tablename on $temp =$usse ";
+							}else{
+								$display = $parentModel.'.'.$val;
+							}
+							$val = $display;
+						}else{
+							$val = $parentModel.'.'.$val;
+						}
+
+						if($val == "$parentModel.date_created"){
 							continue;
 						}
+
+						$data[]= $val;
+
 					}
-
-					if(endsWith($val,$this->foreignKeyEnd)){
-						$tablename = substr($val, 0,strlen($val)-strlen($this->foreignKeyEnd));
-						$tablename = strtolower($tablename);
-						if (!class_exists($tablename)) {
-							$this->load->model("entities/$tablename");
-						}
-						if (isset($tablename::$displayField)) {
-							if (is_array($tablename::$displayField)) {
-								$display="concat_ws(' '";
-								foreach ($tablename::$displayField as $tval) {
-									$display.=",".$tablename.'.'.$tval;
-								}
-								$display.=") as $val";
-							}
-							else{
-								$display = strtolower($tablename::$tablename).'.'.$tablename::$displayField.' as '.$val;
-								// $display =$tablename::$displayField.' as '.$val;
-							}
-							$foreignTable[]=$tablename;
-							$temp = $parentModel.'.'.$tablename.$this->foreignKeyEnd;
-							$usse = isset($tablename::$joinField)?$tablename.'.'.$tablename::$joinField :"$tablename.ID";
-							$onclause.=" left join $tablename on $temp =$usse ";
-						}else{
-							$display = $parentModel.'.'.$val;
-						}
-						$val = $display;
-					}else{
-						$val = $parentModel.'.'.$val;
-					}
-
-					if($val == "$parentModel.date_created"){
-						continue;
-					}
-
-					$data[]= $val;
-
-				}	
+				}else{
+					echo "NO RECORD FOUND";
+				}
 
 				$queryString = implode(",", $data);
 				return $queryString;
@@ -181,26 +185,35 @@
 				$this->classname = $classname;
 			}
 		}
-		private function buildHtmlAndAction($data,$action,$header=null){
+		private function buildHtmlAndAction($data,$action,$header=null,$appendForm=array()){
 			if (empty($data)) {
 				return "<div class='empty-data alert alert-primary text-light'>NO RECORD FOUND </div>";	
 			}
 			$result = $this->openTableTag();
-			$result.= $this->extractheader(empty($header)?array_keys($data[0]):$header,!empty($action));
-			$result.= $this->buildTableBody($data,$action);
+			$result.= $this->extractheader(empty($header)?array_keys($data[0]):$header,!empty($action),$appendForm);
+			$result.= $this->buildTableBody($data,$action,$appendForm);
 			$result.= $this->closeTableTag();
 			return $result;
 		}
 		private function openTableTag(){
 			return "<div class=\"box\"><div class=\"table-responsive no-padding\"><table class='table table-bordered'>\n";
 		}
-		private function extractheader($keys,$includeAction=true){
+		private function extractheader($keys,$includeAction=true,$appendForm=array()){
+			$result='<thead>';
+			$emptyHeader='';
 			if ($includeAction) {
 				$keys[]='Action';
 			}
+
+			if(!empty($appendForm)){
+				$emptyHeader = "<th></th>";
+			}
+
 			$sn = "<th>S/N</th>";
-			$result="<thead>
-			<tr> $sn";
+			$result.="
+			<tr> $emptyHeader $sn";
+
+			
 
 			for ($i=0; $i < count($keys); $i++) { 
 				if ($keys[$i]=='ID' ||$keys[$i]=='id' ) {
@@ -214,18 +227,25 @@
 			return $result;
 		}
 
-		private function buildTableBody($data,$action){
+		private function buildTableBody($data,$action,$appendForm=array()){
 			$result ="<tbody>";
 			for ($i=0; $i < count($data); $i++) { 
 				$current = $data[$i];
-				$result.=$this->buildTableRow($current,$action,@$_GET['p_start']+$i);
+				$result.=$this->buildTableRow($current,$action,@$_GET['p_start']+$i,$appendForm);
 			}
 			$result.='</tbody>';
 			return $result;
 		}
 
-		private function buildTableRow($data,$action,$index=false){
-			$result ='<tr>';
+		private function buildTableRow($data,$action,$index=false,$appendForm=array()){
+			$result ='<tr class="append-content">';
+			if(!empty($appendForm)){
+				extract($appendForm);
+				$id = isset($data['ID'])?$data['ID']:'';
+				$otherClass = ($attrClass) ? $attrClass : '';
+				$inputForm = "<label class='form-check-label'><input type='$type' class='$otherClass $class' name='".$name."[]' id='".$name."[]' value='$id' /></label>";
+				$result.="<td><div class='form-check form-check-flat'>$inputForm</div></td>";
+			}
 			if ($index!==false) {
 				$index+=1;
 				$result.="<td>$index</td>";
@@ -267,8 +287,8 @@
 		}
 		private function addTableAction($action,$data){
 			$result= "<td class='action-column'>
-			<div class='dropdown'><span class='dropdown-toggle btn btn-primary' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Action <i class='fa fa-arrow-down'></i></span>
-			<ul class='dropdown-menu table-action' data-model=''> 
+			<div class='btn-group dropdown'><span class='dropdown-toggle btn btn-primary' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Action <i class='fa fa-arrow-down'></i></span>
+			<ul class='dropdown-menu' data-model=''> 
 			";
 			foreach ($action as $key => $value) {
 				$critical = 0;

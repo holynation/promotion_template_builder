@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 13, 2018 at 07:15 PM
+-- Generation Time: Nov 01, 2018 at 03:00 PM
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.0.27
 
@@ -57,14 +57,13 @@ INSERT INTO `academic_appointment` (`ID`, `lecturer_id`, `first_academic_appoint
 CREATE TABLE `accepted_books` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `surname` varchar(100) NOT NULL,
-  `firstname` varchar(100) NOT NULL,
-  `middlename` varchar(100) NOT NULL,
-  `accepted_year` datetime DEFAULT NULL,
+  `author_names` varchar(255) NOT NULL,
+  `accepted_year` date DEFAULT NULL,
   `article_title` varchar(200) NOT NULL,
   `journal_name` varchar(250) NOT NULL COMMENT 'in italics&title case',
   `country` varchar(250) NOT NULL COMMENT 'name in full',
   `contribution` varchar(150) NOT NULL,
+  `asterisks` int(10) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -72,8 +71,8 @@ CREATE TABLE `accepted_books` (
 -- Dumping data for table `accepted_books`
 --
 
-INSERT INTO `accepted_books` (`ID`, `lecturer_id`, `surname`, `firstname`, `middlename`, `accepted_year`, `article_title`, `journal_name`, `country`, `contribution`, `date_created`) VALUES
-(1, 1, 'Bisiriyu,Balogun', 'Akinola,Kolapo', 'Oluwalonimi,Oluwasegun', '2017-07-05 00:00:00', 'Enhancing Productivity in the Management of University Academic Staff in Nigeria', 'Journal of Educational Management', 'Ghana', '35', '2018-10-04 15:33:56');
+INSERT INTO `accepted_books` (`ID`, `lecturer_id`, `author_names`, `accepted_year`, `article_title`, `journal_name`, `country`, `contribution`, `asterisks`, `date_created`) VALUES
+(1, 1, 'Bisiriyu,Balogun', '2017-07-05', 'Enhancing Productivity in the Management of University Academic Staff in Nigeria', 'Journal of Educational Management', 'Ghana', '35', NULL, '2018-10-04 15:33:56');
 
 -- --------------------------------------------------------
 
@@ -91,16 +90,17 @@ CREATE TABLE `admin` (
   `address` text,
   `dob` date DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
-  `img_path` varchar(200) DEFAULT NULL
+  `img_path` varchar(200) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`ID`, `firstname`, `middlename`, `lastname`, `email`, `phone_number`, `address`, `dob`, `status`, `img_path`) VALUES
-(1, 'Technode', 'Technode', 'Technode', 'technode@gmail.com', '08109994485', 'Akobo,Ibadan', '2018-10-01', 1, 'assets/images/faces/face17.jpg'),
-(2, 'Alatise', 'Abraham', 'Oluwaseun', 'holynationdevelopment@gmail.com', '07064625478', 'Biala Ologede Estate,Olodo,Ibadan', '2018-10-01', 1, 'uploads/admin/1.jpg');
+INSERT INTO `admin` (`ID`, `firstname`, `middlename`, `lastname`, `email`, `phone_number`, `address`, `dob`, `status`, `img_path`, `role_id`) VALUES
+(1, 'Technode', 'Technode', 'Technode', 'technode@gmail.com', '08109994485', 'Akobo,Ibadan', '2018-10-01', 1, 'assets/images/faces/face17.jpg', NULL),
+(2, 'Alatise', 'Abraham', 'Oluwaseun', 'holynationdevelopment@gmail.com', '07064625478', 'Biala Ologede Estate,Olodo,Ibadan', '2018-10-01', 1, 'uploads/admin/1.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -111,9 +111,7 @@ INSERT INTO `admin` (`ID`, `firstname`, `middlename`, `lastname`, `email`, `phon
 CREATE TABLE `article_appear_in_journal` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `surname` varchar(100) NOT NULL,
-  `firstname` varchar(100) NOT NULL,
-  `middlename` varchar(100) NOT NULL,
+  `author_names` varchar(255) NOT NULL,
   `journal_year` varchar(20) DEFAULT NULL,
   `article_title` varchar(200) NOT NULL,
   `journal_name` varchar(250) NOT NULL COMMENT 'in italics&title case',
@@ -122,9 +120,10 @@ CREATE TABLE `article_appear_in_journal` (
   `page_range` varchar(100) NOT NULL,
   `country` varchar(250) NOT NULL COMMENT 'name in full',
   `contribution` varchar(150) NOT NULL,
+  `asterisks` int(10) DEFAULT NULL,
   `extra_volume` varchar(150) DEFAULT NULL COMMENT '=> low volume jounals',
   `extra_vol_year` varchar(20) DEFAULT NULL,
-  `date_of_publication` datetime DEFAULT NULL COMMENT '=>article in yr of promotion',
+  `date_of_publication` date DEFAULT NULL COMMENT '=>article in yr of promotion',
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -132,9 +131,14 @@ CREATE TABLE `article_appear_in_journal` (
 -- Dumping data for table `article_appear_in_journal`
 --
 
-INSERT INTO `article_appear_in_journal` (`ID`, `lecturer_id`, `surname`, `firstname`, `middlename`, `journal_year`, `article_title`, `journal_name`, `volume_no`, `journal_num`, `page_range`, `country`, `contribution`, `extra_volume`, `extra_vol_year`, `date_of_publication`, `date_created`) VALUES
-(1, 1, 'Salau,Musa,Ochei', 'Noah,Akinola,Buchi', 'Oluwalonimi,Oluwasegun', '1997', 'A Critical Assessment of Conflict in the International Law Context', 'Journal of International Law ', 6, 4, '17-37', 'United States of America', '30', NULL, NULL, NULL, '2018-10-04 15:11:26'),
-(2, 1, 'Adam,Olatunji', 'Akinola,Kolapo', 'Oluwalonimi,Oluwasegun', '2012', 'Assessment of Pollution in an Urban Drainage Waterway in the City of Abeokuta', 'Urban Environment and Development ', 2, 1, '16-23', 'Nigeria', '50', '6', '2017', NULL, '2018-10-04 15:18:41');
+INSERT INTO `article_appear_in_journal` (`ID`, `lecturer_id`, `author_names`, `journal_year`, `article_title`, `journal_name`, `volume_no`, `journal_num`, `page_range`, `country`, `contribution`, `asterisks`, `extra_volume`, `extra_vol_year`, `date_of_publication`, `date_created`) VALUES
+(1, 1, ' Salau, N. O., Musa, A. O. and Ochei, B. ', '1997', 'A Critical Assessment of Conflict in the International Law Context', 'Journal of International Law ', 6, 4, '', 'United States of America', '30', NULL, '', '', '0000-00-00', '2018-10-04 15:11:26'),
+(2, 1, 'Adams, K. O. and Olatunji T. K. ', '2012', 'Assessment of Pollution in an Urban Drainage Waterway in the City of Abeokuta', 'Urban Environment and Development ', 2, 1, '16-23', 'Nigeria', '50', NULL, '6', '2017', '2017-10-17', '2018-10-04 15:18:41'),
+(3, 1, 'Olofin, S.O., Olubusoye, O.E., Mordi, C. N O., Salisu, A.A., Adeleke, A.I., Orekoya, S.O., Olowookere, A.E. and Adebiyi, M.A.', '2014', 'A Small Macroeconometric Model of the Nigerian Economy.', 'Economic Modelling', 39, 0, '305-313', 'The Netherlands', '25', 2, '', '', '0000-00-00', '2018-10-30 10:15:55'),
+(4, 1, 'Orekoya, S.O.', '2014', 'A Structural VAR Analysis of Monetary Policy in Nigeria', 'African Journal of Economic Policy', 21, 1, '', 'Nigeria', '100', NULL, NULL, NULL, NULL, '2018-10-30 10:21:51'),
+(5, 1, 'Oladeji, I., Orekoya, S.O. and Adeniyi, O.A.\r\n', '2017', 'An Empirical Re-examination of Output Pollution Linkage in Nigeria', 'African Journal of Sustainable Development ', 7, 3, '', 'Nigeria', '70', 1, '', '', '0000-00-00', '2018-10-30 15:21:43'),
+(6, 1, ' Orekoya, S.O.\r\n', '2018', ' Impact of Mobile Money on Prices and Output in Nigeria', 'DBN Journal of Economics and Sustainable Growth', 1, 1, '', 'Nigeria', '100', NULL, NULL, NULL, '2018-07-10', '2018-10-30 15:29:27'),
+(7, 1, 'Orekoya, S.O.\r\n', '2017', 'Income Inequality, Health Expenditure and Outcomes in Nigeria', 'African Journal of Sustainable Development', 7, 2, '', 'Nigeria', '100', NULL, NULL, NULL, NULL, '2018-10-30 15:38:44');
 
 -- --------------------------------------------------------
 
@@ -145,20 +149,22 @@ INSERT INTO `article_appear_in_journal` (`ID`, `lecturer_id`, `surname`, `firstn
 CREATE TABLE `article_in_conference` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `editors_id` int(11) NOT NULL,
-  `author_surname` varchar(200) NOT NULL,
-  `author_firstname` varchar(200) NOT NULL,
-  `author_middlename` varchar(200) NOT NULL,
+  `author_names` varchar(255) NOT NULL,
+  `editor_names` varchar(255) NOT NULL,
   `year_publish` varchar(20) DEFAULT NULL,
   `article_title` varchar(250) NOT NULL COMMENT 'in title case',
   `conference_theme` varchar(250) NOT NULL,
   `name_of_proceedings` varchar(250) NOT NULL,
-  `date_of_conference` varchar(30) DEFAULT NULL,
+  `start_date` varchar(30) DEFAULT NULL,
+  `end_date` varchar(30) NOT NULL,
+  `month` varchar(30) NOT NULL,
+  `year_of_conference` varchar(20) NOT NULL,
   `city_publish` varchar(100) NOT NULL,
   `publishing_company` varchar(250) NOT NULL,
   `page_range` varchar(50) NOT NULL,
   `country` varchar(100) NOT NULL,
   `contribution` varchar(20) NOT NULL,
+  `asterisks` int(10) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -166,8 +172,35 @@ CREATE TABLE `article_in_conference` (
 -- Dumping data for table `article_in_conference`
 --
 
-INSERT INTO `article_in_conference` (`ID`, `lecturer_id`, `editors_id`, `author_surname`, `author_firstname`, `author_middlename`, `year_publish`, `article_title`, `conference_theme`, `name_of_proceedings`, `date_of_conference`, `city_publish`, `publishing_company`, `page_range`, `country`, `contribution`, `date_created`) VALUES
-(1, 1, 4, 'Okunrinde,Oju,Fadipe', 'Tayo,Ikechuku,Oluwadamilare', 'Kolapo,Abiodun,Segun', '2015', 'Postmodernism and African Literary Scholarship', 'Modern Literary Theories and African Literature in the 21st Century', 'Proceedings of the 1st Nigerian Literature Association’s Conference. ', '2018-10-21', 'Lagos', 'Wadell', '23-45', 'Nigeria', '30', '2018-10-04 14:11:39');
+INSERT INTO `article_in_conference` (`ID`, `lecturer_id`, `author_names`, `editor_names`, `year_publish`, `article_title`, `conference_theme`, `name_of_proceedings`, `start_date`, `end_date`, `month`, `year_of_conference`, `city_publish`, `publishing_company`, `page_range`, `country`, `contribution`, `asterisks`, `date_created`) VALUES
+(1, 1, 'Okunrinde,Oju,Fadipe', 'Tayo,Ikechuku,Oluwadamilare', '2015', 'Postmodernism and African Literary Scholarship', 'Modern Literary Theories and African Literature in the 21st Century', 'Proceedings of the 1st Nigerian Literature Association’s Conference. ', '19', '21', 'October', '2014', 'Lagos', 'Wadell', '23-45', 'Nigeria', '30', NULL, '2018-10-04 14:11:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `best_publication`
+--
+
+CREATE TABLE `best_publication` (
+  `ID` int(11) NOT NULL,
+  `lecturer_id` int(11) DEFAULT NULL,
+  `publication_table_id` int(11) DEFAULT NULL,
+  `table_name` varchar(100) NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `best_publication`
+--
+
+INSERT INTO `best_publication` (`ID`, `lecturer_id`, `publication_table_id`, `table_name`, `date_created`) VALUES
+(4, 1, 1, 'chapter_in_book_published', '2018-10-30 17:05:37'),
+(5, 1, 1, 'article_in_conference', '2018-10-30 17:05:39'),
+(6, 1, 1, 'accepted_books', '2018-10-30 17:05:43'),
+(7, 1, 4, 'article_appear_in_journal', '2018-10-30 17:05:41'),
+(9, 1, 5, 'article_appear_in_journal', '2018-10-30 17:05:47'),
+(10, 1, 6, 'article_appear_in_journal', '2018-10-30 17:05:49'),
+(11, 1, 1, 'article_appear_in_journal', '2018-11-01 13:18:31');
 
 -- --------------------------------------------------------
 
@@ -178,9 +211,7 @@ INSERT INTO `article_in_conference` (`ID`, `lecturer_id`, `editors_id`, `author_
 CREATE TABLE `book_published` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `author_surname` varchar(200) NOT NULL COMMENT 'name may be in bold',
-  `author_firstname` varchar(50) NOT NULL,
-  `author_middlename` varchar(50) DEFAULT NULL,
+  `author_names` varchar(250) NOT NULL COMMENT 'name may be in bold',
   `year_of_publication` varchar(50) NOT NULL COMMENT 'put in bracket',
   `title_of_book` varchar(250) NOT NULL COMMENT 'in italic format and title case',
   `city_of_publication` varchar(250) NOT NULL,
@@ -189,6 +220,7 @@ CREATE TABLE `book_published` (
   `isbn_no` varchar(50) NOT NULL,
   `country_publish` varchar(100) NOT NULL COMMENT 'this in bracket',
   `contribution` varchar(20) NOT NULL COMMENT 'this in bracket',
+  `asterisks` int(10) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -196,8 +228,8 @@ CREATE TABLE `book_published` (
 -- Dumping data for table `book_published`
 --
 
-INSERT INTO `book_published` (`ID`, `lecturer_id`, `author_surname`, `author_firstname`, `author_middlename`, `year_of_publication`, `title_of_book`, `city_of_publication`, `publish_company_name`, `total_no_pages`, `isbn_no`, `country_publish`, `contribution`, `date_created`) VALUES
-(1, 1, 'Abdukadir,Ogunlola', 'Akintoba,Segun', 'Abiodun,Kolapo', '2011', 'Radiation and Mankind', 'Ibadan', 'Star', 250, '978-978-921-011-4', 'Nigeria', '30', '2018-10-03 15:51:18');
+INSERT INTO `book_published` (`ID`, `lecturer_id`, `author_names`, `year_of_publication`, `title_of_book`, `city_of_publication`, `publish_company_name`, `total_no_pages`, `isbn_no`, `country_publish`, `contribution`, `asterisks`, `date_created`) VALUES
+(1, 1, 'Abdukadir, A. A. and Ogunlola, S. K.', '2011', 'Radiation and Mankind', 'Ibadan', 'Star', 250, '978-978-921-011-4', 'Nigeria', '30', 1, '2018-10-03 15:51:18');
 
 -- --------------------------------------------------------
 
@@ -208,10 +240,8 @@ INSERT INTO `book_published` (`ID`, `lecturer_id`, `author_surname`, `author_fir
 CREATE TABLE `chapter_in_book_published` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `editors_id` int(11) NOT NULL,
-  `author_surname` varchar(200) NOT NULL COMMENT 'name may be in bold',
-  `author_firstname` varchar(50) NOT NULL,
-  `author_middlename` varchar(50) DEFAULT NULL,
+  `author_names` varchar(255) NOT NULL COMMENT 'name may be in bold',
+  `editor_names` varchar(255) NOT NULL,
   `year_of_publication` varchar(50) NOT NULL COMMENT 'put in bracket',
   `title_of_chapter` varchar(200) NOT NULL COMMENT 'this is the title of chapter in the book',
   `title_of_book` varchar(250) NOT NULL COMMENT 'in italic format and title case',
@@ -221,6 +251,7 @@ CREATE TABLE `chapter_in_book_published` (
   `isbn_no` varchar(50) NOT NULL,
   `country_publish` varchar(100) NOT NULL COMMENT 'this in bracket',
   `contribution` varchar(20) NOT NULL COMMENT 'this in bracket',
+  `asterisks` int(10) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -228,8 +259,35 @@ CREATE TABLE `chapter_in_book_published` (
 -- Dumping data for table `chapter_in_book_published`
 --
 
-INSERT INTO `chapter_in_book_published` (`ID`, `lecturer_id`, `editors_id`, `author_surname`, `author_firstname`, `author_middlename`, `year_of_publication`, `title_of_chapter`, `title_of_book`, `city_of_publication`, `publish_company_name`, `chapter_page_range`, `isbn_no`, `country_publish`, `contribution`, `date_created`) VALUES
-(1, 1, 2, 'Okunrinde,Oju,Fadipe', 'Tayo,Ikechuku,Oluwadamilare', 'Kolapo,Abiodun,Segun', '2004', 'Mechanised Agriculture in the 21st Century', 'Agriculture and Mankind', 'Ilorin', 'Hopewell', '12-23', 'ISBN 978-36668-7-8', 'Nigeria', '70', '2018-10-03 16:22:18');
+INSERT INTO `chapter_in_book_published` (`ID`, `lecturer_id`, `author_names`, `editor_names`, `year_of_publication`, `title_of_chapter`, `title_of_book`, `city_of_publication`, `publish_company_name`, `chapter_page_range`, `isbn_no`, `country_publish`, `contribution`, `asterisks`, `date_created`) VALUES
+(1, 1, 'Okunrinde, T. K.,  Oju, I. K.  and Fadipe, O. A. ', 'Babajide, O.  L., Otuoke, G.  J.  and Nwakwo I. A. ', '2004', 'Mechanised Agriculture in the 21st Century', 'Agriculture and Mankind', 'Ilorin', 'Hopewell', '12-23pp', 'ISBN 978-36668-7-8', 'Nigeria', '70', NULL, '2018-10-03 16:22:18');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `community_service`
+--
+
+CREATE TABLE `community_service` (
+  `ID` int(11) NOT NULL,
+  `lecturer_id` int(11) DEFAULT NULL,
+  `society_name` varchar(250) DEFAULT NULL,
+  `office_held` varchar(250) DEFAULT NULL,
+  `session_period` varchar(255) DEFAULT NULL,
+  `category` varchar(250) DEFAULT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `community_service`
+--
+
+INSERT INTO `community_service` (`ID`, `lecturer_id`, `society_name`, `office_held`, `session_period`, `category`, `date_created`) VALUES
+(1, 1, 'Faculty Security Committee', 'Member', '2013/2014 and 2014/2015 sessions', 'Community Service', '2018-10-31 17:48:06'),
+(2, 1, 'UI Biomedical Engineering Development Team', 'Member', '2014 till date', 'Community Service', '2018-10-31 17:48:09'),
+(3, 1, 'Departmental Ceremonial Committee', 'Member', '2015 till date', 'Community Service', '2018-10-31 17:48:12'),
+(4, 1, 'DLC Programme', 'Departmental Examination Officer', '2012/2013 till 2015/2016', 'Administrative Duties', '2018-10-31 16:36:18'),
+(5, 1, 'CPEEL', 'Examination Officer/ PG Coordinator', '2014/2015 and 2015/2016', 'Administrative Duties', '2018-10-31 16:37:15');
 
 -- --------------------------------------------------------
 
@@ -378,7 +436,7 @@ CREATE TABLE `lecturer` (
 --
 
 INSERT INTO `lecturer` (`ID`, `title_id`, `surname`, `firstname`, `middlename`, `maiden_name`, `department_id`, `email`, `phone_number`, `dob`, `status`, `address`, `state_of_origin`, `staff_no`, `lga_of_origin`, `disability`, `nationality`, `gender`, `img_path`, `marital_status`, `religion`) VALUES
-(1, 3, 'Alatise', 'Oluwaseun', 'Abraham', NULL, 1, 'lecturer@gmail.com', '07064625478', '2015-01-06', 1, 'Biala Ologede Estate,Olodo.Ibadan', 'Ogun', '1111', 'Ijebu Ode', 0, 'Nigerian', 'male', 'uploads/lecturer/1.jpg', 'single', 'Christianity'),
+(1, 3, 'Alatise', 'Oluwaseun', 'Abraham', '', 1, 'lecturer@gmail.com', '07064625478', '2015-01-06', 1, 'Biala Ologede Estate,Olodo.Ibadan', 'Ogun', '1111', 'Ijebu Ode', 0, 'Nigerian', 'male', 'uploads/lecturer/1_1_5bd89ded4aa9a.png', 'single', 'Christianity'),
 (3, 3, 'Alatise', 'Oluwaseun', '', NULL, 1, 'holynation667@gmail.com', '0810994486', '2009-06-10', 1, NULL, 'Lagos', '12345', 'Ikeja', 0, 'Nigeria', 'male', 'uploads/lecturer/1.jpg', 'single', 'Christianity');
 
 -- --------------------------------------------------------
@@ -406,7 +464,7 @@ CREATE TABLE `major_conf_attended` (
 
 INSERT INTO `major_conf_attended` (`ID`, `lecturer_id`, `conf_name`, `start_date`, `end_date`, `month`, `year_attended`, `city_of_conf`, `country_of_conf`, `date_created`) VALUES
 (1, 1, '28th International Conference of the African Society of Analytical Chemist', '12', '15', 'January', '2010', 'Durban', 'South Africa', '2018-10-05 11:47:47'),
-(2, 3, '30th International Conference of the African Society of Computer Science', '4', '8', 'October', '2017', 'Durban', 'South Africa', '2018-10-09 16:07:24');
+(2, 1, '30th International Conference of the African Society of Computer Science', '4', '8', 'October', '2017', 'Durban', 'South Africa', '2018-10-09 16:07:24');
 
 -- --------------------------------------------------------
 
@@ -443,9 +501,7 @@ CREATE TABLE `paper_read` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
   `major_conf_attended_id` int(11) NOT NULL,
-  `surname` varchar(250) NOT NULL,
-  `firstname` varchar(150) NOT NULL,
-  `middlename` varchar(150) DEFAULT NULL,
+  `author_names` varchar(255) NOT NULL,
   `title_of_paper` varchar(150) NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -454,9 +510,9 @@ CREATE TABLE `paper_read` (
 -- Dumping data for table `paper_read`
 --
 
-INSERT INTO `paper_read` (`ID`, `lecturer_id`, `major_conf_attended_id`, `surname`, `firstname`, `middlename`, `title_of_paper`, `date_created`) VALUES
-(1, 1, 1, 'Okorie,Ajayi', 'Buchi,Akinwumi', NULL, 'Applications of chemometrics  to in-situ polarographic measurements', '2018-10-05 12:41:03'),
-(2, 1, 1, 'Adam,Olatunji', 'Akinola,Kolapo', NULL, 'trying another test of the app', '2018-10-05 12:50:46');
+INSERT INTO `paper_read` (`ID`, `lecturer_id`, `major_conf_attended_id`, `author_names`, `title_of_paper`, `date_created`) VALUES
+(1, 1, 1, 'Okorie, A. B. and Ajayi, F. O.', 'Applications of chemometrics  to in-situ polarographic measurements', '2018-10-05 12:41:03'),
+(2, 1, 2, 'Oladeji, I. and Adeniyi, O. A.', 'trying another test of the app', '2018-10-05 12:50:46');
 
 -- --------------------------------------------------------
 
@@ -467,9 +523,7 @@ INSERT INTO `paper_read` (`ID`, `lecturer_id`, `major_conf_attended_id`, `surnam
 CREATE TABLE `patents_copyright` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `surname` varchar(100) NOT NULL,
-  `firstname` varchar(100) NOT NULL,
-  `middlename` varchar(100) NOT NULL,
+  `author_names` varchar(255) NOT NULL,
   `patent_year` varchar(20) DEFAULT NULL,
   `title_of_patent` varchar(200) NOT NULL COMMENT 'in italics',
   `patent_no` varchar(100) NOT NULL,
@@ -482,8 +536,57 @@ CREATE TABLE `patents_copyright` (
 -- Dumping data for table `patents_copyright`
 --
 
-INSERT INTO `patents_copyright` (`ID`, `lecturer_id`, `surname`, `firstname`, `middlename`, `patent_year`, `title_of_patent`, `patent_no`, `country`, `contribution`, `date_created`) VALUES
-(1, 1, 'Awodiya,Ola,Fasola', 'Mayowa,Oluwaseun,Seye', 'Cynthia,Femi,Damilare', '2013', 'Description of Maize Cultivar', 'IFH-200.NGVZ-00-22', 'Nigeria', '30', '2018-10-04 14:44:13');
+INSERT INTO `patents_copyright` (`ID`, `lecturer_id`, `author_names`, `patent_year`, `title_of_patent`, `patent_no`, `country`, `contribution`, `date_created`) VALUES
+(1, 1, 'Awodiya, M., Ola, O. L. and Fasola, S. A. ', '2013', 'Description of Maize Cultivar', 'IFH-200.NGVZ-00-22', 'Nigeria', '30', '2018-10-04 14:44:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `permission`
+--
+
+CREATE TABLE `permission` (
+  `ID` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
+  `path` varchar(100) DEFAULT NULL,
+  `permission` enum('r','w') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `permission`
+--
+
+INSERT INTO `permission` (`ID`, `role_id`, `path`, `permission`) VALUES
+(1, 1, 'vc/admin/dashboard', 'w'),
+(2, 1, 'vc/add/lecturer', 'w'),
+(3, 1, 'vc/add/admin', 'w'),
+(4, 1, 'vc/add/role', 'w'),
+(5, 1, 'vc/admin/dev_app', 'w'),
+(6, 1, 'vc/add/department', 'w'),
+(7, 1, 'vc/add/faculty', 'w'),
+(8, 1, 'vc/add/title', 'w'),
+(9, 1, 'vc/add/academic_appointment', 'w'),
+(10, 1, 'vc/add/university_education', 'w'),
+(11, 1, 'vc/add/qualifications', 'w'),
+(12, 1, 'vc/add/professional_qualifications', 'w'),
+(13, 1, 'vc/add/scholarships', 'w'),
+(14, 1, 'vc/add/honours_distinctions', 'w'),
+(15, 1, 'vc/add/memberships', 'w'),
+(16, 1, 'vc/add/work_experience', 'w'),
+(17, 1, 'vc/add/teaching_experience', 'w'),
+(18, 1, 'vc/add/research_supervision', 'w'),
+(19, 1, 'vc/add/book_published', 'w'),
+(20, 1, 'vc/add/chapter_in_book_published', 'w'),
+(21, 1, 'vc/add/article_in_conference', 'w'),
+(22, 1, 'vc/add/patents_copyright', 'w'),
+(23, 1, 'vc/add/article_appear_in_journal', 'w'),
+(24, 1, 'vc/add/accepted_books', 'w'),
+(25, 1, 'vc/add/technical_report', 'w'),
+(26, 1, 'vc/add/research_completed', 'w'),
+(27, 1, 'vc/add/research_inprogress', 'w'),
+(28, 1, 'vc/add/project_thesis_dissertation', 'w'),
+(29, 1, 'vc/add/major_conf_attended', 'w'),
+(30, 1, 'vc/add/paper_read', 'w');
 
 -- --------------------------------------------------------
 
@@ -529,9 +632,9 @@ CREATE TABLE `project_thesis_dissertation` (
 --
 
 INSERT INTO `project_thesis_dissertation` (`ID`, `lecturer_id`, `year_research`, `research_name`, `research_category`, `sch_of_research`, `date_created`) VALUES
-(1, 1, '1988', 'Discreet enthalpies related to thermodynamics of substances', 'MSc Project', 'University of Ibadan', '2018-10-03 15:32:16'),
-(2, 1, '1992', 'Stereochemistry of some novel organometallic compounds of mercury', 'MPhil Dissertation', 'University of Lagos', '2018-10-03 15:33:00'),
-(3, 1, '1996', 'Electron spin spectroscopy of some novel organmometallic compounds of arsenic', 'PhD Thesis', 'University of Ibadan', '2018-10-03 15:33:36');
+(1, 1, '1988', 'Discreet enthalpies related to thermodynamics of substances', 'MSc Project,', 'University of Ibadan', '2018-10-03 15:32:16'),
+(2, 1, '1992', 'Stereochemistry of some novel organometallic compounds of mercury', 'MPhil Dissertation,', 'University of Lagos', '2018-10-03 15:33:00'),
+(3, 1, '1996', 'Electron spin spectroscopy of some novel organmometallic compounds of arsenic', 'PhD Thesis,', 'University of Ibadan', '2018-10-03 15:33:36');
 
 -- --------------------------------------------------------
 
@@ -589,7 +692,7 @@ INSERT INTO `research_completed` (`ID`, `lecturer_id`, `topic_name`, `date_creat
 CREATE TABLE `research_inprogress` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `topic_name` varchar(200) NOT NULL,
+  `topic_name` text NOT NULL,
   `importance` text,
   `current_doing` text,
   `significance` text,
@@ -602,7 +705,8 @@ CREATE TABLE `research_inprogress` (
 --
 
 INSERT INTO `research_inprogress` (`ID`, `lecturer_id`, `topic_name`, `importance`, `current_doing`, `significance`, `progress_of_research`, `date_created`) VALUES
-(1, 1, 'Development of an xrf method for combatting matrix interference in solid samples', 'Matrix interference remains a gross limitation to the application of xrf methods to some solid samples', 'We are currently investigating the use of some substituted carbohydrates as possible candidates for matrix dilution with good potential for matrix elimination', '', 'Laboratory studies are ongoing, since 2016, and several products have been tested', '2018-10-03 15:14:00');
+(1, 1, 'Development of an xrf method for combatting matrix interference in solid samples', 'Matrix interference remains a gross limitation to the application of xrf methods to some solid samples', 'We are currently investigating the use of some substituted carbohydrates as possible candidates for matrix dilution with good potential for matrix elimination', '', 'Laboratory studies are ongoing, since 2016, and several products have been tested', '2018-10-03 15:14:00'),
+(2, 1, 'Stress-testing the Nigerian Financial System', 'The stability of financial system is gauged usually by accounting ratios.\r\nSeveral of such ratios have been employed in the literature\r\n', 'In this paper, we use some robust econometric tools to test the resilience and absorptive capacity of Nigeria’s financial institutions to unexpected but plausible economic and financial shocks\r\n\r\n', NULL, 'The outcome of this inquiry will be compared with the previous studies that used the traditional accounting ratios so as to proffer a better measure of resilience of the financial system\r\n', '2018-10-15 15:11:45');
 
 -- --------------------------------------------------------
 
@@ -626,6 +730,26 @@ CREATE TABLE `research_supervision` (
 INSERT INTO `research_supervision` (`ID`, `lecturer_id`, `msc_total`, `phd_total`, `category`, `date_created`) VALUES
 (1, 1, 12, 4, 'completed', '2018-10-03 14:07:14'),
 (2, 1, 4, 2, 'ongoing', '2018-10-03 14:38:42');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role`
+--
+
+CREATE TABLE `role` (
+  `ID` int(11) NOT NULL,
+  `role_title` varchar(150) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `role`
+--
+
+INSERT INTO `role` (`ID`, `role_title`, `status`) VALUES
+(1, 'superadmin', 1),
+(2, 'Technode', 1);
 
 -- --------------------------------------------------------
 
@@ -661,7 +785,7 @@ INSERT INTO `scholarships` (`ID`, `lecturer_id`, `title_name`, `granting_bodies`
 CREATE TABLE `teaching_experience` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `course_name` varchar(200) NOT NULL,
+  `course_code` varchar(200) NOT NULL,
   `course_title` varchar(150) NOT NULL,
   `session_name` varchar(200) NOT NULL,
   `total_person` varchar(200) NOT NULL,
@@ -669,6 +793,18 @@ CREATE TABLE `teaching_experience` (
   `category` varchar(200) NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `teaching_experience`
+--
+
+INSERT INTO `teaching_experience` (`ID`, `lecturer_id`, `course_code`, `course_title`, `session_name`, `total_person`, `pg_courses_qualify`, `category`, `date_created`) VALUES
+(1, 1, 'ECO 103', 'Nigerian Economy in Perspective', '2006/07,2007/08,2016/17', '2', NULL, 'Undergraduate', '2018-10-15 11:32:09'),
+(4, 1, 'ECO 201', 'Principles of Economics I', '2012/13,2013/14', '2', NULL, 'Undergraduate', '2018-10-15 11:52:29'),
+(5, 1, 'ECO 302', 'Macroeconomic Theory', '2015/16,2017/18', '2', NULL, 'Undergraduate', '2018-10-15 12:13:35'),
+(6, 1, 'ECO 712', 'Macroeconomic Theory I', '2017/18', '2', NULL, 'Postgraduate', '2018-10-15 12:15:42'),
+(7, 1, 'MBF 705', 'Financial Systems', '2013/14', '2', NULL, 'Postgraduate', '2018-10-15 12:17:16'),
+(8, 1, 'CEE 702', 'Advanced Macroeconomics', '2014/15,till date', '2', NULL, 'Postgraduate', '2018-10-15 12:21:21');
 
 -- --------------------------------------------------------
 
@@ -679,15 +815,14 @@ CREATE TABLE `teaching_experience` (
 CREATE TABLE `technical_report` (
   `ID` int(11) NOT NULL,
   `lecturer_id` int(11) NOT NULL,
-  `surname` varchar(100) NOT NULL,
-  `firstname` varchar(100) NOT NULL,
-  `middlename` varchar(100) NOT NULL,
+  `author_names` varchar(255) NOT NULL,
   `report_year` varchar(20) DEFAULT NULL,
   `report_title` varchar(200) NOT NULL,
   `organisation_report_submitted` varchar(250) NOT NULL,
   `total_page` varchar(100) NOT NULL,
   `country` varchar(250) NOT NULL COMMENT 'name in full',
   `contribution` varchar(150) NOT NULL,
+  `asterisks` int(10) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -695,8 +830,8 @@ CREATE TABLE `technical_report` (
 -- Dumping data for table `technical_report`
 --
 
-INSERT INTO `technical_report` (`ID`, `lecturer_id`, `surname`, `firstname`, `middlename`, `report_year`, `report_title`, `organisation_report_submitted`, `total_page`, `country`, `contribution`, `date_created`) VALUES
-(1, 1, 'Ayinde,Nworgugu,Faseyi', 'Boluwatife,Seun,Ikechuku', '', '2003', 'Causes of Prevalence of Malaria Fever in Nigeria', 'A Technical Report Submitted to the World Health Organisation', '44', 'Nigeria', '60', '2018-10-04 15:52:41');
+INSERT INTO `technical_report` (`ID`, `lecturer_id`, `author_names`, `report_year`, `report_title`, `organisation_report_submitted`, `total_page`, `country`, `contribution`, `asterisks`, `date_created`) VALUES
+(1, 1, 'Ayinde, B., Nworgugu, S. and Faseyi, I. ', '2003', 'Causes of Prevalence of Malaria Fever in Nigeria', 'A Technical Report Submitted to the World Health Organisation', '44', 'Nigeria', '60', NULL, '2018-10-04 15:52:41');
 
 -- --------------------------------------------------------
 
@@ -831,12 +966,19 @@ ALTER TABLE `admin`
 -- Indexes for table `article_appear_in_journal`
 --
 ALTER TABLE `article_appear_in_journal`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `article_title` (`article_title`);
 
 --
 -- Indexes for table `article_in_conference`
 --
 ALTER TABLE `article_in_conference`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `best_publication`
+--
+ALTER TABLE `best_publication`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -849,6 +991,12 @@ ALTER TABLE `book_published`
 -- Indexes for table `chapter_in_book_published`
 --
 ALTER TABLE `chapter_in_book_published`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `community_service`
+--
+ALTER TABLE `community_service`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -915,6 +1063,13 @@ ALTER TABLE `patents_copyright`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `permission`
+--
+ALTER TABLE `permission`
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `role_id` (`role_id`,`path`);
+
+--
 -- Indexes for table `professional_qualifications`
 --
 ALTER TABLE `professional_qualifications`
@@ -951,6 +1106,13 @@ ALTER TABLE `research_supervision`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `role_title` (`role_title`);
+
+--
 -- Indexes for table `scholarships`
 --
 ALTER TABLE `scholarships`
@@ -960,7 +1122,8 @@ ALTER TABLE `scholarships`
 -- Indexes for table `teaching_experience`
 --
 ALTER TABLE `teaching_experience`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `course_code` (`course_code`);
 
 --
 -- Indexes for table `technical_report`
@@ -1018,13 +1181,19 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `article_appear_in_journal`
 --
 ALTER TABLE `article_appear_in_journal`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `article_in_conference`
 --
 ALTER TABLE `article_in_conference`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `best_publication`
+--
+ALTER TABLE `best_publication`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `book_published`
@@ -1037,6 +1206,12 @@ ALTER TABLE `book_published`
 --
 ALTER TABLE `chapter_in_book_published`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `community_service`
+--
+ALTER TABLE `community_service`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `department`
@@ -1099,6 +1274,12 @@ ALTER TABLE `patents_copyright`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `permission`
+--
+ALTER TABLE `permission`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
 -- AUTO_INCREMENT for table `professional_qualifications`
 --
 ALTER TABLE `professional_qualifications`
@@ -1126,12 +1307,18 @@ ALTER TABLE `research_completed`
 -- AUTO_INCREMENT for table `research_inprogress`
 --
 ALTER TABLE `research_inprogress`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `research_supervision`
 --
 ALTER TABLE `research_supervision`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `role`
+--
+ALTER TABLE `role`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -1144,7 +1331,7 @@ ALTER TABLE `scholarships`
 -- AUTO_INCREMENT for table `teaching_experience`
 --
 ALTER TABLE `teaching_experience`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `technical_report`

@@ -46,8 +46,11 @@
               <li class="nav-item">
                 <a class="nav-link" href="#" data-toggle='modal' data-target='#center_modal_password'>Change Password</a>
               </li>
+             <!--  <li class="nav-item">
+                <a class="nav-link" href="<?php //echo base_url('vc/lecturer/profile'); ?>">Profile</a>
+              </li> -->
               <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('vc/lecturer/profile'); ?>">Profile</a>
+                <a class="nav-link" href="<?php echo base_url('auth/logout'); ?>">Logout</a>
               </li>
             </ul>
           </div>
@@ -118,6 +121,29 @@
               <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('vc/add/research_supervision'); ?>">Research Supervision</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="<?php echo base_url('vc/add/community_service'); ?>">Community Service</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="collapse" href="#research" aria-expanded="false" aria-controls="research">
+            <i class="menu-icon mdi mdi-file-presentation-box"></i>
+            <span class="menu-title">Research</span>
+            <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse" id="research">
+            <ul class="nav flex-column sub-menu">
+              <li class="nav-item">
+                <a class="nav-link" href="<?php echo base_url('vc/add/research_completed'); ?>">Completed</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="<?php echo base_url('vc/add/research_inprogress'); ?>">In Progress</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="<?php echo base_url('vc/add/project_thesis_dissertation'); ?>">Project-Dissertation and Thesis</a>
+              </li>
             </ul>
           </div>
         </li>
@@ -156,26 +182,6 @@
             </ul>
           </div>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="collapse" href="#research" aria-expanded="false" aria-controls="research">
-            <i class="menu-icon mdi mdi-file-presentation-box"></i>
-            <span class="menu-title">Research</span>
-            <i class="menu-arrow"></i>
-          </a>
-          <div class="collapse" id="research">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('vc/add/research_completed'); ?>">Completed</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('vc/add/research_inprogress'); ?>">In Progress</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('vc/add/project_thesis_dissertation'); ?>">Project-Dissertation and Thesis</a>
-              </li>
-            </ul>
-          </div>
-        </li>
 
         <li class="nav-item">
           <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
@@ -194,6 +200,12 @@
             </ul>
           </div>
         </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="<?php //echo base_url('vc/lecturer/best_publication'); ?>">
+            <i class="menu-icon mdi mdi-library-books"></i>
+            <span class="menu-title">Best Publications</span>
+          </a>
+        </li> -->
         <a class="btn btn-primary" href="<?php echo base_url('vc/lecturer/printApp'); ?>">Generate Report  <i class="mdi mdi-printer"></i></a>
       </ul>
   </nav>

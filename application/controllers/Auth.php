@@ -110,6 +110,7 @@ class Auth extends CI_Controller
 					if ($isAjax) {
 						$arr['status']=true;
 						$arr['message']= $baseurl;
+						// echo $baseurl;exit;
 						echo  json_encode($arr);
 						return;
 					}else{

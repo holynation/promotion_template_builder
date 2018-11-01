@@ -10,16 +10,16 @@ class Book_published extends Crud {
 
 protected static $tablename = "Book_published"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('date_created');
+static $nullArray = array('date_created','asterisks');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array();
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','year_of_publication' => 'varchar','title_of_book' => 'varchar','city_of_publication' => 'varchar','publish_company_name' => 'varchar','total_no_pages' => 'int','isbn_no' => 'varchar','country_publish' => 'varchar','contribution' => 'varchar','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','year_of_publication' => 'varchar','title_of_book' => 'varchar','city_of_publication' => 'varchar','publish_company_name' => 'varchar','total_no_pages' => 'int','isbn_no' => 'varchar','country_publish' => 'varchar','contribution' => 'varchar','asterisks' => 'int','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','lecturer_id' => '','author_names' => '','year_of_publication' => '','title_of_book' => '','city_of_publication' => '','publish_company_name' => '','total_no_pages' => '','isbn_no' => '','country_publish' => '','contribution' => 'Contribution(%)','date_created' => '');
+static $labelArray = array('ID' => '','lecturer_id' => '','author_names' => '','year_of_publication' => '','title_of_book' => '','city_of_publication' => '','publish_company_name' => '','total_no_pages' => '','isbn_no' => '','country_publish' => '','contribution' => 'Contribution(%)','asterisks' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array('date_created' => 'current_timestamp()');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
@@ -95,6 +95,9 @@ function getLecturer_idFormField($value = ''){
 				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' placeholder='30' required />
 			</div>";
 } 
+function getAsterisksFormField($value=''){
+	return addAsteriskToPub($value);
+}
  function getDate_createdFormField($value = ''){
 	return " ";
 } 

@@ -30,19 +30,35 @@
 <!-- this is the navbar -->
   <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
-        <a class="navbar-brand brand-logo" href="<?php echo base_url('vc/admin/dashboard'); ?>">
+        <?php 
+          $userType = $this->webSessionManager->getCurrentUserProp('user_type');
+          if($userType == 'lecturer'):
+        ?>
+        <a class="navbar-brand brand-logo" href="<?php echo base_url('vc/lecturer/dashboard'); ?>">
           <img src="<?php echo base_url('assets/images/logo.svg'); ?>" alt="logo" />
         </a>
-        <a class="navbar-brand brand-logo-mini" href="<?php echo base_url('vc/admin/dashboard'); ?>">
+        <a class="navbar-brand brand-logo-mini" href="<?php echo base_url('vc/lecturer/dashboard'); ?>">
           <img src="<?php echo base_url('assets/images/logo-mini.svg'); ?>" alt="logo" />
         </a>
+        <?php else: ?>
+            <a class="navbar-brand brand-logo" href="<?php echo base_url('vc/admin/dashboard'); ?>">
+              <img src="<?php echo base_url('assets/images/logo.svg'); ?>" alt="logo" />
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="<?php echo base_url('vc/admin/dashboard'); ?>">
+              <img src="<?php echo base_url('assets/images/logo-mini.svg'); ?>" alt="logo" />
+            </a>
+        <?php endif; ?>
       </div>
       <!-- this is section deals with the header for each page -->
       <?php if(isSessionActive()): ?>
       <div class="navbar-menu-wrapper d-flex align-items-center">
         <ul class="navbar-nav navbar-nav-left header-links d-none d-md-flex">
+          <?php 
+            $userType = $this->webSessionManager->getCurrentUserProp('user_type');
+            if($userType == 'lecturer'):
+          ?>
           <li class="nav-item">
-            <a href="#" class="nav-link">Schedule
+            <a href="<?php echo base_url('vc/lecturer/dashboard'); ?>" class="nav-link">Lecturer
               <span class="badge badge-primary ml-1">New</span>
             </a>
           </li>
@@ -50,35 +66,20 @@
             <a href="#" class="nav-link">
               <i class="mdi mdi-elevation-rise"></i>Reports</a>
           </li>
-        </ul>
-        <ul class="navbar-nav navbar-nav-right">
-          <li class="nav-item dropdown">
-            <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-              <i class="mdi mdi-file-document-box"></i>
-              <span class="count">7</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
-              <div class="dropdown-item">
-                <p class="mb-0 font-weight-normal float-left">You have 7 unread mails
-                </p>
-                <span class="badge badge-info badge-pill float-right">View all</span>
-              </div>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <img src="images/faces/face4.jpg" alt="image" class="profile-pic">
-                </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis font-weight-medium text-dark">David Grey
-                    <span class="float-right font-weight-light small-text">1 Minutes ago</span>
-                  </h6>
-                  <p class="font-weight-light small-text">
-                    The meeting is cancelled
-                  </p>
-                </div>
+          <?php else: ?>
+            <li class="nav-item">
+              <a href="<?php echo base_url('vc/admin/dashboard'); ?>" class="nav-link">Admin Dashboard
+                <span class="badge badge-primary ml-1">New</span>
               </a>
-            </div>
-          </li>
+            </li>
+            <li class="nav-item active">
+              <a href="#" class="nav-link">
+                <i class="mdi mdi-elevation-rise"></i>Reports</a>
+            </li>
+          <?php endif; ?>
+        </ul>
+        
+        <ul class="navbar-nav navbar-nav-right">
           <li class="nav-item dropdown d-none d-xl-inline-block">
             <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
               <?php
@@ -93,8 +94,10 @@
               <span class="profile-text">Hello, <?php echo $fullname; ?> !</span>
               <img class="img-xs rounded-circle" src="<?php echo base_url($path); ?>" alt="Profile image">
               <?php else: 
+                  if(isset($lecturer)):
                   $fullname = $lecturer->surname .' '.$lecturer->firstname;
                   $path = $lecturer->img_path;
+                  endif;
                 ?>
                 <span class="profile-text"><?php echo $fullname ; ?> !</span>
                 <img class="img-xs rounded-circle" src="<?php echo base_url($path); ?>" alt="Profile image">
@@ -114,7 +117,7 @@
                   </div>
                 </div>
               </a>
-              <a class="dropdown-item">
+              <a class="dropdown-item" href="#" data-toggle='modal' data-target='#center_modal_password'>
                 Change Password
               </a>
               <a class="dropdown-item" href="<?php echo base_url('auth/logout'); ?>">
@@ -133,10 +136,10 @@
           <li class="nav-item active">
             <a href="<?php echo base_url('auth/web'); ?>" class="nav-link"><i class="mdi mdi-account-multiple"></i> Login</a>
           </li>
-          <li class="nav-item">
-            <a href="<?php echo base_url('auth/register'); ?>" class="nav-link">
+          <!-- <li class="nav-item">
+            <a href="<?php //echo base_url('auth/register'); ?>" class="nav-link">
               <i class="mdi mdi-account-outline"></i>Register</a>
-          </li>
+          </li> -->
         </ul>
       </div>
     <?php endif; ?>

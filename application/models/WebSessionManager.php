@@ -33,6 +33,7 @@ class WebSessionManager extends CI_Model
       $temp =$user->toArray();
       // unset($temp['ID']);
       $all = array_merge($userArray,$temp);
+      // print_r($all);exit;
       $this->session->set_userdata($all);
 	}
 

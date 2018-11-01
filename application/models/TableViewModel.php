@@ -47,7 +47,7 @@ class TableViewModel extends CI_Model
 		return $this->loadTable($model,$data,$message='',$exclusionArray,$action,$paged,$start,$length);
 	}
 
-	private function loadTable($model,$data,$totalRow,$exclusionArray,$action,$paged,$start,$length,$removeId=true){
+	private function loadTable($model,$data,$totalRow,$exclusionArray,$action,$paged,$start,$length,$removeId=true,$appendForm=array()){
 		if (!$this->validateModelNameAndAccess($model)) {
 			return false;
 		}
@@ -62,8 +62,8 @@ class TableViewModel extends CI_Model
 		}
 		$header = $this->getHeader($model,$exclusionArray,$removeId);
 		$result=$this->openTable();
-		$result.=$this->generateheader($header,$action);
-		$result.=$this->generateTableBody($model,$data,$exclusionArray,$actionArray);
+		$result.=$this->generateheader($header,$action,$appendForm);
+		$result.=$this->generateTableBody($model,$data,$exclusionArray,$actionArray,$appendForm);
 		$result.=$this->closeTable();
 		// $size = $length?$length:$this->defaultPagingLength;
 		if ($paged && $totalRow > $length) {
@@ -71,7 +71,7 @@ class TableViewModel extends CI_Model
 		}
 		return $result;
 	}
-	public function getTableHtml($model,&$message='',$exclusionArray=array(),$action=null,$paged= true,$start=0,$length=NULL,$resolve=true,$sort=' order by ID desc ',$where=''){
+	public function getTableHtml($model,&$message='',$exclusionArray=array(),$action=null,$paged= true,$start=0,$length=NULL,$resolve=true,$sort=' order by ID desc ',$where='',$appendForm=array()){
 		loadClass($this->load,$model);
 		if ($paged) {
 			$length = $length?$length:$this->defaultPagingLength;
@@ -79,8 +79,9 @@ class TableViewModel extends CI_Model
 		//use get function for the len and the start index for the sorting
 		$start = (isset($_GET['p_start'])&& is_numeric($_GET['p_start']) )?(int)$_GET['p_start']:$start;
 		$length = (isset($_GET['p_len'])&& is_numeric($_GET['p_len']) )?(int)$_GET['p_len']:$length;
-		$data = $this->export?$this->$model->allNonObject($message,$resolve,0,null,$sort):$this->$model->all($message,$resolve,$start,$length,$sort,$where);
-		return $this->export?$this->loadExportTable($model,$data):$this->loadTable($model,$data,$message,$exclusionArray,$action,$paged,$start,$length);
+		// $data = $this->export?$this->$model->allNonObject($message,$resolve,0,null,$sort):$this->$model->all($message,$resolve,$start,$length,$sort,$where);
+		$data = $this->$model->all($message,$resolve,$start,$length,$sort,$where);
+		return $this->export?$this->loadExportTable($model,$data):$this->loadTable($model,$data,$message,$exclusionArray,$action,$paged,$start,$length,true,$appendForm);
 		
 	}
 	public function getTableHtmlExtra($model,&$message='',$exclusionArray=array(),$action=null,$paged= true,$start=0,$length=NULL,$resolve=true,$sort=' order by ID desc '){
@@ -154,17 +155,23 @@ class TableViewModel extends CI_Model
 	private function openTable(){
 		return "  <div class=\"box\"><div class=\"table-responsive no-padding\"><table class='table table-bordered'> \n";
 	}
-	private function generateTableBody($model,$data,$exclusionArray,$actionArray){
+	private function generateTableBody($model,$data,$exclusionArray,$actionArray,$appendForm=array()){
 		$result ='<tbody>';
 		for ($i=0; $i < count($data); $i++) { 
 			$current= $data[$i];
-			$result.=$this->generateTableRow($model,$current,$exclusionArray,$actionArray,@$_GET['p_start']+$i);
+			$result.=$this->generateTableRow($model,$current,$exclusionArray,$actionArray,@$_GET['p_start']+$i,$appendForm);
 		}
 		$result.='</tbody>';
 		return $result;
 	}
-	private function generateTableRow($model,$rowData,$exclusionArray,$actionArray,$index=false){
-		$result="<tr data-row-identifier='{$rowData->ID}'>";
+	private function generateTableRow($model,$rowData,$exclusionArray,$actionArray,$index=false,$appendForm=array()){
+		$result="<tr data-row-identifier='{$rowData->ID}' class='best-content'>";
+		if(!empty($appendForm)){
+			extract($appendForm);
+			$id = $rowData->ID;
+			$inputForm = "<label class='form-check-label'><input type='$type' class='form-check-input $class' name='".$name."[]' id='".$name."[]' value='$id' /></label>";
+			$result.="<td><div class='form-check form-check-flat'>$inputForm</div></td>";
+		}
 		if ($index!==false) {
 			$index+=1;
 			$result.="<td>$index</td>";
@@ -214,10 +221,14 @@ class TableViewModel extends CI_Model
 	private function closeTable(){
 		return '</table></div></div>';
 	}
-	private function generateHeader($header,$action){
+	private function generateHeader($header,$action,$appendForm=array()){
 		$sn = "<th>S/N</th>";
+		$emptyHeader='';
+		if(!empty($appendForm)){
+			$emptyHeader = "<th></th>";
+		}
 		$result="<thead>
-			<tr> $sn";
+			<tr> $emptyHeader $sn";
 		for ($i=0; $i < count($header); $i++) {
 			$item = $header[$i]; 
 			$result.="<th>$item</th>";

@@ -17,9 +17,9 @@ static $uploadDependency = array();
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array();
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','major_conf_attended_id' => 'int','surname' => 'varchar','firstname' => 'varchar','middlename' => 'varchar','title_of_paper' => 'varchar','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','major_conf_attended_id' => 'int','author_names' => 'varchar','title_of_paper' => 'varchar','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','lecturer_id' => '','major_conf_attended_id' => '','surname' => '','firstname' => '','middlename' => '','title_of_paper' => '','date_created' => '');
+static $labelArray = array('ID' => '','lecturer_id' => '','major_conf_attended_id' => '','author_names' => '','title_of_paper' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array('date_created' => 'current_timestamp()');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
@@ -70,24 +70,12 @@ function getLecturer_idFormField($value = ''){
 		$result.="</div>";
 		return $result;
 }
- function getSurnameFormField($value = ''){
+ function getAuthor_namesFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='surname'>Surname</label>
-				<input type='text' name='surname' id='surname' value='$value' class='form-control' required />
+				<label for='author_names'>Author Names (e.g Abdukadir, A.A. and Ogunlola, S.K.)</label>
+				<textarea name='author_names' id='author_names' class='form-control' placeholder='please list all the names of author separated by commas' required>$value</textarea>
 			</div>";
-} 
- function getFirstnameFormField($value = ''){
-	return "<div class='form-group'>
-				<label for='firstname'>Firstname</label>
-				<input type='text' name='firstname' id='firstname' value='$value' class='form-control' required />
-			</div>";
-} 
- function getMiddlenameFormField($value = ''){
-	return "<div class='form-group'>
-				<label for='middlename'>Middlename</label>
-				<input type='text' name='middlename' id='middlename' value='$value' class='form-control' />
-			</div>";
-} 
+}  
  function getTitle_of_paperFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='title_of_paper'>Title Of Paper</label>

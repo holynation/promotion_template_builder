@@ -20,7 +20,7 @@
       for your Curriculum Vitae.</p>
       <footer>
         <ul class="buttons vertical">
-          <li><a href="<?php echo base_url('auth/register'); ?>" class="button fit scrolly">Get started</a></li>
+          <li><a href="<?php echo base_url('auth/web'); ?>" class="button fit scrolly">Get started</a></li>
         </ul> 
       </footer>
 

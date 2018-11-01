@@ -10,16 +10,16 @@ class Technical_report extends Crud {
 
 protected static $tablename = "Technical_report"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('date_created','middlename');
+static $nullArray = array('date_created','asterisks');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
-static $displayField = 'report_year';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
+static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array();
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','surname' => 'varchar','firstname' => 'varchar','middlename' => 'varchar','report_year' => 'varchar','report_title' => 'varchar','organisation_report_submitted' => 'varchar','total_page' => 'varchar','country' => 'varchar','contribution' => 'varchar','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','report_year' => 'varchar','report_title' => 'varchar','organisation_report_submitted' => 'varchar','total_page' => 'varchar','country' => 'varchar','contribution' => 'varchar','asterisks'=>'int','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','lecturer_id' => '','surname' => '','firstname' => '','middlename' => '','report_year' => '','report_title' => '','organisation_report_submitted' => '','total_page' => '','country' => '','contribution' => 'Contribution(%)','date_created' => '');
+static $labelArray = array('ID' => '','lecturer_id' => '','author_names' => '','report_year' => '','report_title' => '','organisation_report_submitted' => '','total_page' => '','country' => '','contribution' => 'Contribution(%)','asterisks'=>'','date_created' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array('date_created' => 'current_timestamp()');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
@@ -36,22 +36,10 @@ function __construct($array = array())
 function getLecturer_idFormField($value = ''){
 	return getLecturerOption($value);
 }
- function getSurnameFormField($value = ''){
+ function getAuthor_namesFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='surname'>Surname</label>
-				<input type='text' name='surname' id='surname' value='$value' class='form-control' placeholder=\"list all surname's separated by comma\" required />
-			</div>";
-} 
- function getFirstnameFormField($value = ''){
-	return "<div class='form-group'>
-				<label for='firstname'>Firstname</label>
-				<input type='text' name='firstname' id='firstname' value='$value' class='form-control' placeholder=\"list all firstname's separated by comma\" required />
-			</div>";
-} 
- function getMiddlenameFormField($value = ''){
-	return "<div class='form-group'>
-				<label for='middlename'>Middlename</label>
-				<input type='text' name='middlename' id='middlename' value='$value' class='form-control' placeholder=\"list all middlename's separated by comma\" />
+				<label for='author_names'>Author Names (e.g Abdukadir, A.A. and Ogunlola, S.K.)</label>
+				<textarea name='author_names' id='author_names' class='form-control' placeholder='please list all the names of author separated by commas' required>$value</textarea>
 			</div>";
 }  
  function getReport_yearFormField($value = ''){
@@ -73,13 +61,13 @@ function getLecturer_idFormField($value = ''){
 } 
  function getOrganisation_report_submittedFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='organisation_report_submitted'>Organisation Report Submitted</label>
+				<label for='organisation_report_submitted'>Organisation Report Submitted To</label>
 				<input type='text' name='organisation_report_submitted' id='organisation_report_submitted' value='$value' class='form-control' required />
 			</div>";
 } 
  function getTotal_pageFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='total_page'>Total No. Of Pages</label>
+				<label for='total_page'>Total No. Of Pages (state the number only)</label>
 				<input type='number' name='total_page' id='total_page' value='$value' class='form-control' required />
 			</div>";
 } 
@@ -94,6 +82,9 @@ function getLecturer_idFormField($value = ''){
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
 				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' required />
 			</div>";
+}
+function getAsterisksFormField($value=''){
+	return addAsteriskToPub($value);
 } 
  function getDate_createdFormField($value = ''){
 	return " ";

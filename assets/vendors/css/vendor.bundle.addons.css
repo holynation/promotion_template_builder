@@ -613,7 +613,7 @@ div.tagsinput{border:1px solid #CCC;background:#FFF;padding:5px;width:300px;heig
 }
 .box .box-body {
   padding-top: 2em;
-  height: 85px;
+  height: auto;
   /* rating widgets will be absolutely centered relative to box body */
   position: relative;
 }

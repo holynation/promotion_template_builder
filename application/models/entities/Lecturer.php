@@ -46,7 +46,7 @@ function getTitle_idFormField($value = ''){
 		if(is_array($fk)){
 			
 			$result ="<div class='form-group'>
-			<label for='title_id'>Title Id</label>";
+			<label for='title_id'>Title</label>";
 			$option = $this->loadOption($fk,$value);
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='title_id' id='title_id' class='form-control'>
@@ -646,6 +646,75 @@ public function getLecturerIdOption($value=''){
 	endif;
 }
 
+public function getDasboardCount($table,$name='amount'){
+	$query = "SELECT count(*) as $name from $table where lecturer_id = ?";
+	$result = $this->db->query($query,array($this->ID));
+	$row = $result->result_array();
+	if($result->num_rows() > 0){
+		return $row[0]["$name"];
+	}else{
+		return "0";
+	}
+}
+
+public function getPublicationCount(){
+	$count=0;
+	$query = "SELECT count(*) as total from book_published where lecturer_id = ?";
+	$result = $this->db->query($query,array($this->ID));
+	$row = $result->result_array();
+	if($result->num_rows() > 0){
+		$count+=$row[0]["total"];
+	}
+
+	$row1 = $this->getSinglePub('chapter_in_book_published');
+	if($row1 > 0){
+		$count+=$row1;
+	}
+	
+	$row2 = $this->getSinglePub('article_in_conference');
+	if($row2 > 0){
+		$count+=$row2;
+	}
+	$row3 = $this->getSinglePub('patents_copyright');
+	if($row3 > 0){
+		$count+=$row3;
+	}
+	$row4 = $this->getSinglePub('article_appear_in_journal');
+	if($row4 > 0){
+		$count+=$row4;
+	}
+	$row5 = $this->getSinglePub('accepted_books');
+	if($row5 > 0){
+		$count+=$row5;
+	}
+	$row6 = $this->getSinglePub('technical_report');
+	if($row6 > 0){
+		$count+=$row6;
+	}
+
+	if($count > 0){
+		return $count;
+	}else{
+		return "0";
+	}
+}
+
+public function getPublicationData($table){
+	return array($this->getSinglePub($table));
+}
+
+private function getSinglePub($table){
+	$count=0;
+	$query = "SELECT count(*) as total from $table where lecturer_id = ?";
+	$result = $this->db->query($query,array($this->ID));
+	$row = $result->result_array();
+	if($result->num_rows() > 0){
+		return $row[0]["total"];
+	}else{
+		return 0;
+	}
+}
+
 public function getBiodata(){
 	$query = "select lecturer.* from lecturer where id=?";
 	$result = $this->query($query,array($this->ID));
@@ -670,6 +739,8 @@ public function getAcademicAppoint(){
 
 public function getFromDbClass($class,$order='order by id'){
 	loadClass($this->load,$class);
+	// $this->lecturer->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
+ //    $this->lecturer->load();
 
 	$newClass = ucfirst($class);
 	$class = new $newClass();
@@ -679,6 +750,62 @@ public function getFromDbClass($class,$order='order by id'){
 	}
 	
 	return $result;
+}
+public function getFromDbDuties($class,$order='order by id',$where='Community Service'){
+	loadClass($this->load,$class);
+
+	$newClass = ucfirst($class);
+	$class = new $newClass();
+	$result = $class->getWhere(array('lecturer_id' => $this->ID,'category' => $where),$c,0,null,false,$order);
+	if(!$result){
+		return false;
+	}
+	
+	return $result;
+}
+public function getBestPublication($table=''){
+	$query = "SELECT * from $table where id in (select publication_table_id from best_publication where lecturer_id = ? and table_name='$table') order by ID desc";
+	$result = $this->query($query,array($this->ID));
+	if(!$result){
+		return false;
+	}
+	$return =array();
+	foreach($result as $res){
+		$class = ucfirst($table);
+		$return[] = new $class($res);
+	}
+	return $return;
+
+}
+public function checkLecturerExist(){
+	$query = "SELECT count(*) as total from lecturer where ID = ?";
+	$result = $this->db->query($query,array($this->ID));
+	$row = $result->result_array();
+	if($result->num_rows() > 0){
+		return true;
+	}else{
+		return false;
+	}
+}
+public function delete($id=null,&$db=null)
+{
+	$db=$this->db;
+	$db->trans_begin();
+	if(parent::delete($id,$db)){
+		$query="delete from user where user_table_id=? and user_type='lecturer'";
+		if($this->query($query,array($id))){
+			$db->trans_commit();
+			return true;
+		}
+		else{
+			$db->trans_rollback();
+			return false;
+		}
+	}
+	else{
+		$db->trans_rollback();
+		return false;
+	}
 }
 
 

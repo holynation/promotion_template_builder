@@ -20,6 +20,7 @@
             </button>
           </div>
         </li>
+        <!-- this is the beginning of the nav bar -->
         <li class="nav-item">
           <a class="nav-link" href="<?php echo base_url('vc/admin/dashboard'); ?>">
             <i class="menu-icon mdi mdi-television"></i>

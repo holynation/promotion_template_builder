@@ -56,19 +56,19 @@
                 <div class="form-group">
                   <button class="btn btn-primary submit-btn btn-block">Login</button>
                 </div>
-                <div class="form-group d-flex justify-content-between">
+                <!-- <div class="form-group d-flex justify-content-between">
                   <div class="form-check form-check-flat mt-0">
                     <label class="form-check-label">
                       <input type="checkbox" class="form-check-input" checked> Keep me signed in
                     </label>
                   </div>
                   <a href="#" class="text-small forgot-password text-black">Forgot Password</a>
-                </div>
+                </div> -->
                 
-                <div class="text-block text-center my-3">
+                <!-- <div class="text-block text-center my-3">
                   <span class="text-small font-weight-semibold">Not a member ?</span>
-                  <a href="<?php echo base_url('auth/signup'); ?>" class="text-black text-small">Create new account</a>
-                </div>
+                  <a href="<?php //echo base_url('auth/signup'); ?>" class="text-black text-small">Create new account</a>
+                </div> -->
                 <input type="hidden" name="isajax">
                 <input type="hidden" id='base_path' value="<?= $base ?>">
               </form>
