@@ -155,7 +155,7 @@ else{
                   <?php
                   $tableData ='';
                   $dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
-                  $where = " where lecturer.id = $dataId";
+                  $where = " where lecturer.id = $dataId order by ID desc";
                   $tableExclude =array('pg_courses_qualify','lecturer_id');
                   $tableAction =array('delete' => 'delete/teaching_experience', 'edit' => 'edit/teaching_experience');
                   if($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'):

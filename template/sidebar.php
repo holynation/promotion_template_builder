@@ -22,9 +22,9 @@
                 </div>
               </div>
             </div>
-            <button class="btn btn-success btn-block" style="margin-top:-10px;">Subscribe
+            <!-- <button class="btn btn-success btn-block" style="margin-top:-10px;">Subscribe
               <i class="mdi mdi-plus"></i>
-            </button>
+            </button> -->
           </div>
         </li>
         <!-- this is the beginning of the nav bar -->

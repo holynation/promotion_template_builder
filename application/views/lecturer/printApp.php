@@ -141,6 +141,11 @@ else{
 		.date-sign{
 			margin-right: 5%;
 		}
+		@page{
+			margin-top:40px;
+			margin-left:30px;
+			margin-right:30px;
+		}
 	  
   </style>
 			<div class="sub-header">
@@ -388,7 +393,7 @@ else{
 										<?php } } }else{ echo '<p id="nil-value">Nil</p>'; } ?>
 										</ul>
 	    							</li>
-	    							<li>
+	    							<li style="page-break-before: always;">
 			    						<p>Courses taught at Postgraduate:</p>
 			    						<ul>
 			    						<?php
