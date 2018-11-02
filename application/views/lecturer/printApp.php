@@ -1,7 +1,13 @@
 <?php 
+$userType= $this->webSessionManager->getCurrentUserProp('user_type');
 include "template/header.php";
-include "template/sidebar_lecturer.php";
-?>
+if ($userType=='admin') {
+  include "template/sidebar.php";
+}
+else{
+  include "template/sidebar_lecturer.php";
+}
+ ?>
 
 <div class="main-panel">
     <div class="content-wrapper">
@@ -111,7 +117,7 @@ include "template/sidebar_lecturer.php";
 	  	font-size: 17.5px;
 	  }
 	  .narrow{
-	  	max-width: 70%;
+	  	max-width: 95%;
 	  }
 	  .breakWord{
 	  	word-break: break-word;
@@ -153,23 +159,23 @@ include "template/sidebar_lecturer.php";
 	    				<table width="750" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (a)</td>
-								<td class="table1DataHeader">Name:</td>
+								<td class="table1DataHeader" width="450">Name:</td>
 								<td class="table1Data"><?php echo ucwords($lecturer->firstname .' '.$lecturer->middlename); ?> <span><?php echo ucwords($lecturer->surname); ?></span></td>
 							</tr>
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (b)</td>
-								<td class="table1DataHeader" width="350">Date Of Birth:</td>
-								<td class="table1Data"><?php echo dateFormatter($lecturer->dob); ?></td>
+								<td class="table1DataHeader" width="450">Date Of Birth:</td>
+								<td class="table1Data"><?php echo dateFormatter(@$lecturer->dob); ?></td>
 							</tr>
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (c)</td>
-								<td class="table1DataHeader" width="350">Department:</td>
-								<td class="table1Data"><?php echo ucwords($lecturer->department->department_name); ?></td>
+								<td class="table1DataHeader" width="450">Department:</td>
+								<td class="table1Data"><?php echo ucwords(@$lecturer->department->department_name); ?></td>
 							</tr>
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (d)</td>
-								<td class="table1DataHeader" width="350">Faculty:</td>
-								<td class="table1Data"><?php echo ucwords($lecturer->department->faculty->faculty_name); ?></td>
+								<td class="table1DataHeader" width="450">Faculty:</td>
+								<td class="table1Data"><?php echo ucwords(@$lecturer->department->faculty->faculty_name); ?></td>
 							</tr>
 						</table>
 	    			</li>
@@ -178,22 +184,22 @@ include "template/sidebar_lecturer.php";
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (a)</td>
 								<td class="table1DataHeader">First Academic Appointment:</td>
-								<td class="table1Data"><?php echo ucwords($appointment->first_academic_appointment); ?> (<?php echo dateFormatter($appointment->date_of_appointment); ?>)</td>
+								<td class="table1Data"><?php echo ucwords(@$appointment->first_academic_appointment); ?> (<?php echo dateFormatter(@$appointment->date_of_appointment); ?>)</td>
 							</tr>
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (b)</td>
 								<td class="table1DataHeader" width="350">Present Post:</td>
-								<td class="table1Data"><?php echo ucwords($appointment->present_post); ?> (<?php echo dateFormatter($appointment->date_of_present_post); ?>)</td>
+								<td class="table1Data"><?php echo ucwords(@$appointment->present_post); ?> (<?php echo dateFormatter(@$appointment->date_of_present_post); ?>)</td>
 							</tr>
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (c)</td>
 								<td class="table1DataHeader" width="250">Date of last Promotion:</td>
-								<td class="table1Data"><?php echo dateFormatter($appointment->date_of_last_promotion); ?></td>
+								<td class="table1Data"><?php echo dateFormatter(@$appointment->date_of_last_promotion); ?></td>
 							</tr>
 							<tr>
 								<td class="table1Data" id="push-left" width="95"> (d)</td>
 								<td class="table1DataHeader" width="450">Date last considered (in cases where promotion was not through:</td>
-								<td class="table1Data"><?php echo ($appointment->date_last_considered)?  dateFormatter($appointment->date_last_considered): 'Not Applicable' ; ?></td>
+								<td class="table1Data"><?php echo (@$appointment->date_last_considered)?  dateFormatter(@$appointment->date_last_considered): 'Not Applicable' ; ?></td>
 							</tr>
 						</table>
 	    			</li>
@@ -204,13 +210,16 @@ include "template/sidebar_lecturer.php";
 	    						<td class="table1DataHeader" id="push-left" width="95">University Education (with dates):</td>
 	    					</tr>
 	    					<?php
-		    					foreach($education as $edu):
+	    						if(!empty($education)){
+		    						foreach($education as $edu){
 		    				?>
 	    					<tr>
-								<td class="table1Data" width="500" id="push-edu"><?php echo $edu->university_name; ?>, <?php echo $edu->location; ?></td>
+								<td class="table1Data" width="544" id="push-edu"><?php echo $edu->university_name; ?>, <?php echo $edu->location; ?></td>
 								<td class="table1Data" id="push-edu1"><?php echo $edu->start_date; ?> - <?php echo $edu->end_date; ?></td>
 							</tr>
-							<?php endforeach; ?>
+							<?php } }else{ ?>
+								<p id="nil-value" style="padding:0 8%;">Nil</p>
+						<?php } ?>
 	    				</table>
 	    			</li>
 	    			<!-- this is the academic qualification section -->
@@ -220,13 +229,17 @@ include "template/sidebar_lecturer.php";
 	    						<td class="table1DataHeader" id="push-left" width="95">Academic Qualifications (with dates and granting institutions): </td>
 	    					</tr>
 	    					<?php
-		    					foreach($qualification as $qua):
+	    						if(!empty($qualification)){
+	    							foreach($qualification as $qua){
+		    					
 		    				?>
 	    					<tr>
-								<td class="table1Data" width="500" id="push-edu"><?php echo $qua->academic_qualification; ?> (<?php echo ucwords($qua->school_granted); ?>)</td>
+								<td class="table1Data" id="push-edu" width="544"><?php echo $qua->academic_qualification; ?> (<?php echo ucwords($qua->school_granted); ?>)</td>
 								<td class="table1Data" id="push-edu1"><?php echo $qua->date_granted; ?></td>
 							</tr>
-							<?php endforeach; ?>
+							<?php } }else{ ?>
+									<p id="nil-value" style="padding:0 8%;">Nil</p>
+							<?php } ?>
 	    				</table>
 	    			</li>
 	    			<!-- this is the professional qualification and diplomas -->
@@ -239,7 +252,7 @@ include "template/sidebar_lecturer.php";
 	    						if(!empty($professional)){
 	    							foreach($professional as $profess){ ?>
 										<tr>
-											<td class="table1Data" width="450" id="push-edu"><?php echo ucfirst($profess->qualifications); ?>; <?php echo ucfirst($profess->school_granted); ?>; <?php echo $profess->date_granted; ?></td>
+											<td class="table1Data breakWord narrow" width="500" id="push-edu"><?php echo ucfirst($profess->qualifications); ?>; <?php echo ucfirst($profess->school_granted); ?>; <?php echo $profess->date_granted; ?></td>
 										</tr>
 	    							<?php }
 	    						}else{ ?>
@@ -536,7 +549,7 @@ include "template/sidebar_lecturer.php";
 				    						if(!empty($research_com)){
 				    							foreach($research_com as $complete){
 				    						?>
-											<li id="listSub"><p><?php echo ucfirst($complete->topic_name); ?></p></li> 
+											<li id="listSub" class="breakWord narrow"><p><?php echo ucfirst($complete->topic_name); ?></p></li> 
 										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
 										<?php }  ?>
@@ -549,7 +562,7 @@ include "template/sidebar_lecturer.php";
 				    						if(!empty($research_in)){
 				    							foreach($research_in as $progress){
 				    						?>
-											<li id="listSub">
+											<li id="listSub" class="breakWord narrow">
 												<p>
 												<?php echo ucfirst($progress->topic_name); ?><br/>
 												<?php echo ucfirst($progress->importance); ?> 
@@ -567,11 +580,12 @@ include "template/sidebar_lecturer.php";
 	    								<p>Project, Dissertation and Thesis:</p>
 			    						<ul style="list-style-type: lower-roman;">
 			    						<?php
-			    						$userInitial = $this->webSessionManager->getNameInitial();
+			    						$userId = (@$user_id) ? @$user_id : '';
+			    						$userInitial = $this->webSessionManager->getNameInitial($userId);
 				    						if(!empty($project_thesis)){
 				    							foreach($project_thesis as $project){
 				    						?>
-											<li id="listSub">
+											<li id="listSub" class="breakWord narrow">
 												<?php echo $userInitial; ?> <?php echo "(" .$project->year_research .")." ; ?>
 												<?php echo $project->research_name; ?>
 												<?php echo $project->research_category; ?>
@@ -757,16 +771,21 @@ include "template/sidebar_lecturer.php";
 				    						if(!empty($patents)){
 				    							foreach($patents as $patent){
 				    						?>
-											<li id="listSub">
-												<p>
-													<?php echo ucfirst($patent->author_names); ?>
-													<?php echo punctuateStr(addParenthesis($patent->patent_year,'(',')'),'.'); ?>	
-													<?php echo "<i>".punctuateStr($patent->title_of_patent,'.')."</i>"; ?>
-													<?php echo punctuateStr($patent->patent_no,'.'); ?>
-													<?php echo addParenthesis($patent->country,'(',')'); ?>
-												<?php echo punctuateStr(addParenthesis($patent->contribution,'(Contribution: ','%)'),'.'); ?>
-												</p>
-											</li> 
+				    						<div class="row" style="margin-left:-4%;">
+				    							<div class="col-sm-1">
+												</div>
+												<div class="col-sm-11" style="margin-left:-6%;">
+													<li id="single-listSub">
+															<?php echo ucfirst($patent->author_names); ?>
+															<?php echo punctuateStr(addParenthesis($patent->patent_year,'(',')'),'.'); ?>	
+															<?php echo "<i>".punctuateStr($patent->title_of_patent,'.')."</i>"; ?>
+															<?php echo punctuateStr($patent->patent_no,'.'); ?>
+															<?php echo addParenthesis($patent->country,'(',')'); ?>
+														<?php echo punctuateStr(addParenthesis($patent->contribution,'(Contribution: ','%)'),'.'); ?>
+													</li> 
+												</div>
+				    						</div>
+											
 										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
 										<?php }  ?>
@@ -944,7 +963,7 @@ include "template/sidebar_lecturer.php";
 	    						if(!empty($major_conf)){
 	    							foreach($major_conf as $conf){
 	    							?>
-									<li>
+									<li class="breakWord narrow">
 										<?php echo punctuateStr(ucfirst($conf->conf_name),','); ?>
 										<?php 
 											$startDate = $conf->start_date;
@@ -975,7 +994,7 @@ include "template/sidebar_lecturer.php";
 			    			</div>
 	    				</div>
 	    			</li>
-	    			<?php if($exist_publication): ?>
+	    			<?php if(@$exist_publication): ?>
 	    			<li style="page-break-before: always;">
 	    				<div class="divDataHeader">
     						<div class="divDataHead" id="push-left">
@@ -986,7 +1005,7 @@ include "template/sidebar_lecturer.php";
 	    					<?php if(!empty($best_publish_bp)){
 	    							foreach($best_publish_bp as $bp){
 	    							?>
-									<li id="listSub">
+									<li id="listSub" class="breakWord narrow">
 										<p>
 										<?php echo $bp->author_names ;?> 
 										<?php echo punctuateStr(addParenthesis($bp->year_of_publication,'(',')')); ?>
@@ -1003,7 +1022,7 @@ include "template/sidebar_lecturer.php";
 
 							<?php if(!empty($best_publish_cbp)){
 								foreach($best_publish_cbp as $cbp){ ?>
-									<li id="listSub">
+									<li id="listSub" class="breakWord narrow">
 									 	<p>
 									 	<?php echo ucfirst($cbp->author_names); ?>
 									 	<?php echo punctuateStr(addParenthesis($cbp->year_of_publication,'(',')')); ?>
@@ -1024,7 +1043,7 @@ include "template/sidebar_lecturer.php";
 
 							<?php if(!empty($best_publish_ac)){
 								foreach($best_publish_ac as $ac){ ?>
-									<li id="listSub">
+									<li id="listSub" class="breakWord narrow">
 										<p>
 										<?php echo ucfirst($ac->author_names); ?>
 										<?php echo punctuateStr(addParenthesis($ac->year_publish,'(',')'),'.'); ?>
@@ -1046,7 +1065,7 @@ include "template/sidebar_lecturer.php";
 
 							<?php if(!empty($best_publish_aaj)){
 								foreach($best_publish_aaj as $aaj){ ?>
-									<li id="listSub">
+									<li id="listSub" class="breakWord narrow">
 									 	<p>
 									 		<?php echo ucfirst($aaj->author_names); ?>
 									 		<?php echo punctuateStr(addParenthesis($aaj->journal_year,'(',')'),'.'); ?>
@@ -1075,7 +1094,7 @@ include "template/sidebar_lecturer.php";
 
 							<?php if(!empty($best_publish_ab)){
 									foreach($best_publish_ab as $ab){ ?>
-										<li id="listSub">
+										<li id="listSub" class="breakWord narrow">
 										 	<p>
 										 		<?php echo ucfirst($ab->author_names); ?>
 										 		<?php echo punctuateStr($ab->article_title,'.'); ?>
@@ -1092,7 +1111,7 @@ include "template/sidebar_lecturer.php";
 
 							<?php if(!empty($best_publish_tr)){
 								foreach($best_publish_tr as $tr){ ?>
-										<li id="listSub">
+										<li id="listSub" class="breakWord narrow">
 										 	<p>
 										 		<?php echo ucfirst($tr->author_names); ?>
 										 		<?php echo punctuateStr(addParenthesis($tr->report_year,'(',')'),'.'); ?>

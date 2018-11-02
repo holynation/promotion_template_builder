@@ -94,15 +94,17 @@ else{
 	          <span class="d-flex alifn-items-center">
 	            <p>Administrative <?php echo removeUnderscore($model); ?></p>
               <?php 
-              $disable = '';
-                if(isset($checkExists)){
-                  $disable = ($checkExists && $model=='lecturer') ? "disabled" : '';
-                }
+              // $disable = '';
+              //   if(isset($checkExists)){
+              //     $disable = ($checkExists && $model=='lecturer') ? "disabled" : '';
+              //   }
                ?>
+               <?php if($this->webSessionManager->getCurrentUserProp('user_type') != 'lecturer'): ?>
 	            <div class="col-md-3 col-sm-3">
-		            <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#basic_modal" data-animate-modal="zoomInDown" <?php echo ($disable) ? $disable : '';?>>Add
+		            <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#basic_modal" data-animate-modal="zoomInDown">Add
 		            </button>
 		          </div>
+            <?php endif; ?>
               <?php if($showAsteriskInfo): ?>
                 <div class="col-md-6 col-sm-6 alert alert-info">
                   <ul>

@@ -127,12 +127,18 @@ class WebSessionManager extends CI_Model
       }
 
    	// this set of function check the type of user that is currently logged in
-   	function isCurrentUserType($userType){
+   	function isCurrentUserType($userType,$userId=''){
          $temp=$userType==$this->getCurrentUserProp('user_type');
          if (!$temp) {
             return false;
          }
-         $st= $this->getCurrentUserProp('user_table_id');
+         $st='';
+         if($userId != ''){
+            $st = $userId;
+         }else{
+            $st= $this->getCurrentUserProp('user_table_id');
+         }
+         
          loadClass($this->load,$userType);
          $className = ucfirst($userType);
          $result = new $className(array('ID'=>$st));
@@ -140,12 +146,26 @@ class WebSessionManager extends CI_Model
          return $result;
    	}
 
-      function getNameInitial(){
-         $user = $this->isCurrentUserType('lecturer');
+      function getNameInitial($userId=''){
+         $user='';
+         if($userId != ''){
+            $user = $this->getCurrentLecturer($userId);
+         }else{
+            $user = $this->isCurrentUserType('lecturer');
+         }
+
          $surname = ucfirst($user->surname);
          $firstname = ucfirst(getFirstString($user->firstname));
          $middlename = ucfirst(getFirstString($user->middlename));
          return $surname .", ".$firstname .". ".$middlename.".";
+      }
+
+      function getCurrentLecturer($id){
+         loadClass($this->load,'lecturer');
+         $className = ucfirst('lecturer');
+         $result = new $className(array('ID'=>$id));
+         $result->load();
+         return $result;
       }
 
    	function getUserDisplayName(){

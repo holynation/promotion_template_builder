@@ -26,6 +26,19 @@ class AdminData extends CI_Model
 		$result['scholarship'] = $this->admin->getDasboardCount('scholarships','sch_total');
 		$result['department'] = $this->admin->getDasboardCount('department','depart_total');
 		$result['publication'] = $this->admin->getPublicationCount();
+
+		// this is to get the publication data chart
+		$result['book_data'] = $this->admin->getPublicationData('book_published');
+		$result['cbp_data'] = $this->admin->getPublicationData('chapter_in_book_published');
+		$result['ac_data'] = $this->admin->getPublicationData('article_in_conference');
+		$result['pc_data'] = $this->admin->getPublicationData('patents_copyright');
+		$result['aaj_data'] = $this->admin->getPublicationData('article_appear_in_journal');
+		$result['ab_data'] = $this->admin->getPublicationData('accepted_books');
+		$result['tr_data'] = $this->admin->getPublicationData('technical_report');
+		$jsonArray = array_merge($result['book_data'],$result['cbp_data'],$result['ac_data'],$result['pc_data'],$result['aaj_data'],$result['ab_data'],$result['tr_data']);
+
+		$result['buildDataJson'] = json_encode($jsonArray);
+
 		return $result;
 	}
 

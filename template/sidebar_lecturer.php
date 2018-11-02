@@ -44,11 +44,8 @@
                 <a class="nav-link" href="<?php echo base_url('vc/lecturer/dashboard'); ?>">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle='modal' data-target='#center_modal_password'>Change Password</a>
+                <a class="nav-link" href="<?php echo base_url('vc/lecturer/profile'); ?>">Profile</a>
               </li>
-             <!--  <li class="nav-item">
-                <a class="nav-link" href="<?php //echo base_url('vc/lecturer/profile'); ?>">Profile</a>
-              </li> -->
               <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('auth/logout'); ?>">Logout</a>
               </li>

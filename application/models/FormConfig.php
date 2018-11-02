@@ -31,9 +31,9 @@ class FormConfig extends CI_Model
 		$action = array();
 		$userType = $this->webSessionManager->getCurrentUserProp('user_type');
 		if($userType == 'lecturer'){
-			$action = array('edit' => 'edit/lecturer','delete' => 'delete/lecturer');
+			$action = array('edit' => 'edit/lecturer','profile' => 'vc/lecturer/profile');
 		}else{
-			$action = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer');
+			$action = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer','profile'=>'vc/lecturer/profile','print'=>'vc/lecturer/printApp');
 		}
 		return $action;
 	}

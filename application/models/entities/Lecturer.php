@@ -28,7 +28,7 @@ static $documentField = array('img_path'=>array(array('jpeg','jpg','png','gif'),
 static $relation = array('title' => array('title_id','id')
 ,'department' => array('department_id','id')
 );
-static $tableAction = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer');
+static $tableAction = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer','profile'=>'vc/lecturer/profile','print'=>'vc/lecturer/printApp');
 function __construct($array = array())
 {
 	parent::__construct($array);

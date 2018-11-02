@@ -183,6 +183,10 @@ public function getPublicationCount(){
 	}
 }
 
+public function getPublicationData($table){
+	return array($this->getSinglePub($table));
+}
+
 private function getSinglePub($table){
 	$count=0;
 	$query = "SELECT count(*) as total from $table";

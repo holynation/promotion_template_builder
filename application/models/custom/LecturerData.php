@@ -10,15 +10,16 @@ class LecturerData extends CI_Model
 	{
 		parent::__construct();
 		//load the lecturer object
+
 		$this->loadLecturer();
 	}
 
 	private function loadLecturer()
 	{
-		$id = $this->webSessionManager->getCurrentUserProp('user_table_id');
 		loadClass($this->load,'lecturer');
-		$this->lecturer = new Lecturer(array('ID'=>$id));
-		$this->lecturer->load();
+			$user_id = $this->webSessionManager->getCurrentUserProp('user_table_id');
+			$this->lecturer = new Lecturer(array('ID'=>$user_id));
+			$this->lecturer->load();
 	}
 
 	public function loadDashboardData()
@@ -42,8 +43,14 @@ class LecturerData extends CI_Model
 		return $result;
 	}
 
-	public function loadAllData(){
+	public function loadAllData($userid =''){
 		$result = array();
+		if($userid != ''){
+			$this->lecturer = new Lecturer(array('ID'=>$userid));
+			$this->lecturer->load();
+			$result['user_id'] = $userid;
+		}
+		
 		$result['lecturers'] = $this->lecturer->getBiodata();
 		$result['appointment'] = $this->lecturer->getAcademicAppoint();
 		$result['education'] = $this->lecturer->getFromDbClass('university_education','order by start_date asc');
@@ -69,7 +76,12 @@ class LecturerData extends CI_Model
 		$result['accepted_book'] = $this->lecturer->getFromDbClass('accepted_books','order by accepted_year asc');
 		$result['tech_report'] = $this->lecturer->getFromDbClass('technical_report','order by report_year asc');
 		$result['major_conf'] = $this->lecturer->getFromDbClass('major_conf_attended','order by year_attended asc');
-		$check = $this->checkPublication($this->webSessionManager->getCurrentUserProp('user_table_id'));
+		if($userid != ''){
+			$check = $this->checkPublication($userid);
+		}else{
+			$check = $this->checkPublication($this->webSessionManager->getCurrentUserProp('user_table_id'));
+		}
+		
 		if($check){
 			$result['exist_publication'] = 'bp_exists';
 			$result['best_publish_bp'] = $this->lecturer->getBestPublication('book_published');

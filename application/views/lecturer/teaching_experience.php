@@ -1,7 +1,13 @@
 <?php 
+$userType= $this->webSessionManager->getCurrentUserProp('user_type');
 include "template/header.php";
-include "template/sidebar_lecturer.php";
-?>
+if ($userType=='admin') {
+  include "template/sidebar.php";
+}
+else{
+  include "template/sidebar_lecturer.php";
+}
+ ?>
 
 <div class="main-panel">
     <div class="content-wrapper">
@@ -147,12 +153,23 @@ include "template/sidebar_lecturer.php";
               <div class="card-body">
                 <h4 class="card-title"><?php echo 'Detail Teaching Table'; ?></h4>
                   <?php
+                  $tableData ='';
                   $dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
                   $where = " where lecturer.id = $dataId";
                   $tableExclude =array('pg_courses_qualify','lecturer_id');
                   $tableAction =array('delete' => 'delete/teaching_experience', 'edit' => 'edit/teaching_experience');
+                  if($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'):
                   $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true,$where);
-                   echo $tableData;
+                else:
+                  if(!empty($tableExclude)){
+                    $remove = 'lecturer_id';
+                    if(in_array($remove,$tableExclude)){
+                      unset($tableExclude[array_search($remove,$tableExclude)]);
+                    }
+                  }
+                  $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true);
+                 endif;
+                 echo $tableData;
                 ?>
               </div>
             </div>

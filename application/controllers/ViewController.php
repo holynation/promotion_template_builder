@@ -105,9 +105,21 @@ class ViewController extends CI_Controller{
       $path ='vc/add/role';
     }
 
+    if($page =='profile'){
+      $path = 'vc/lecturer/profile';
+    }
+    if($page == 'printApp'){
+      $path = 'vc/lecturer/printApp';
+    }
+    if($page == 'teaching_experience'){
+      $path = 'vc/lecturer/teaching_experience';
+    }
+
     if (!$role->canView($path)) {
       show_access_denied();exit;
     }
+
+
     $sidebarContent=$this->adminData->getCanViewPages($role);
     // print_r($sidebarContent);exit;
     $data['canView']=$sidebarContent;
@@ -134,18 +146,22 @@ class ViewController extends CI_Controller{
    $data = array_merge($data,$this->adminData->loadDashboardData());
   }
 
+  private function adminProfile(&$data){
+    return $data;
+  }
+
   private function lecturer($page,&$data){
     $this->load->model('custom/lecturerData');
     loadClass($this->load,'lecturer');
     $id = $this->webSessionManager->getCurrentUserProp('user_table_id');
     $this->lecturer = new Lecturer(array('ID'=>$id));
     $this->lecturer->load();
-    if($this->webSessionManager->getCurrentUserProp('role_id')) {
-      $this->load->model('custom/adminData');
-      $role=$this->lecturer->role;
-      $sidebarContent=$this->adminData->getCanViewPages($role);
-      $data['canView']=$sidebarContent;
-    }
+    // if($this->webSessionManager->getCurrentUserProp('role_id')) {
+    //   $this->load->model('custom/adminData');
+    //   $role=$this->lecturer->role;
+    //   $sidebarContent=$this->adminData->getCanViewPages($role);
+    //   $data['canView']=$sidebarContent;
+    // }
     $data['lecturer'] = $this->lecturer;
   }
 
@@ -153,12 +169,49 @@ class ViewController extends CI_Controller{
     $data = array_merge($data,$this->lecturerData->loadDashboardData());
   }
 
-  private function lecturerTeaching_exp(&$data){
-    return $data;
+  private function lecturerProfile(&$data){
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+      $this->admin('profile',$data);
+      if (!isset($data['id']) || !$data['id']) {
+        show_404();exit;
+      }
+      $lect = new Lecturer(array('ID'=>$data['id']));
+      if (!$lect->load()) {
+        show_404();exit;
+      }
+      $data['lecturer']=$lect;
+      $data['extra']=true;
+    }
+  }
+
+  private function lecturerTeaching_experience(&$data){
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+      $this->admin('teaching_experience',$data);
+    }
   }
 
   private function lecturerPrintApp(&$data){
-    $data = array_merge($data,$this->lecturerData->loadAllData());
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+      $this->admin('printApp',$data);
+      if (!isset($data['id']) || !$data['id']) {
+        show_404();exit;
+      }
+
+      $lect = new Lecturer(array('ID'=>$data['id']));
+      if (!$lect->load()) {
+        show_404();exit;
+      }
+      $data['lecturer']=$lect;
+
+      // $lecturerData = new LecturerData($data['id']); 
+      $data = array_merge($data,$this->lecturerData->loadAllData($data['id']));
+      
+    }else{
+      $data = array_merge($data,$this->lecturerData->loadAllData());
+    }
+      
+    
+    
   }
 
   //function for loading edit page for general application
@@ -272,6 +325,11 @@ class ViewController extends CI_Controller{
       $data['admin']=$this->admin;
       $data['currentRole']=$role;
       $path ='vc/add/'.$model;
+
+      if($model == 'teaching_experience'){
+        $path = 'vc/lecturer/teaching_experiences';
+      }
+
       if (!$role->canView($path)) {
         show_access_denied($this->load);exit;
       }

@@ -117,9 +117,6 @@
                   </div>
                 </div>
               </a>
-              <a class="dropdown-item" href="#" data-toggle='modal' data-target='#center_modal_password'>
-                Change Password
-              </a>
               <a class="dropdown-item" href="<?php echo base_url('auth/logout'); ?>">
                 Sign Out
               </a>
