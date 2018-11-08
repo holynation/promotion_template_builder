@@ -189,6 +189,23 @@
 
 		return $result;
 	}
+	function boldUser($names, $user=''){
+		$result='';
+		if($user != ''){
+			$buildStr = punctuateStr($user->surname,',') .' '. punctuateStr(ucfirst(getFirstString($user->firstname)),'.') .' '. punctuateStr(ucfirst(getFirstString($user->middlename)),'.') .'';
+			if(stristr(trim($names),$buildStr) !== false){
+				$first = stristr(trim($names), $buildStr);
+				$buildLen = strlen($buildStr);
+				$pos = strpos(trim($names), $first);
+				$boldStr = "<b>$buildStr</b>";
+				$result = substr_replace(trim($names), "$boldStr",$pos,$buildLen);
+			}else{
+				$result = $names;
+			}
+		}
+		
+		return $result;
+	}
 	//this function returns the json encoded string based on the key pair paremter saved on it.
 	function createJsonMessage(){
 		$argNum = func_num_args();

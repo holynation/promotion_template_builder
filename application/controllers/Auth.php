@@ -90,7 +90,7 @@ class Auth extends CI_Controller
 			$checkPass = $this->hash_created->decode_password(trim($password), $this->user->data()[0]['password']);
 			if($checkPass){
 				$array = array('username'=>$email,'status'=>1);
-				$user = $this->user->getWhere($array,$count,0,null,false," order by field(user_type,'admin','lecturer')");
+				$user = $this->user->getWhere($array,$count,0,null,false," order by field('user_type','admin','lecturer')");
 				if($user == false) {	
 					if ($isAjax) {
 						$arr['status']=false;

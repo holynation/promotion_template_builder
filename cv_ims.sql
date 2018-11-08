@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 01, 2018 at 03:00 PM
+-- Generation Time: Nov 03, 2018 at 05:07 PM
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.0.27
 
@@ -436,8 +436,8 @@ CREATE TABLE `lecturer` (
 --
 
 INSERT INTO `lecturer` (`ID`, `title_id`, `surname`, `firstname`, `middlename`, `maiden_name`, `department_id`, `email`, `phone_number`, `dob`, `status`, `address`, `state_of_origin`, `staff_no`, `lga_of_origin`, `disability`, `nationality`, `gender`, `img_path`, `marital_status`, `religion`) VALUES
-(1, 3, 'Alatise', 'Oluwaseun', 'Abraham', '', 1, 'lecturer@gmail.com', '07064625478', '2015-01-06', 1, 'Biala Ologede Estate,Olodo.Ibadan', 'Ogun', '1111', 'Ijebu Ode', 0, 'Nigerian', 'male', 'uploads/lecturer/1_1_5bd89ded4aa9a.png', 'single', 'Christianity'),
-(3, 3, 'Alatise', 'Oluwaseun', '', NULL, 1, 'holynation667@gmail.com', '0810994486', '2009-06-10', 1, NULL, 'Lagos', '12345', 'Ikeja', 0, 'Nigeria', 'male', 'uploads/lecturer/1.jpg', 'single', 'Christianity');
+(1, 3, 'Alatise', 'Oluwaseun', 'Abraham', '', 1, 'lecturer@gmail.com', '07064625478', '2015-01-06', 1, 'Biala Ologede Estate,Olodo.Ibadan', 'Ogun', '1111', 'Ijebu Ode', 0, 'Nigerian', 'male', 'uploads/lecturer/1_1_5bdc0956a67ee.png', 'single', 'Christianity'),
+(3, 3, 'Alatise', 'Oluwaseun', '', '', 2, 'holynation667@gmail.com', '0810994486', '2009-06-10', 1, 'Biala Ologede Estate,Olodo.Ibadan', 'Lagos', '12345', 'Ikeja', 0, 'Nigeria', 'male', 'uploads/lecturer/1.jpg', 'single', 'Christianity');
 
 -- --------------------------------------------------------
 
@@ -573,7 +573,7 @@ INSERT INTO `permission` (`ID`, `role_id`, `path`, `permission`) VALUES
 (14, 1, 'vc/add/honours_distinctions', 'w'),
 (15, 1, 'vc/add/memberships', 'w'),
 (16, 1, 'vc/add/work_experience', 'w'),
-(17, 1, 'vc/add/teaching_experience', 'w'),
+(17, 1, 'vc/lecturer/teaching_experience', 'w'),
 (18, 1, 'vc/add/research_supervision', 'w'),
 (19, 1, 'vc/add/book_published', 'w'),
 (20, 1, 'vc/add/chapter_in_book_published', 'w'),
@@ -586,7 +586,10 @@ INSERT INTO `permission` (`ID`, `role_id`, `path`, `permission`) VALUES
 (27, 1, 'vc/add/research_inprogress', 'w'),
 (28, 1, 'vc/add/project_thesis_dissertation', 'w'),
 (29, 1, 'vc/add/major_conf_attended', 'w'),
-(30, 1, 'vc/add/paper_read', 'w');
+(30, 1, 'vc/add/paper_read', 'w'),
+(242, 1, 'vc/lecturer/profile', 'w'),
+(6847, 1, 'vc/add/community_service', 'w'),
+(7266, 1, 'vc/lecturer/printApp', 'w');
 
 -- --------------------------------------------------------
 
@@ -799,7 +802,7 @@ CREATE TABLE `teaching_experience` (
 --
 
 INSERT INTO `teaching_experience` (`ID`, `lecturer_id`, `course_code`, `course_title`, `session_name`, `total_person`, `pg_courses_qualify`, `category`, `date_created`) VALUES
-(1, 1, 'ECO 103', 'Nigerian Economy in Perspective', '2006/07,2007/08,2016/17', '2', NULL, 'Undergraduate', '2018-10-15 11:32:09'),
+(1, 1, 'ECO 103', 'Nigerian Economy in Perspective.', '2006/07,2007/08,2016/17', '2', NULL, 'Undergraduate', '2018-10-15 11:32:09'),
 (4, 1, 'ECO 201', 'Principles of Economics I', '2012/13,2013/14', '2', NULL, 'Undergraduate', '2018-10-15 11:52:29'),
 (5, 1, 'ECO 302', 'Macroeconomic Theory', '2015/16,2017/18', '2', NULL, 'Undergraduate', '2018-10-15 12:13:35'),
 (6, 1, 'ECO 712', 'Macroeconomic Theory I', '2017/18', '2', NULL, 'Postgraduate', '2018-10-15 12:15:42'),
@@ -1277,7 +1280,7 @@ ALTER TABLE `patents_copyright`
 -- AUTO_INCREMENT for table `permission`
 --
 ALTER TABLE `permission`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7267;
 
 --
 -- AUTO_INCREMENT for table `professional_qualifications`
