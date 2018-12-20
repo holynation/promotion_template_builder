@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title><?php echo getTitlePage(); ?></title>
   <!-- plugins:css -->
-  <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/vendors/airdatepicker/dist/css/datepicker.css'); ?>">
   <link rel="stylesheet" href="<?php echo $base; ?>assets/vendors/iconfonts/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="<?php echo $base; ?>assets/vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="<?php echo $base; ?>assets/vendors/css/vendor.bundle.addons.css">
@@ -20,6 +19,9 @@
   
   <link rel="stylesheet" type="text/css" href="<?php echo $base; ?>assets/css/A.vendors%2c%2c_animate%2c%2c_animate.min.css%2bcss%2c%2c_custom_css%2c%2c_advanced_modals.css%2cMcc.y5G3zLmBWR.css.pagespeed.cf.FkvOREn9M1.css"/>
   <!-- endinject -->
+  <!-- this is the toast notification css -->
+  <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/toast.css'); ?>">
+  <!-- end of the toastr -->
   <link rel="shortcut icon" href="<?php echo $base; ?>assets/images/favicon.png" />
   <script src="<?php echo base_url('assets/js/jquery-2.1.4.min.js'); ?>"></script>
 
@@ -149,6 +151,7 @@
       text-align: center;
       width: 50%;
       top: -5px;
+      cursor: pointer;
     }
   </style>
 <div id="notification" style="" class="text-center"></div>

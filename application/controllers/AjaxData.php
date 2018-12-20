@@ -117,14 +117,14 @@
 				$confirm = $_POST['confirmPassword'];
 				if ($new !==$confirm) {
 					// $this->application_log->log('profile module','password does not match');
-					echo createJsonMessage('status',false,'message','new password does not match with the confirmaton');exit;
+					echo createJsonMessage('status',false,'message','new password does not match with the confirmaton','flagAction',true);exit;
 				}
 				//check that this user owns the password
 				loadClass($this->load,'user');
 				$this->user->user_ID = $this->webSessionManager->getCurrentUserProp('ID');
 				$result = $this->user->changePassword($old,$new,$message);
 				// $this->application_log->log('profile module',$message);
-				echo createJsonMessage('status',$result,'message',$message);
+				echo createJsonMessage('status',$result,'message',$message,'flagAction',true);
 			}
 		}
 
@@ -139,7 +139,7 @@
 			if (isset($_POST['sub'])) {
 				$role = $_POST['role'];
 				if (!$role) {
-					echo createJsonMessage('status',false,'message','error occured while saving permission');
+					echo createJsonMessage('status',false,'message','error occured while saving permission','flagAction',false);
 				}
 				loadClass($this->load,'role');
 				try {
@@ -147,9 +147,9 @@
 					$updateList = json_decode($_POST['update'],true);
 					$this->role->ID=$role;
 					$result=$this->role->processPermission($updateList,$removeList);
-					echo createJsonMessage('status',$result,'message','permission updated successfully');
+					echo createJsonMessage('status',$result,'message','permission updated successfully','flagAction',true);
 				} catch (Exception $e) {
-					echo createJsonMessage('status',false,'message','error occured while saving permission');
+					echo createJsonMessage('status',false,'message','error occured while saving permission','flagAction',false);
 				}
 				
 			}
@@ -163,13 +163,13 @@
 				try{
 					$updateList = json_decode($_POST['update'],true);
 					if(empty($updateList)){
-						echo createJsonMessage('status',false,'message','You have not chosen any publication');
+						echo createJsonMessage('status',false,'message','You have not chosen any publication','flagAction',false);
 						exit;
 					}
 					$result = $this->best_publication->processPublication($table,$userTypeId,$updateList); 
-					echo createJsonMessage('status',$result,'message','Your publication is successfully saved...');
+					echo createJsonMessage('status',$result,'message','Your publication is successfully saved...','flagAction',true);
 				}catch(Exception $e){
-					echo createJsonMessage('status',false,'message','error occured while saving best publication');
+					echo createJsonMessage('status',false,'message','error occured while saving best publication','flagAction',false);
 				}
 			}
 
@@ -188,5 +188,6 @@
 
 			}
 		}
+
 	}
  ?>

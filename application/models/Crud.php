@@ -133,9 +133,10 @@ class Crud extends CI_Model
 		$this->array = $array;
 	}
 
-	function exists($id,&$dbObject=null){
+	function exists($id,&$dbObject=null,&$arrData=array()){
 		$tablename =$this->getTableName();
 		$wherelist = $this->buildExistWhereString($id,$data);
+		$arrData = $data;
 		$query = "select count(*) as amount from $tablename where $wherelist";
 		$result = $this->query($query,$data,$dbObject);
 		return $result[0]['amount'] != 0;
@@ -302,8 +303,8 @@ class Crud extends CI_Model
 			$limit = " LIMIT ?,?";
 			$array=array($lower,$length);
 		}
-		$query =$resolveForeign?$this->buildSelectClause()." $where $sort $limit":"SELECT SQL_CALC_FOUND_ROWS * FROM $tablename $where $sort $limit  ";
-		
+
+		$query =$resolveForeign?$this->buildSelectClause()." $where $sort $limit":"SELECT SQL_CALC_FOUND_ROWS * FROM $tablename $where $sort $limit ";
 		$result = $this->query($query,$array);
 		$result2 = $this->query("SELECT FOUND_ROWS() as totalCount");
 		$totalRow=$result2[0]['totalCount'];
@@ -410,12 +411,12 @@ class Crud extends CI_Model
 		if (isset(static::$uniqueArray) && !empty(static::$uniqueArray)) {
 			$uniqueKeys = static::$uniqueArray;
 			foreach ($uniqueKeys as $value) {
-				$result = $this->exists(array($value));
+				$result = $this->exists(array($value),$dbObject,$arrData);
 				if ($result) {
-					return true;
+					return (!empty($arrData)) ? $arrData : true;
+					// return true;
 				}
 			}
-			
 		}
 
 		if (isset(static::$compositePrimaryKey) && !empty(static::$compositePrimaryKey)) {
@@ -431,7 +432,14 @@ class Crud extends CI_Model
 			throw new Exception("no value to insert");
 		}
 		if ($this->checkExist()) {
-			$message='duplicate entry.  row already exist';
+			$checkMsg = $this->checkExist();
+			if(is_array($checkMsg)){
+				$string = implode(",", $checkMsg);
+				$message = " '$string' already exists...";
+			}else{
+				$message='Duplicate entry row already exist...';
+			}
+			
 			return false;
 		}
 		$tablename =$this->getTableName();

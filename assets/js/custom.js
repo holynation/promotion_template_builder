@@ -1,8 +1,154 @@
-function reportAndRefresh(target,data){
-	showNotification(data.status,data.message);
-	location.reload();
-	
+var _asyncTime = 3000;
+
+function reportAndRefresh(target,data,action,timeOut){
+  var _timeOut = timeOut || _asyncTime;
+	if(action != ''){
+		var _parseData = data.trim(),
+			_parseData = $.parseJSON(_parseData);
+		showNotification(_parseData.status,_parseData.message,_timeOut);
+		timeOutReload(_timeOut);
+	}else{
+		showNotification(data.status,data.message,_timeOut);
+		timeOutReload(_timeOut);
+	}
 }
+
+function timeOutReload(delay){
+	var timeDelay = delay || 5000;
+	setTimeout(function(){
+		location.reload();
+	},timeDelay);
+}
+
+// this is to alternate between toastr and manual(self) notification
+function showNotification(status,data,asyncTime){
+	if(typeof toastr !== 'undefined'){
+		showToastNotification(status,data,asyncTime);
+	}else{
+		showNotifications(status,data);
+	}
+}
+
+// this is the toast functionality method
+function showToastNotification(status,data,asyncTime){
+    var i = -1;
+    var toastCount = 0;
+    var $toastlast;
+
+    // console.log('got here');
+
+    // this is the default setting for the notification
+    var _showDuration = 900,
+        _hideDuration = 1000,
+        _timeOut = asyncTime || 10000,
+        _extendedTimeOut = 1000,
+        _showEasing = 'swing' || 'linear',
+        _hideEasing=  'swing' || 'linear',
+        _showMethod = 'show'  || 'fadeIn',
+        _hideMethod = 'hide'  || 'fadeOut',
+        _positionClass = 'toast-top-left' || 'toast-top-right',
+        _shortCutFunction =  status  ? 'success' : 'error',
+        _message = data || '',
+        _title =  status ? 'Success' : 'Error';
+
+    var getMessage = function () {
+    	const _checkStatusMsg = status ? 'operation successful' : 'error in performing the operation';
+
+        return _checkStatusMsg;
+    };
+
+    var getMessageWithClearButton = function (msg) {
+        msg = msg ? msg : 'Clear itself?';
+        msg += '<br /><br /><button type="button" class="btn clear">Yes</button>';
+        return msg;
+    };
+
+    var shortCutFunction = _shortCutFunction;
+    var msg = _message;
+    var title = _title || '';
+    var $showDuration = _showDuration;
+    var $hideDuration = _hideDuration;
+    var $timeOut = _timeOut;
+    var $extendedTimeOut = _extendedTimeOut;
+    var $showEasing = _showEasing;
+    var $hideEasing = _hideEasing;
+    var $showMethod = _showMethod;
+    var $hideMethod = _hideMethod;
+    var toastIndex = toastCount++;
+
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: _positionClass || 'toast-top-right',
+        onclick: null
+    };
+
+    if (_showDuration) {
+        toastr.options.showDuration = _showDuration;
+    }
+
+    if (_hideDuration) {
+        toastr.options.hideDuration = _hideDuration;
+    }
+
+    if (_timeOut) {
+        toastr.options.timeOut = _timeOut;
+    }
+
+    if (_extendedTimeOut) {
+        toastr.options.extendedTimeOut = _extendedTimeOut;
+    }
+
+    if (_showEasing) {
+        toastr.options.showEasing = _showEasing;
+    }
+
+    if (_hideEasing) {
+        toastr.options.hideEasing = _hideEasing;
+    }
+
+    if (_showMethod) {
+        toastr.options.showMethod = _showMethod;
+    }
+
+    if (_hideMethod) {
+        toastr.options.hideMethod = _hideMethod;
+    }
+
+    if (!msg) {
+        msg = getMessage();
+    }
+
+    var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+    $toastlast = $toast;
+
+    if (typeof $toast === 'undefined') {
+        return;
+    }
+
+    if ($toast.find('#okBtn').length) {
+        $toast.delegate('#okBtn', 'click', function () {
+            alert('you clicked me. i was toast #' + toastIndex + '. goodbye!');
+            $toast.remove();
+        });
+    }
+    if ($toast.find('#surpriseBtn').length) {
+        $toast.delegate('#surpriseBtn', 'click', function () {
+            alert('Surprise! you clicked me. i was toast #' + toastIndex + '. You could perform an action here.');
+        });
+    }
+    if ($toast.find('.clear').length) {
+        $toast.delegate('.clear', 'click', function () {
+            toastr.clear($toast, {
+                force: true
+            });
+        });
+    }
+
+}
+
+//end toast notification
+
 
 /* BoxWidget()
  * ======
@@ -172,83 +318,77 @@ function reportAndRefresh(target,data){
   });
 }(jQuery);
 
-// $(document).ready(function(){
-// 	// this is the authentication validation
-// 	$("#signForm1").bootstrapValidator({
-// 		fields: {
-// 			password: {
-//                 validators: {
-//                     notEmpty: {
-//                         message: 'The password is required'
-//                     }
-//                 }
-//             },
-//             confirm_password: {
-//                 validators: {
-//                     notEmpty: {
-//                         message: 'The confirm password is required and can\'t be empty'
-//                     },
-//                     identical: {
-//                         field: 'password',
-//                         message: 'Confirm Password should match with password'
-//                     }
-//                 }
-//             }
-// 		},
-// 		submitHandler: function (validator, form, submitButton) {
-//             console.log('got here');
-//         }
-// 	});
-// });
-
-
-
-// $(document).ready(function(){
-// 	$('#signInForm').bootstrapValidator({
-// 		fields: {
-// 			email: {
-// 				validators:{
-// 					notEmpty:{
-// 						message: 'email is required'
-// 					}
-// 				}
-// 			},
-// 			password: {
-// 				validators:{
-// 					notEmpty:{
-// 						message: 'password is required'
-// 					}
-// 				}
-// 			}
-// 		}
-// 	});
-// });
-
 $(document).ready(function(){
 	addAsterisk();
+	// this is aspect shows when you are trying to perform an action that requires permission
 	$('li[data-critical=1] a').click(function(event){
 		event.preventDefault();
 		var link = $(this).attr('href');
 		var action = $(this).text();
 		if (confirm("are you sure you want to "+action+" item?")) {
-			sendAjax(null,link,'','get',reportAndRefresh);
+			sendAjax(null,link,'','get');
 		}
 	});
+
+  // this is the multiple action script
+  $('#multipleDelete').on('click', function(){
+    var tableDataBox = [];
+
+    $('.best-content').each(function(index, el){
+      var checkBoxData = $(this).find(':checked').val();
+      if(typeof checkBoxData !== 'undefined'){
+        tableDataBox.push({checkBoxData: checkBoxData});
+      }
+    });
+    var checkBoxAction = JSON.stringify(tableDataBox),
+        modelAction = $('#modelAction').val(),
+        dataPost = {checkBoxAction:checkBoxAction,task: 'multipleDelete'},
+        url = $('#actionUrl').val();
+        // sendAjax(null,url,dataPost,'get',showStatus);
+        if(confirm("are you sure you want to delete item(s)?")){
+          $.ajax({
+            url : url,
+            type: 'get',
+            data: dataPost,
+            contentType: 'application/json',
+            success: function(data){
+              var _parseData = data,
+                  $parse = jQuery.parseJSON(_parseData);
+
+                  if($parse.flagAction){
+                    reportAndRefresh(null,data,'flagAction',5000);
+                    return true;
+                  }else{
+                    showNotification($parse.status,$parse.message,4000);
+                    return false;
+                  }
+            },
+            error: function(xhr,data,exception){
+              if (failure==undefined) {
+                ajaxFormSubmissionFailure(target,xhr,data,exception);return;
+              }
+              var param = failure.length;
+              if (param ==1) {
+                failure(exception);
+              }
+              else if (param=2) {
+                failure(exception,data);
+              }
+              else if (param==3) {
+                failure(exception,data,target)
+              }
+              else{
+                  failure(target,xhr,data,exception);
+              }
+            }
+          });
+        } 
+  });
+
 	$(document).ajaxComplete(function() {
 		$('#loading').hide();
 	});
 
-	// $('.table-action').mouseleave(function(event) {
-	// 	$(this).hide('fast');
-	// });
-	// $('.table-action li').click(function(event) {
-	// 	event.stopImmediatePropagation();
-	// 	$(this).parent('.table-action').hide('fast');
-	// });
-	// $('.dropdownbtn').click(function(event) {
-	// 	$(this).children('.table-action').show('fast');
-
-	// });
 	$(document).ajaxStart(function() {
 		$('#loading').show();
 	});
@@ -256,6 +396,7 @@ $(document).ready(function(){
 	sidebarNavigation();
 	pageStateFromCookie();
 	bindDropDown('autoload');
+
 	$('#notification').click(function(event) {
 		$(this).hide('slow');
 	});
@@ -318,6 +459,13 @@ if (typeof Modernizr !=="undefined") {
 		addMoreEvent();
 	}
 	});
+
+ // adding the notification status plain
+function showStatus(target,data){
+  var data = JSON.parse(data);
+    showNotification(data.status,data.message,4000);
+    return true;
+}
 //function for adding asterisks to all required element
 function addAsterisk(){
 	var required =$('input[required],select[required],textarea[required]');
@@ -386,7 +534,7 @@ function isObject(array) {
     return Object.prototype.toString.call(array) == '[object Object]';
 }
 
-function showNotification(status,data){//a boolean value for success or failure
+function showNotifications(status,data){//a boolean value for success or failure
 	//work on this code to show toast
 	var notification =$("#notification");
 	if (status) {
@@ -467,7 +615,9 @@ function ajaxFormSubmissionFailure(target,xhr,data,exception){
 	}
 }
 // this function helps send ajax request to the server.
-// the first parameter is the target. not needed alway can therefore be null, then the link , the data(already encode) , the function to call on success and the function to call on failure.
+// the first parameter is the target. not always needed can therefore be null,
+// then the link , the data(already encode) ,
+// the function to call on success and the function to call on failure.
 function sendAjax(target,url,data,type,success, failure){
     $.ajax({
         url: url,
@@ -476,9 +626,18 @@ function sendAjax(target,url,data,type,success, failure){
         data: data,
         contentType:typeof data==='string'?'application/x-www-form-urlencoded':false,
         success: function(data){
+        	var _parseData = data,
+        		$parse = jQuery.parseJSON(_parseData);
+
+        	if((typeof $parse.flagAction !== 'undefined')){
+        		reportAndRefresh(target,data,'flagAction');
+        		return true;
+        	}
+
         	if (typeof(success)==='undefined') {
         		ajaxFormSubmissionSuccess(target,data);return;
         	}
+
         	var len=success.length;
         	if (len ==1) {
         		success(data);

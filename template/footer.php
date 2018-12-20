@@ -15,6 +15,12 @@
   <script src="<?php echo $base; ?>assets/js/off-canvas.js"></script>
   <script src="<?php echo $base; ?>assets/js/misc.js"></script>
   <!-- endinject -->
+
+  <!-- this is for the toastr -->
+  <script type="text/javascript" src="<?php echo base_url('assets/vendors/toastr/js/toastr.min.js.pagespeed.js'); ?>"></script>
+  <!-- <script type="text/javascript" src="<?php //echo base_url('assets/js/toastr_notifications.js'); ?>"></script> -->
+  <!-- end of toastr -->
+
   <!-- Custom js for this page-->
   <script src="<?php echo $base; ?>assets/js/dashboard.js"></script>
   <!-- End custom js for this page-->

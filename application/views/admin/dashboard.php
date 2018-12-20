@@ -114,7 +114,7 @@ include "template/sidebar.php";
 <script type="text/javascript">
 var ctx = document.getElementById("myChart");
 var dataVal = JSON.parse('<?php echo $buildDataJson; ?>');
-console.log(dataVal);
+// console.log(dataVal);
 
 var myChart = new Chart(ctx, {
     type: 'bar',

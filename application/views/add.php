@@ -38,14 +38,14 @@ $query .= ' '. $where;
 $parentModel='';
 }else{
   $dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
-  // $query = "select * from $model where $model.lecturer_id = ?";
-  // $parentModel = $model;
 $where = " where lecturer.id = $dataId";
 }
+
 if($model == 'chapter_in_book_published' && $this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'){
   $tableExclude = array('editors_id');
 }
 
+// this is the lecturer section
 if($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'){
 // $tableData= $this->queryHtmlTableModel->getHtmlTableWithQuery($query,array($dataId),$count,$tableAction,null,true,0,50,$parentModel,$tableExclude);
 if(!empty($tableExclude)){
@@ -54,13 +54,14 @@ if(!empty($tableExclude)){
   $tableExclude = array('date_created','lecturer_id');
 }
 $order = " order by ID desc ";
-$tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true,$order,$where,$append);
+$tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true,$order,$where,$append,true);
 }
+// this is for the admin section
 else{
   if ($model == 'role') {
     $tableData= $this->queryHtmlTableModel->getHtmlTableWithQuery($query,array($dataId),$count,$tableAction);
   }else{
-    $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true);
+    $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,20,true,'order by ID desc','',array(),true);
   }
 }
 
@@ -221,9 +222,26 @@ else{
 						       echo $tableData;
 						    ?>
 	      			</div>
+              <div class="col-sm-4" style="margin:10px;">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Action
+                  </button>
+                  <div>
+                    <input type="hidden" name="modelAction" id="modelAction" value="<?php echo $model; ?>">
+                    <input type="hidden" name="actionUrl" id="actionUrl" value='<?php echo base_url("ac/multipleAction/$model");?>'>
+                  </div>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="javascript:void(0);" name="multipleDelete" id="multipleDelete">
+                      <i class="fa fa-reply fa-fw"></i>Delete
+                    </a>
+                  </div>
+                </div>
+              </div>
 	      		</div>
 	      	</div>
       	</div>
+
         <?php if($append != ''): ?>
         <div class="row">
           <div class="col-lg-12">
@@ -342,6 +360,7 @@ else{
        //rebind the autoload functions inside
        $('#modal-edit').modal();
     }
+
     function ajaxFormSuccess(target,data) {
       if (data.status) {
         inserted=true;
