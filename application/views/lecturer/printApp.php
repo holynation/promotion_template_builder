@@ -645,7 +645,7 @@ else{
 					    						</div>
 					    						<div class="col-sm-11" style="margin-left:-6%;">
 					    							<li id="single-listSub">
-														<?php echo $bp->author_names ;?> 
+														<?php  echo boldUser($bp->author_names,$lecturer);?>
 														<?php echo punctuateStr(addParenthesis($bp->year_of_publication,'(',')')); ?>
 														<?php echo "<i>". punctuateStr($bp->title_of_book,'.') ."</i>"; ?>
 														<?php echo punctuateStr($bp->city_of_publication,':') ?>
@@ -693,7 +693,7 @@ else{
 												</div>
 												<div class="col-sm-11" style="margin-left:-6%;">
 													<li id="single-listSub">
-													 	<?php echo ucfirst($chapters->author_names); ?>
+													 	<?php echo boldUser(ucfirst($chapters->author_names),$lecturer); ?>
 													 	<?php echo punctuateStr(addParenthesis($chapters->year_of_publication,'(',')')); ?>
 													 	<?php echo punctuateStr($chapters->title_of_chapter,'.'); ?>
 													 	<?php $editors = "In $chapters->editor_names (Eds.)";
@@ -745,7 +745,7 @@ else{
 												</div>
 												<div class="col-sm-11" style="margin-left:-6%;">
 													<li id="single-listSub">
-														<?php echo ucfirst($conf->author_names); ?>
+														<?php echo boldUser(ucfirst($conf->author_names),$lecturer); ?>
 														<?php echo punctuateStr(addParenthesis($conf->year_publish,'(',')'),'.'); ?>
 														<?php echo punctuateStr($conf->article_title); ?>
 													<?php $editors = "In $chapters->editor_names (Eds.).";
@@ -781,7 +781,7 @@ else{
 												</div>
 												<div class="col-sm-11" style="margin-left:-6%;">
 													<li id="single-listSub">
-															<?php echo ucfirst($patent->author_names); ?>
+															<?php echo boldUser(ucfirst($patent->author_names),$lecturer); ?>
 															<?php echo punctuateStr(addParenthesis($patent->patent_year,'(',')'),'.'); ?>	
 															<?php echo "<i>".punctuateStr($patent->title_of_patent,'.')."</i>"; ?>
 															<?php echo punctuateStr($patent->patent_no,'.'); ?>
@@ -827,7 +827,7 @@ else{
 												</div>
 												<div class="col-sm-11" style="margin-left:-6%;">
 													<li id="single-listSub">
-											 		<?php echo ucfirst($journal->author_names); ?>
+											 		<?php echo boldUser(ucfirst($journal->author_names),$lecturer); ?>
 											 		<?php echo punctuateStr(addParenthesis($journal->journal_year,'(',')'),'.'); ?>
 											 		<?php echo punctuateStr($journal->article_title,'.'); ?>
 											 		<?php echo "<i>".$journal->journal_name ."</i>"; ?>
@@ -888,7 +888,7 @@ else{
 												</div>
 												<div class="col-sm-11" style="margin-left:-6%;">
 													<li id="single-listSub">
-												 		<?php echo ucfirst($accept_book->author_names); ?>
+												 		<?php echo boldUser(ucfirst($accept_book->author_names),$lecturer); ?>
 												 		<?php echo punctuateStr($accept_book->article_title,'.'); ?>
 												 		<?php echo "<i>".$accept_book->journal_name ."</i>"; ?>
 												 		<?php echo addParenthesis($accept_book->country,'(',')'); ?>
@@ -936,7 +936,7 @@ else{
 												</div>
 												<div class="col-sm-11" style="margin-left:-6%;">
 													<li id="single-listSub">
-												 		<?php echo ucfirst($report->author_names); ?>
+												 		<?php echo boldUser(ucfirst($report->author_names),$lecturer); ?>
 												 		<?php echo punctuateStr(addParenthesis($report->report_year,'(',')'),'.'); ?>
 												 		<?php echo punctuateStr($report->report_title,'.'); ?>
 												 		<?php echo punctuateStr($report->organisation_report_submitted,'.'); ?>
