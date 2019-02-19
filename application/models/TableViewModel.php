@@ -7,7 +7,7 @@ class TableViewModel extends CI_Model
 	private $modelFolderName= 'entities';
 	private $statusArray = array(1=>'enabled',0=>'disabled');
 	private $booleanArray = array(0 =>'No',1=>'Yes' );
-	private $defaultPagingLength =100;
+	private $defaultPagingLength =50;
 	public $export=false;
 	function __construct()
 	{
@@ -47,7 +47,7 @@ class TableViewModel extends CI_Model
 		return $this->loadTable($model,$data,$message='',$exclusionArray,$action,$paged,$start,$length);
 	}
 
-	private function loadTable($model,$data,$totalRow,$exclusionArray,$action,$paged,$start,$length,$removeId=true,$appendForm=array()){
+	private function loadTable($model,$data,$totalRow,$exclusionArray,$action,$paged,$start,$length,$removeId=true,$appendForm=array(),$multipleAction){
 		if (!$this->validateModelNameAndAccess($model)) {
 			return false;
 		}
@@ -62,16 +62,18 @@ class TableViewModel extends CI_Model
 		}
 		$header = $this->getHeader($model,$exclusionArray,$removeId);
 		$result=$this->openTable();
-		$result.=$this->generateheader($header,$action,$appendForm);
-		$result.=$this->generateTableBody($model,$data,$exclusionArray,$actionArray,$appendForm);
+		$result.=$this->generateheader($header,$action,$appendForm,$multipleAction);
+		$result.=$this->generateTableBody($model,$data,$exclusionArray,$actionArray,$appendForm,$multipleAction);
 		$result.=$this->closeTable();
+
 		// $size = $length?$length:$this->defaultPagingLength;
 		if ($paged && $totalRow > $length) {
 			$result.=$this->generatePagedFooter($totalRow,$start,$length);//for testing sake
 		}
 		return $result;
 	}
-	public function getTableHtml($model,&$message='',$exclusionArray=array(),$action=null,$paged= true,$start=0,$length=NULL,$resolve=true,$sort=' order by ID desc ',$where='',$appendForm=array()){
+	// the multipleAction arg is for performing multiple action using checkbox
+	public function getTableHtml($model,&$message='',$exclusionArray=array(),$action=null,$paged= true,$start=0,$length=NULL,$resolve=true,$sort=' order by ID desc ',$where='',$appendForm=array(),$multipleAction=false){
 		loadClass($this->load,$model);
 		if ($paged) {
 			$length = $length?$length:$this->defaultPagingLength;
@@ -79,10 +81,16 @@ class TableViewModel extends CI_Model
 		//use get function for the len and the start index for the sorting
 		$start = (isset($_GET['p_start'])&& is_numeric($_GET['p_start']) )?(int)$_GET['p_start']:$start;
 		$length = (isset($_GET['p_len'])&& is_numeric($_GET['p_len']) )?(int)$_GET['p_len']:$length;
+
 		// $data = $this->export?$this->$model->allNonObject($message,$resolve,0,null,$sort):$this->$model->all($message,$resolve,$start,$length,$sort,$where);
 		$data = $this->$model->all($message,$resolve,$start,$length,$sort,$where);
-		return $this->export?$this->loadExportTable($model,$data):$this->loadTable($model,$data,$message,$exclusionArray,$action,$paged,$start,$length,true,$appendForm);
-		
+
+		$countAll = ''; // using this to count all the records in the model
+		if($paged){
+			$countAll = $this->db->count_all($model);
+		}
+		// return $this->export?$this->loadExportTable($model,$data):$this->loadTable($model,$data,$message,$exclusionArray,$action,$paged,$start,$length,true,$appendForm,$multipleAction);
+		return $this->export?$this->loadExportTable($model,$data):$this->loadTable($model,$data,$countAll,$exclusionArray,$action,$paged,$start,$length,true,$appendForm,$multipleAction);
 	}
 	public function getTableHtmlExtra($model,&$message='',$exclusionArray=array(),$action=null,$paged= true,$start=0,$length=NULL,$resolve=true,$sort=' order by ID desc '){
 		loadClass($this->load,$model);
@@ -155,17 +163,25 @@ class TableViewModel extends CI_Model
 	private function openTable(){
 		return "  <div class=\"box\"><div class=\"table-responsive no-padding\"><table class='table table-bordered'> \n";
 	}
-	private function generateTableBody($model,$data,$exclusionArray,$actionArray,$appendForm=array()){
+	private function generateTableBody($model,$data,$exclusionArray,$actionArray,$appendForm=array(),$multipleAction){
 		$result ='<tbody>';
 		for ($i=0; $i < count($data); $i++) { 
 			$current= $data[$i];
-			$result.=$this->generateTableRow($model,$current,$exclusionArray,$actionArray,@$_GET['p_start']+$i,$appendForm);
+			$result.=$this->generateTableRow($model,$current,$exclusionArray,$actionArray,@$_GET['p_start']+$i,$appendForm,$multipleAction);
 		}
 		$result.='</tbody>';
 		return $result;
 	}
-	private function generateTableRow($model,$rowData,$exclusionArray,$actionArray,$index=false,$appendForm=array()){
-		$result="<tr data-row-identifier='{$rowData->ID}' class='best-content'>";
+	private function generateTableRow($model,$rowData,$exclusionArray,$actionArray,$index=false,$appendForm=array(),$multipleAction){
+		$result="<tr data-row-identifier='{$rowData->ID}' class='best-content' id='best-content'>";
+
+		// this is to add multiple checkbox functionality
+		if($multipleAction){
+			$id = $rowData->ID;
+			$inputForm = "<label class='form-check-label'><input type='checkbox' class='form-check-input form-control' name='".$model.'Box'."[]' id='".$model.'Box'."[]' value='$id' /></label>";
+			$result.="<td><div class='form-check form-check-flat'>$inputForm</div></td>";
+		}
+
 		if(!empty($appendForm)){
 			extract($appendForm);
 			$id = $rowData->ID;
@@ -221,11 +237,14 @@ class TableViewModel extends CI_Model
 	private function closeTable(){
 		return '</table></div></div>';
 	}
-	private function generateHeader($header,$action,$appendForm=array()){
+	private function generateHeader($header,$action,$appendForm=array(),$multipleAction){
 		$sn = "<th>S/N</th>";
 		$emptyHeader='';
 		if(!empty($appendForm)){
-			$emptyHeader = "<th></th>";
+			$emptyHeader .= "<th></th>";
+		}
+		if($multipleAction){
+			$emptyHeader .= "<th></th>";
 		}
 		$result="<thead>
 			<tr> $emptyHeader $sn";
@@ -245,12 +264,21 @@ class TableViewModel extends CI_Model
 	//this function generate page footer will link to navigate through the pages
 	 function generatePagedFooter($totalPage,$currentcount,$pageLength){
 	 	$beginCount =10;
+	 	
 	 	if ($totalPage <= $pageLength) {
 	 		return;
 	 	}
+	 	// $links = base_url('');
 		$result="<div class='paging'>
-		<div style='display:inline_block'>page size : <input type='text' style='width:50px;display:inline_block;background-color:white;' id='page_size'  value='$pageLength' /></div>
-			<ul class='pagination pagination-sm no-margin'>
+		<div>
+			<div class='form_group'>
+				<label class='col-sm-3 col-form-label'>Page Size :</label>
+				<div class='col-sm-9'>
+					<input class='form-control' type='text' style='width:50px;display:inline_block;background-color:white;' id='page_size'  value='$pageLength' />
+				</div>
+			</div>
+		</div>
+			<ul class='pagination rounded-separated pagination-danger'>
 			";
 		// $pageArray=$this->generatePageArray($totalPage,$pageLength);
 		$totalPaged = ceil($totalPage/$pageLength);
@@ -263,46 +291,57 @@ class TableViewModel extends CI_Model
 			$prev = $currentIndex> 0? ($currentIndex-1):0;
 			$prev*=$pageLength;
 			$disable = $prev==0?'disabled':'';
-			$result.="<li data-start='$prev' data-length='$pageLength' class='paged-item $disable'>«</li>";
+			$result.="<li data-start='$prev' data-length='$pageLength' class='page-item $disable'>«</li>";
 			$len = $start+ceil($beginCount/2);
 			for ($i=$start; $i < $len; $i++) { 
 				$current =1+ $i;
-				$itemClass ='paged-item';
+				$itemClass ='page-item';
 				if ($i==$currentIndex) {
-					$itemClass ='active paged-item';
+					$itemClass ='active page-item';
 				}
 				$end = $current*$pageLength;
-				$result.="<li data-start='$end' data-length='$pageLength' class='$itemClass '>$current</li>";
+				$result.="<li data-start='$end' data-length='$pageLength' class='$itemClass '>
+				<a class='page-link'> $current</a>
+				</li>";
 				// $start = $end;
 			}
-			$result.="<li data-start='' data-length='$pageLength' class='paged-item  break'>...</li>";
+			$result.="<li data-start='' data-length='$pageLength' class='page-item  break'>
+			<a class='page-link'>...</a>
+			</li>";
 			$len =floor($beginCount/2);
 			$start = ($totalPaged-(1+$len));
 			$len+=$start;
 			for ($i=$start; $i < $len; $i++) { 
 				$current =1+ $i;
-				$itemClass ='paged-item';
+				$itemClass ='page-item';
 				if ($i==$currentIndex) {
-					$itemClass ='paged-item active';
+					$itemClass ='page-item active';
 				}
 				$end = $current * $pageLength;
-				$result.="<li data-start='$end' data-length='$pageLength' class='$itemClass '>$current</li>";
+				$result.="<li data-start='$end' data-length='$pageLength' class='$itemClass '>
+				<a class='page-link'>$current</a>
+				</li>";
 				// $start = $end;
 			}
 			$prev = $currentIndex < $totalPaged? ($currentIndex+1):$totalPaged-1;
 			$last =$prev *$pageLength;
-			$result.="<li data-start='$last' data-length='$pageLength' class='paged-item'>»</li>";
+			$result.="<li data-start='$last' data-length='$pageLength' class='page-item'>
+			<a class='page-link'>»</a>
+			</li>";
 			$len = $start+$beginCount;
 		}
 		else{
-			for ($i=0; $i < $totalPaged; $i++) { 
-				$current =1+ $i;
-				$itemClass ='paged-item';
+			for ($i=0; $i <= $totalPaged; $i++) { 
+				$current =$i + 1;
+				$itemClass ='page-item';
 				if ($i==$currentIndex) {
-					$itemClass ='paged-item active';
+					$itemClass ='page-item active';
 				}
+				$start =  ($current > 1) ? ($current * $pageLength) - $pageLength : 0;
 				$end = $start * $pageLength;
-				$result.="<li data-start='$end' data-length='$pageLength' class='$itemClass'>$current</li>";
+				$result.="<li data-start='$end' data-length='$pageLength' class='$itemClass'>
+				<a class='page-link' href='?p_start=".$start."&p_len=".$pageLength."'>$current</a>
+				</li>";
 				// $start = $end;
 			}
 		}
