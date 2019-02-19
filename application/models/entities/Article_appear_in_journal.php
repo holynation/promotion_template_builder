@@ -68,7 +68,7 @@ function getLecturer_idFormField($value = ''){
  function getVolume_noFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='volume_no'>Volume No (just state the number)</label>
-				<input type='number' name='volume_no' id='volume_no' value='$value' class='form-control' placeholder='e.g Vol. 2' required />
+				<input type='number' min='0' name='volume_no' id='volume_no' value='$value' class='form-control' placeholder='e.g Vol. 2' required />
 			</div>";
 } 
  function getJournal_numFormField($value = ''){
@@ -92,7 +92,7 @@ function getLecturer_idFormField($value = ''){
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' required />
+				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' required />
 			</div>";
 } 
 function getAsterisksFormField($value=''){

@@ -859,6 +859,13 @@ function childLoad(target,data){
 		loadSelect(target,fromServer);
 		return;
 	}
+	// else if(target[0].tagName.toLowerCase() == 'input'){
+	// 	// console.log(target[0].attributes);
+	// 	var currentElement = target[0];
+	// 	console.log(currentElement);
+	// 	var attr = ;
+	// 	console.log(attr);
+	// }
 	// if not select just
 	target.html(data);
 }

@@ -72,7 +72,7 @@ else{
                                     </div>
                                     <div class="form-group">
                                       <label for="total_person">Number of persons</label>
-                                      <input type="number" name="total_person" id="total_person" class="form-control" placeholder="number of person that took the course" required/>
+                                      <input type="number" min="0" name="total_person" id="total_person" class="form-control" placeholder="number of person that took the course" required/>
                                     </div>
                                     <?php 
                                     $arr =array('Undergraduate','Postgraduate');

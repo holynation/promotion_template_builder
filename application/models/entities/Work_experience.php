@@ -63,7 +63,8 @@ function getLecturer_idFormField($value = ''){
 	$result = "<div class='form-group'>
 				<label for='end_date'>End Date</label>";
 			$option = getDropDownYear($value);
-	$result.="<select name='end_date' id='end_date' class='form-control'>
+	// $result.="<select name='end_date' id='end_date' class='form-control autoload' data-load='validateWorkDate' data-depend='start_date' data-child='within_a_year'>
+			$result.="<select name='end_date' id='end_date' class='form-control'>
 			<option value=''>..choose....</option>
 					 $option
 				</select>";

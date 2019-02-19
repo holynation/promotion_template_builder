@@ -68,7 +68,7 @@ function getLecturer_idFormField($value = ''){
  function getTotal_pageFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='total_page'>Total No. Of Pages (state the number only)</label>
-				<input type='number' name='total_page' id='total_page' value='$value' class='form-control' required />
+				<input type='number' min='0' name='total_page' id='total_page' value='$value' class='form-control' required />
 			</div>";
 } 
  function getCountryFormField($value = ''){
@@ -80,7 +80,7 @@ function getLecturer_idFormField($value = ''){
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' required />
+				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' required />
 			</div>";
 }
 function getAsterisksFormField($value=''){

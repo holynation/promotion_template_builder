@@ -52,12 +52,18 @@
 			if($query->num_rows() > 0 and $query1->num_rows() > 0){
 				$orderFirst = $query->result_array()[0]['orderFirst'];
 				$orderSecond = $query1->result_array()[0]['orderSecond'];
+				rterur
 
 				// echo $orderFirst ."||".$orderSecond;
-				if($orderFirst < $orderSecond){
-					echo createJsonMessage('status',false,'message','Sorry your Present Post cannot be lesser than your First Academic appointment...');exit;
-				}
-				
+				// if($orderFirst < $orderSecond){
+				// 	echo createJsonMessage('status',false,'message','Sorry your Present Post cannot be lesser than your First Academic appointment...','flagAction',false);exit;
+				// }
+			}
+		}
+
+		public function validateWorkDate($end,$start){
+			if($end == $start){
+				echo createJsonMessage('status',true,'message',"<label>testing</label>");exit;
 			}
 		}
 

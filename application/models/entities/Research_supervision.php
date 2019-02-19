@@ -39,13 +39,13 @@ function getLecturer_idFormField($value = ''){
  function getMsc_totalFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='msc_total'>Msc Total</label>
-				<input type='number' name='msc_total' id='msc_total' value='$value' class='form-control' required />
+				<input type='number' min='0' name='msc_total' id='msc_total' value='$value' class='form-control' required />
 			</div>";
 } 
  function getPhd_totalFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='phd_total'>Phd Total</label>
-				<input type='number' name='phd_total' id='phd_total' value='$value' class='form-control' />
+				<input type='number' min='0' name='phd_total' id='phd_total' value='$value' class='form-control' />
 			</div>";
 } 
  function getCategoryFormField($value = ''){

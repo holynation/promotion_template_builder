@@ -48,7 +48,7 @@ function getLecturer_idFormField($value = ''){
 			
 			$result ="<div class='form-group'>
 			<label for='first_academic_appointment'>First Academic Appointment</label>";
-			$option = $this->loadOption($fk,$value,'','appointment_order',false);
+			$option = $this->loadOption($fk,$value,'','appointment_order',true);
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='first_academic_appointment' id='first_academic_appointment' class='form-control' required>
 						$option
@@ -75,7 +75,7 @@ function getLecturer_idFormField($value = ''){
 			
 			$result ="<div class='form-group'>
 			<label for='present_post'>Present Post</label>";
-			$option = $this->loadOption($fk,$value,'','appointment_order',false);
+			$option = $this->loadOption($fk,$value,'','appointment_order',true);
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='present_post' id='present_post' class='form-control autoload'
 			data-load='checkAppointment' data-depend='first_academic_appointment' required>

@@ -104,7 +104,7 @@ function getLecturer_idFormField($value = ''){
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' required />
+				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' required />
 			</div>";
 } 
 function getAsterisksFormField($value=''){

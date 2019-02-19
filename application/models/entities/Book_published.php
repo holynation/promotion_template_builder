@@ -74,7 +74,7 @@ function getLecturer_idFormField($value = ''){
  function getTotal_no_pagesFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='total_no_pages'>Total No Pages</label>
-				<input type='number' name='total_no_pages' id='total_no_pages' value='$value' class='form-control' placeholder='250' required />
+				<input type='number' min='0' name='total_no_pages' id='total_no_pages' value='$value' class='form-control' placeholder='250' required />
 			</div>";
 } 
  function getIsbn_noFormField($value = ''){
@@ -92,7 +92,7 @@ function getLecturer_idFormField($value = ''){
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='number' name='contribution' id='contribution' value='$value' class='form-control' placeholder='30' required />
+				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' placeholder='30' required />
 			</div>";
 } 
 function getAsterisksFormField($value=''){
