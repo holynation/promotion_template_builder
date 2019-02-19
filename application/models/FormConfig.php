@@ -33,7 +33,7 @@ class FormConfig extends CI_Model
 		if($userType == 'lecturer'){
 			$action = array('edit' => 'edit/lecturer','profile' => 'vc/lecturer/profile');
 		}else{
-			$action = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer','profile'=>'vc/lecturer/profile','print'=>'vc/lecturer/printApp');
+			$action = array('enable'=>'getEnabled','edit' => 'edit/lecturer','delete' => 'delete/lecturer','profile'=>'vc/lecturer/profile','print report'=>'vc/lecturer/printApp');
 		}
 		return $action;
 	}

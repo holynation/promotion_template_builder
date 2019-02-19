@@ -17,6 +17,14 @@ $page_hint = ($configData && array_key_exists('page_hint', $configData))?$config
 $form_hint = ($configData && array_key_exists('form_hint', $configData))?$configData['form_hint']:'';
 $showAppendForm = ($configData && array_key_exists('showAppendForm', $configData))?$configData['showAppendForm']:false;
 $showAsteriskInfo = ($configData && array_key_exists('asterisk_info', $configData))?$configData['asterisk_info']:false;
+// $showStatus = ($configData && array_key_exists('show_add', $configData))?$configData['show_add']:true;
+
+$show_add = '';
+if($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer' && $model == 'lecturer'){
+  $show_add = false;
+}else{
+  $show_add = true;
+}
 
 $append='';
 if($showAppendForm){
@@ -99,7 +107,7 @@ else{
               //     $disable = ($checkExists && $model=='lecturer') ? "disabled" : '';
               //   }
                ?>
-               <?php if($this->webSessionManager->getCurrentUserProp('user_type') != 'lecturer'): ?>
+               <?php if($show_add): ?>
 	            <div class="col-md-3 col-sm-3">
 		            <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#basic_modal" data-animate-modal="zoomInDown">Add
 		            </button>

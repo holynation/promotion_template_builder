@@ -151,4 +151,4 @@
       top: -5px;
     }
   </style>
-<div id="notification" style="" class="text-center"></div>
+<div id="notification" class="text-center"></div>

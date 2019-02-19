@@ -558,23 +558,28 @@ class Crud extends CI_Model
 		return $result;
 	}
 
-	
-
 	//the array must contain the table name and the display value field then it can load options
-	public function loadOption($array,$val=false,$prepend =''){
+	public function loadOption($array,$val=false,$prepend ='',$orderBy='',$hidden=false){
 		extract($array);
-		
+		// the $hidden parameter means to use the display value has the hidden value for select option
+
+		if($orderBy != ''){
+			$orderBy = $orderBy;
+		}else{
+			$orderBy = $display;
+		}
+
 		if (is_array($table) && count($table)==2) {
 			$query = $this->buildJoin($table,$display);
 		}
 		else{
-			$query = "SELECT id,$display as value FROM $table order by $display asc";
+			$query = "SELECT id,$display as value FROM $table order by $orderBy asc";
 		}
 		$result =$this->query($query);
 		if (is_array($prepend)) {
 			$result = array_merge($prepend,$result);
 		}
-		return $this->buildSelectOption($result,$val);
+		return $this->buildSelectOption($result,$val,$hidden);
 
 	}
 	private function buildJoin($table,$display){
@@ -600,7 +605,7 @@ class Crud extends CI_Model
 		}
 		return $result;
 	}
-	public function buildSelectOption($array,$val){
+	public function buildSelectOption($array,$val,$hidden=false){
 
 		$result = "<option value='' selected='selected'>..choose..</option>";
 		if ($val) {
@@ -609,11 +614,20 @@ class Crud extends CI_Model
 		for ($i=0; $i < count($array); $i++) {
 			$current = $array[$i];
 			extract($current);
+			$hiddenValue='';
+			if($hidden){
+				$hiddenValue = $value;
+			}else{
+				$hiddenValue= $id;
+			}
 			if ($val && $val==$id) {
 				$result.="<option value='$id' selected='selected'>$value</option>";
 				continue;
+			}else if($val && $val == $value){
+				$result.="<option value='$value' selected='selected'>$value</option>";
+				continue;
 			}
-			$result.="<option value='$id'>$value</option>";
+			$result.="<option value='$hiddenValue'>$value</option>";
 		}
 		return $result;
 	}

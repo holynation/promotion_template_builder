@@ -37,10 +37,25 @@ function getLecturer_idFormField($value = ''){
 	return getLecturerOption($value);
 }
  function getFirst_academic_appointmentFormField($value = ''){
-	return "<div class='form-group'>
-				<label for='first_academic_appointment'>First Academic Appointment</label>
-				<input type='text' name='first_academic_appointment' id='first_academic_appointment' value='$value' class='form-control' placeholder='Please do not abbreviate' required />
-			</div>";
+	$fk=array('table'=>'appointment_category','display'=>'category_name'); 
+ 	//change the value of this variable to array('table'=>'department','display'=>'department_name'); if you want to preload the value from the database where the display key is the name of the field to use for display in the table.[i.e the display key is a column name in the table specify in that array it means select id,'department_name' as value from 'department' meaning the display name must be a column name in the table model].It is important to note that the table key can be in this format[array('table' => array('department', 'another table name'))] provided that their is a relationship between these tables. The value param in the function is set to true if the form model is used for editing or updating so that the option value can be selected by default;
+
+		if(is_null($fk)){
+			return $result = "<input type='hidden' name='first_academic_appointment' id='first_academic_appointment' value='$value' class='form-control' />";
+		}
+
+		if(is_array($fk)){
+			
+			$result ="<div class='form-group'>
+			<label for='first_academic_appointment'>First Academic Appointment</label>";
+			$option = $this->loadOption($fk,$value,'','appointment_order',false);
+			//load the value from the given table given the name of the table to load and the display field
+			$result.="<select name='first_academic_appointment' id='first_academic_appointment' class='form-control' required>
+						$option
+					</select>";
+		}
+		$result.="</div>";
+		return $result;
 } 
  function getDate_of_appointmentFormField($value = ''){
 	return "<div class='form-group'>
@@ -49,10 +64,26 @@ function getLecturer_idFormField($value = ''){
 			</div>";
 } 
  function getPresent_postFormField($value = ''){
-	return "<div class='form-group'>
-				<label for='present_post'>Present Post</label>
-				<input type='text' name='present_post' id='present_post' value='$value' class='form-control' placeholder='Please do not abbreviate' required />
-			</div>";
+	$fk=array('table'=>'appointment_category','display'=>'category_name'); 
+ 	//change the value of this variable to array('table'=>'department','display'=>'department_name'); if you want to preload the value from the database where the display key is the name of the field to use for display in the table.[i.e the display key is a column name in the table specify in that array it means select id,'department_name' as value from 'department' meaning the display name must be a column name in the table model].It is important to note that the table key can be in this format[array('table' => array('department', 'another table name'))] provided that their is a relationship between these tables. The value param in the function is set to true if the form model is used for editing or updating so that the option value can be selected by default;
+
+		if(is_null($fk)){
+			return $result = "<input type='hidden' name='present_post' id='present_post' value='$value' class='form-control' />";
+		}
+
+		if(is_array($fk)){
+			
+			$result ="<div class='form-group'>
+			<label for='present_post'>Present Post</label>";
+			$option = $this->loadOption($fk,$value,'','appointment_order',false);
+			//load the value from the given table given the name of the table to load and the display field
+			$result.="<select name='present_post' id='present_post' class='form-control autoload'
+			data-load='checkAppointment' data-depend='first_academic_appointment' required>
+				$option
+			</select>";
+		}
+		$result.="</div>";
+		return $result;
 } 
  function getDate_of_present_postFormField($value = ''){
 	return "<div class='form-group'>

@@ -42,6 +42,25 @@
 			echo $this->returnJSONFromNonAssocArray($result);
 		}
 
+		public function checkAppointment($dateAppointId,$firstAppointmentId){
+			// i wanna use sql to perform the check between this parameters,read more about
+			// $sql = "select appointment_order as appoint_order from appointment_category ac where ac.category_name = ? and ac.appointment_order >= (select appointment_order from appointment_category ac2 where ac2.category_name = ?)";
+			$sql = "select appointment_order as orderFirst from appointment_category ac where ac.id = ?";
+			$query = $this->db->query($sql, array($dateAppointId));
+			$sql1 = "select appointment_order as orderSecond from appointment_category ac where ac.id = ?";
+			$query1 = $this->db->query($sql1, array($firstAppointmentId));
+			if($query->num_rows() > 0 and $query1->num_rows() > 0){
+				$orderFirst = $query->result_array()[0]['orderFirst'];
+				$orderSecond = $query1->result_array()[0]['orderSecond'];
+
+				// echo $orderFirst ."||".$orderSecond;
+				if($orderFirst < $orderSecond){
+					echo createJsonMessage('status',false,'message','Sorry your Present Post cannot be lesser than your First Academic appointment...');exit;
+				}
+				
+			}
+		}
+
 		private function returnJSONFromNonAssocArray($array){
 			//process if into id and value then
 			$result =array();

@@ -661,6 +661,7 @@ function extractRow(element){
 	return result;
 }
 
+// this function is what we use to get the autoload from the entity files
 function bindDropDown(className){
 	$('div').on('change',"."+className, function(event) {
 		event.stopImmediatePropagation();
