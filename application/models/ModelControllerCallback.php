@@ -10,7 +10,7 @@
 			parent::__construct();
 			$this->load->model('webSessionManager');
 			$this->load->helper('string');
-			$this->load->library('hash_created');
+			// $this->load->library('hash_created');
 		}
 
 		public function onLecturerInserted($data,$type,&$db,&$message)
@@ -20,7 +20,7 @@
 			loadClass($this->load,'user');
 			if ($type=='insert') {
 				// this is to update an already user in the user table
-					$param = array('user_type'=>'lecturer','username'=>$data['email'],'password'=>$this->hash_created->encode_password($data['staff_no']),'user_table_id'=>$data['LAST_INSERT_ID']);
+					$param = array('user_type'=>'lecturer','username'=>$data['email'],'password'=>md5($data['staff_no']),'user_table_id'=>$data['LAST_INSERT_ID']);
 					$std = new User($param);
 					if ($std->insert($db,$message)) {
 						return true;

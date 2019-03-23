@@ -10,7 +10,7 @@ class Book_published extends Crud {
 
 protected static $tablename = "Book_published"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('date_created','asterisks');
+static $nullArray = array('date_created','asterisks','total_no_pages','');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
@@ -68,13 +68,13 @@ function getLecturer_idFormField($value = ''){
  function getPublish_company_nameFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='publish_company_name'>Publish Company Name</label>
-				<input type='text' name='publish_company_name' id='publish_company_name' value='$value' class='form-control' required />
+				<input type='text' name='publish_company_name' id='publish_company_name' value='$value' class='form-control' />
 			</div>";
 } 
  function getTotal_no_pagesFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='total_no_pages'>Total No Pages</label>
-				<input type='number' min='0' name='total_no_pages' id='total_no_pages' value='$value' class='form-control' placeholder='250' required />
+				<input type='number' min='0' name='total_no_pages' id='total_no_pages' value='$value' class='form-control' placeholder='250' />
 			</div>";
 } 
  function getIsbn_noFormField($value = ''){

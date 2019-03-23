@@ -13,10 +13,12 @@ class ModelController extends CI_Controller
 		$this->load->model('accessControl');//for authentication authorization validation
 		// $this->load->model('entities/application_log');
 		$this->load->helper('array');
+		$this->load->helper('string');
 		$this->load->model('modelControllerDataValidator');
 		$this->load->model('webSessionManager');
 		$this->load->model('modelControllerCallback');
 		$this->load->model('entities/role');
+		// $this->load->library('hash_created');
 		if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
 			$this->role->checkWritePermission();
 		}
@@ -42,6 +44,16 @@ class ModelController extends CI_Controller
 				return;
 
 			}
+			//this is to check for the slider model
+			if($model == 'faculty_news'){
+				loadClass($this->load,'faculty_news');
+				$result = $this->faculty_news->checkLimit();
+				if($result >= 3){
+					echo createJsonMessage('status',false,'message','sorry, you\'ve reached the limit for faculty news (3)...');
+					return;
+				}
+			}
+
 			unset($_POST['MAX_FILE_SIZE']);
 			if ($model=='many') {
 				$this->insertMany($filter,$parent);
@@ -246,7 +258,15 @@ class ModelController extends CI_Controller
 		foreach ($paramFile as $name => $value) {
 			// $this->log($model,"uploading file $name");
 			if (in_array($name, $fields)) {//if the field name is present in the fields the upload the document
-				list($type,$size,$directory) = $value;
+				// print_r($value);exit;
+
+				// list($type,$size,$directory,$preserve,@$max_width,@$max_height) = $value;
+				// this is a precaution if no keys of this name are not set in the array
+				$preserve=false;
+				$max_width = 0;
+				$max_height = 0;
+				extract($value);
+
 				$method ="get".ucfirst($model)."Directory";
 				$this->load->model('uploadDirectoryManager');
 				if (method_exists($this->uploadDirectoryManager, $method)) {
@@ -256,7 +276,7 @@ class ModelController extends CI_Controller
 					}
 					$directory.=$dir;
 				}
-				$currentUpload = $this->uploadFile($model,$name,$type,$size,$directory,$message,$insertType);
+				$currentUpload = $this->uploadFile($model,$name,$type,$size,$directory,$message,$insertType,$preserve,$max_width,$max_height);
 				if ($currentUpload==false) {
 					return $parameter;
 				}
@@ -269,7 +289,7 @@ class ModelController extends CI_Controller
 		return $parameter;
 	}
 
-	private function uploadFile($model,$name,$type,$maxSize,$destination,&$message='',$insertType=false){
+	private function uploadFile($model,$name,$type,$maxSize,$destination,&$message='',$insertType=false,$preserve=false,$max_width=0,$max_height=0){
 		if (!$this->checkFile($name,$message)) {
 			return false;
 		}
@@ -279,17 +299,46 @@ class ModelController extends CI_Controller
 		$typeValid = is_array($type)?in_array(strtolower($ext), $type):strtolower($ext)==strtolower($type);
 		if (!empty($filename) &&  $typeValid  && !empty($destination)) {
 			if ($fileSize > $maxSize) {
-				$message='file too large to be saved';return false;
+				// $message='file too large to be saved';return false;
+				$calcsize = calc_size($maxSize);
+				exit(createJsonMessage('status',false,'message',"The file you are attempting to upload is larger than the permitted size ($calcsize)"));
 			}
-			
-			$user = $this->webSessionManager->getCurrentuserProp('user_type').$this->webSessionManager->getCurrentuserProp('ID');
-			$new_name = $this->webSessionManager->getCurrentuserProp('user_table_id').'_'.uniqid();
+
 			$destination='uploads/'.$destination;
 			if (!is_dir($destination)) {
 				mkdir($destination,0777,true);
 			}
-			$pos = $this->getUploadID($model,$insertType) .'_'.$new_name;
-			$destination.="$pos.".$ext;//the test should be replaced by the name of the current user.		
+
+			// using this is to check whether max_width or max_height was passed
+			if(($max_width !== 0 && $max_height !== 0) || $max_width !== 0 || $max_height !== 0){
+                $config['max_width'] = $max_width;
+                $config['max_height'] = $max_height;
+                $temp_name = $_FILES[$name]['tmp_name'];
+
+                if (!$this->isAllowedDimensions($temp_name,$max_width,$max_height))
+                {
+                    // $message = 'The image you are attempting to upload doesn\'t fit into the allowed dimensions.';return false;
+                    exit(createJsonMessage('status',false,'message',"The image you are attempting to upload doesn't fit into the allowed dimensions(max_width:$max_width x max_height:$max_height)."));
+                }
+			}
+
+			$naming= '';
+			$new_name = $this->webSessionManager->getCurrentuserProp('user_table_id').'_'.uniqid()."_".date('Y-m-d').'.'.$ext;
+			if($insertType){
+				$getUpload = $this->getUploadID($model,$insertType,$name);
+				if($getUpload === 'insert'){
+					// this means inserting
+					$naming = ($preserve) ? $filename : $new_name; 
+				}else{
+					$naming = basename($getUpload); // this means updating
+				}
+				
+			}else{
+				// this means inserting
+				$naming = ($preserve) ? $filename : $new_name; 
+			}
+			$pos = $naming;
+			$destination.=$pos;//the test should be replaced by the name of the current user.
 			if(move_uploaded_file($_FILES[$name]['tmp_name'], $destination)){
 				$message=$destination;
 				return true;//$destination;
@@ -300,18 +349,57 @@ class ModelController extends CI_Controller
 			}
 		}
 		else{
-			$message = "error while uploading file. please try again";return false;
-			// exit(createJsonMessage('status',false,'message','error while uploading file. please try again conddition not satisfy'));
+			// $message = "error while uploading file. please try again";return false;
+			exit(createJsonMessage('status',false,'message','error while uploading file. please try again condition not satisfy'));
 		}
-		$message='error while uploading file. please try again';
-		return false;
+		// $message='error while uploading file. please try again';return false;
+		exit(createJsonMessage('status',false,'message','error while uploading file. please try again'));
 	}
-	private function getUploadID($model,$id)
+	private function isAllowedDimensions($temp,$max_width=0,$max_height=0)
+	{
+
+		if (function_exists('getimagesize'))
+		{
+			$D = @getimagesize($temp);
+
+			if ($max_width > 0 && $D[0] > $max_width)
+			{
+				return FALSE;
+			}
+
+			if ($max_height > 0 && $D[1] > $max_height)
+			{
+				return FALSE;
+			}
+
+			// if ($min_width > 0 && $D[0] < $min_width)
+			// {
+			// 	return FALSE;
+			// }
+
+			// if ($min_height > 0 && $D[1] < $min_height)
+			// {
+			// 	return FALSE;
+			// }
+		}
+
+		return TRUE;
+	}
+	private function getUploadID($model,$id,$name='')
 	{
 		if ($id) {
-			return $id;
+			// return $id;
+			// this means that it is updating
+			$query="select $name from $model where id = ?";
+			$result = $this->db->query($query,array($id));
+			$result=$result->result_array();
+			
+			// the return message 'insert' is a rare case whereby there is no image at first
+			// yet one want to add the image through update action
+			return (!empty($result[0][$name])) ? $result[0][$name] : 'insert';
 		}
 		else{
+			// this means it is inserting
 			$query="select id from $model order by id desc limit 1";
 			$result = $this->db->query($query);
 			$result=$result->result_array();
@@ -683,7 +771,7 @@ class ModelController extends CI_Controller
 		$data['pageTitle']='file upload report';
 		if ($result) {
 			$data['status']=true;
-			$data['message']=$message;
+			$data['message']= ($message != '') ? $message : 'You have successfully performed the operation...';
 			$data['model']=$model;
 			$data['insert_info']=$this->db->conn_id->info;
 		}
@@ -696,7 +784,7 @@ class ModelController extends CI_Controller
 			}
 		}
 
-		$arr =array('student_biodata','applicant','admin','lecturer');
+		$arr =array('admin','lecturer');
 		if ($result && in_array($model, $arr)) {
 			$data['status']=$this->updateUserType($model,$data);
 			if ($data['status']) {
@@ -712,6 +800,24 @@ class ModelController extends CI_Controller
 		$this->load->view('uploadreport',$data);
 	}
 
+	private function updateUserType($model,$param)
+	{
+		$username='';
+		$password='surname';
+		if ($model=='student_biodata') {
+			$username='matric_number';
+		}
+		if ($model=='lecturer') {
+			$username ="email";
+			$password = "staff_no";
+		}
+		if ($model=='admin') {
+			$username ='email';
+		}
+		$query ="insert ignore into user(username,password,user_type,user_table_id) select $username,md5(lower($password)),'$model',ID from $model where ID not in (select user_table_id from user where user_type='$model')";
+		$result =$this->db->query($query);
+		return $result;
+	}
 
 	private function loadUploadedFileContent($filePath=false){
 		$filename = 'bulk-upload';
@@ -763,8 +869,6 @@ class ModelController extends CI_Controller
 				}
 			}
 			$sessionJoin = $sessionJoin;
-			// echo $sessionJoin;exit;
-
 			$query = "insert ignore into teaching_experience(lecturer_id,course_code,course_title,session_name,total_person,category) values(?,?,?,?,?,?)";
 			$result = $this->db->query($query,array($lecturer_id,$course_code,$course_title,$sessionJoin,$total_person,$category));
 			if ($result) {

@@ -273,6 +273,8 @@ public function getModules()
 				'Dev App'=>'vc/admin/dev_app',
 				'Department'=>'vc/add/department',
 				'Faculty'=>'vc/add/faculty',
+				'Faculty News' => 'vc/add/faculty_news',
+				'Faculty Deans' => 'vc/add/past_deans',
 				'Appointment category' => 'vc/add/appointment_category',
 				'User title'=>'vc/add/title'
 			)

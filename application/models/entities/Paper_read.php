@@ -10,7 +10,7 @@ class Paper_read extends Crud {
 
 protected static $tablename = "Paper_read"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('middlename','date_created');
+static $nullArray = array('middlename','date_created','author_names');
 static $compositePrimaryKey = array('major_conf_attended_id','title_of_paper');
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
@@ -72,14 +72,14 @@ function getLecturer_idFormField($value = ''){
 }
  function getAuthor_namesFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='author_names'>Author Names (e.g Abdukadir, A.A. and Ogunlola, S.K.)</label>
-				<textarea name='author_names' id='author_names' class='form-control' placeholder='please list all the names of author separated by commas' required>$value</textarea>
+				<label for='author_names'>Reader's Names (e.g Abdukadir, A.A. and Ogunlola, S.K.)</label>
+				<textarea name='author_names' id='author_names' class='form-control' placeholder='please list all the names of author separated by commas'>$value</textarea>
 			</div>";
 }  
  function getTitle_of_paperFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='title_of_paper'>Title Of Paper</label>
-				<input type='text' name='title_of_paper' id='title_of_paper' value='$value' class='form-control' required />
+				<textarea name='title_of_paper' id='title_of_paper' class='form-control' required>$value</textarea>
 			</div>";
 } 
  function getDate_createdFormField($value = ''){

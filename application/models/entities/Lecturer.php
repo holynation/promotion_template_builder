@@ -10,21 +10,21 @@ class Lecturer extends Crud {
 
 protected static $tablename = "Lecturer"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('middlename','maiden_name','address','state_of_origin','lga_of_origin','disability','nationality','img_path','marital_status','religion','status');
+static $nullArray = array('middlename','maiden_name','address','state_of_origin','lga_of_origin','disability','nationality','img_path','marital_status','religion','status','maiden_name','dob');
 static $compositePrimaryKey = array('surname','firstname','middlename');
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = array('surname','firstname','staff_no');// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array('staff_no','email','phone_number');
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('title_id' => 'int','surname' => 'varchar','firstname' => 'varchar','middlename' => 'varchar','maiden_name' => 'varchar','staff_no' => 'varchar','department_id' => 'int','email' => 'text','phone_number' => 'text','gender' => 'enum','dob' => 'date','address' => 'varchar','marital_status' => 'enum','state_of_origin' => 'varchar','lga_of_origin' => 'varchar','religion' => 'enum','nationality' => 'varchar','status' => 'tinyint','disability' => 'tinyint','img_path' => 'varchar');
+static $typeArray = array('title_id' => 'int','surname' => 'varchar','firstname' => 'varchar','middlename' => 'varchar','maiden_name' => 'varchar','staff_no' => 'varchar','department_id' => 'int','email' => 'text','phone_number' => 'text','gender' => 'enum','dob' => 'date','address' => 'varchar','marital_status' => 'enum','state_of_origin' => 'varchar','lga_of_origin' => 'varchar','religion' => 'enum','highest_qualification' => 'varchar','nationality' => 'varchar','status' => 'tinyint','disability' => 'tinyint','img_path' => 'varchar');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','title_id' => '','surname' => '','firstname' => '','middlename' => '','maiden_name' => '','department_id' => '','email' => '','phone_number' => '','dob' => '','address' => '','state_of_origin' => '','staff_no' => '','lga_of_origin' => '','status' => '','disability' => '','nationality' => '','gender' => '','img_path' => '','marital_status' => '','religion' => '');
-/*associative array of fields that have default value*/ 
+static $labelArray = array('ID' => '','title_id' => '','surname' => '','firstname' => '','middlename' => '','maiden_name' => '','department_id' => '','email' => '','phone_number' => '','dob' => '','address' => '','state_of_origin' => '','staff_no' => '','lga_of_origin' => '','status' => '','disability' => '','nationality' => '','gender' => '','img_path' => '','marital_status' => '','religion' => '','highest_qualification' => '');
+/*associative array of fields that have default value*/
 static $defaultArray = array('status' => '1');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
 //the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.
-static $documentField = array('img_path'=>array(array('jpeg','jpg','png','gif'),'10000888','lecturer/')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
+static $documentField = array('img_path'=>array(array('jpeg','jpg','png','gif'),'1048576','lecturer/')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
 static $relation = array('title' => array('title_id','id')
 ,'department' => array('department_id','id')
 );
@@ -126,7 +126,7 @@ function getTitle_idFormField($value = ''){
  function getDobFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='dob'>Dob</label>
-				<input type='date' name='dob' id='dob' value='$value' class='form-control' required />
+				<input type='date' name='dob' id='dob' value='$value' class='form-control' />
 			</div>";
 } 
  function getStatusFormField($value = ''){
@@ -209,7 +209,13 @@ function getLga_of_originFormField($value = ''){
 				<label for='nationality'>Nationality</label>
 				<input type='text' name='nationality' id='nationality' value='$value' class='form-control' />
 			</div>";
-} 
+}
+ function getHighest_qualificationFormField($value = ''){
+	return "<div class='form-group'>
+				<label for='highest_qualification'>Highest Qualification</label>
+				<input type='text' name='highest_qualification' id='highest_qualification' value='$value' class='form-control' />
+			</div>";
+}
  function getImg_pathFormField($value = ''){
  	$logo= base_url($value);
 	return "<div class='form-group'>
@@ -221,10 +227,10 @@ function getLga_of_originFormField($value = ''){
 
 protected function getTitle(){
 	$query ='SELECT * FROM title WHERE id=?';
-	if (!isset($this->array['ID'])) {
+	if (!isset($this->array['title_id'])) {
 		return null;
 	}
-	$id = $this->array['ID'];
+	$id = $this->array['title_id'];
 	$result = $this->db->query($query,array($id));
 	$result = $result->result_array();
 	if (empty($result)) {
@@ -236,10 +242,10 @@ protected function getTitle(){
 }
  protected function getDepartment(){
 	$query ='SELECT * FROM department WHERE id=?';
-	if (!isset($this->array['ID'])) {
+	if (!isset($this->array['department_id'])) {
 		return null;
 	}
-	$id = $this->array['ID'];
+	$id = $this->array['department_id'];
 	$result = $this->db->query($query,array($id));
 	$result = $result->result_array();
 	if (empty($result)) {

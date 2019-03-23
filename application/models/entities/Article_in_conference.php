@@ -10,12 +10,12 @@ class Article_in_conference extends Crud {
 
 protected static $tablename = "Article_in_conference"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('end_date','date_created','editor_names','asterisks');
+static $nullArray = array('end_date','date_created','editor_names','asterisks','contribution','name_of_proceedings','page_range');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
-static $uniqueArray = array();
+static $uniqueArray = array('article_title');
 /* this is an associative array containing the fieldname and the type of the field*/ 
 static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','editor_names' => 'varchar','year_publish'=>'varchar','article_title' => 'varchar','conference_theme' => 'varchar','name_of_proceedings' => 'varchar','start_date' => 'varchar','end_date' => 'varchar','month' => 'varchar','year_of_conference' => 'varchar','city_publish' => 'varchar','publishing_company' => 'varchar','page_range' => 'varchar','country' => 'varchar','contribution' => 'varchar','asterisks' => 'int','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
@@ -68,13 +68,13 @@ function getLecturer_idFormField($value = ''){
  function getConference_themeFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='conference_theme'>Conference Theme</label>
-				<input type='text' name='conference_theme' id='conference_theme' value='$value' class='form-control' required />
+				<textarea name='conference_theme' id='conference_theme' class='form-control' required>$value</textarea>
 			</div>";
 } 
  function getName_of_proceedingsFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='name_of_proceedings'>Name Of Proceedings</label>
-				<input type='text' name='name_of_proceedings' id='name_of_proceedings' value='$value' class='form-control' required />
+				<input type='text' name='name_of_proceedings' id='name_of_proceedings' value='$value' class='form-control' />
 			</div>";
 } 
  function getStart_dateFormField($value = ''){
@@ -135,7 +135,7 @@ function getLecturer_idFormField($value = ''){
  function getPage_rangeFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='page_range'>Page in Range</label>
-				<input type='text' name='page_range' id='page_range' value='$value' class='form-control' placeholder='e.g: 23-45' required />
+				<input type='text' name='page_range' id='page_range' value='$value' class='form-control' placeholder='e.g: 23-45' />
 			</div>";
 } 
  function getCountryFormField($value = ''){
@@ -147,7 +147,7 @@ function getLecturer_idFormField($value = ''){
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='text' name='contribution' id='contribution' value='$value' class='form-control' required />
+				<input type='text' name='contribution' id='contribution' value='$value' class='form-control' />
 			</div>";
 }
 function getAsterisksFormField($value=''){

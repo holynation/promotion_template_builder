@@ -15,6 +15,8 @@ class TableViewModel extends CI_Model
 		$this->load->model('crud');
 		$this->load->model('tableActionModel');
 		$this->load->helper('string');
+		$this->load->helper('download');
+		$this->lang->load('table_model');
 	}
 	//create  a method that load the table based on the specified paramterr
 	/**
@@ -56,9 +58,9 @@ class TableViewModel extends CI_Model
 		// $totalRow=0;
 		if (empty($data) || $data==false) {
 			$link = base_url("vc/$model/create");
-			return "<div class='empty-data alert alert-primary text-light'>
-				NO RECORD FOUND
-			</div>";
+			return "<div class='empty-data alert alert-primary text-light'>".
+				$this->lang->line('no_record_found').
+			"</div>";
 		}
 		$header = $this->getHeader($model,$exclusionArray,$removeId);
 		$result=$this->openTable();
@@ -176,15 +178,16 @@ class TableViewModel extends CI_Model
 		$result="<tr data-row-identifier='{$rowData->ID}' class='best-content' id='best-content'>";
 
 		// this is to add multiple checkbox functionality
+		$id = $rowData->ID;
 		if($multipleAction){
-			$id = $rowData->ID;
+			// $id = $rowData->ID;
 			$inputForm = "<label class='form-check-label'><input type='checkbox' class='form-check-input form-control' name='".$model.'Box'."[]' id='".$model.'Box'."[]' value='$id' /></label>";
 			$result.="<td><div class='form-check form-check-flat'>$inputForm</div></td>";
 		}
 
 		if(!empty($appendForm)){
 			extract($appendForm);
-			$id = $rowData->ID;
+			// $id = $rowData->ID;
 			$inputForm = "<label class='form-check-label'><input type='$type' class='form-check-input $class' name='".$name."[]' id='".$name."[]' value='$id' /></label>";
 			$result.="<td><div class='form-check form-check-flat'>$inputForm</div></td>";
 		}
@@ -203,13 +206,38 @@ class TableViewModel extends CI_Model
 			$value = $rowData->$key;
 		
 			if (!empty($documentArray) && in_array($key, $documentArray)) {
-				$link = base_url($value);
-				$value = "<a href='$link' target='_blank'>Download</a>";
+				$link = 'javascript:void(0)';
+				$imageMsg = 'no image yet';
+				if($value != ""){
+					$link = base_url($value);
+					$imageMsg = "View Image";
+				}
+
+				$img_ext = array('gif', 'jpg', 'jpeg', 'jpe', 'png');
+				$ext = getFileExtension(strtolower($link));
+				
+				if(in_array($ext, $img_ext)){
+					$value = "<a href='$link' target='_blank'>$imageMsg</a>";
+				}else{
+					// $id = $rowData->ID;
+					$selector = $model . "_download_$id";
+					$value = "<a href='$link' target='_blank' id='$selector'>Download</a>";
+					// $value .= "<script>
+					// 		\$(document).ready(function(){
+					// 			\$('td a[id={$selector}]').click(function(e){
+					// 				e.preventDefault();
+					// 				// console.log('hi');
+					// 				//force_download($link,NULL)
+					// 			});
+					// 		});
+					// </script>";
+				}
 			}
+
 			if ($model::$typeArray[$key]=='tinyint') {
 				$value = $value?1:0;
 				if ($key == 'status') {
-					$value = (!$value)?'disabled':$this->statusArray[$value];
+					$value = (!$value)?' ':$this->statusArray[$value];
 				}
 				else{
 					$value = $this->booleanArray[$value];
@@ -274,7 +302,7 @@ class TableViewModel extends CI_Model
 			<div class='form_group'>
 				<label class='col-sm-3 col-form-label'>Page Size :</label>
 				<div class='col-sm-9'>
-					<input class='form-control' type='text' style='width:50px;display:inline_block;background-color:white;' id='page_size'  value='$pageLength' />
+					<input class='form-control' type='text' style='width:50px;display:inline_block;background-color:white;' id='page_size' value='$pageLength' disabled/>
 				</div>
 			</div>
 		</div>
@@ -388,15 +416,15 @@ class TableViewModel extends CI_Model
 	private function validateModelNameAndAccess($modelname){
 		$message='';
 		if (empty($modelname)) {
-			throw new Exception('empty model name not allowed'); 
+			throw new Exception($this->lang->line('no_model')); 
 			return false;
 		}
 		if (!is_subclass_of($this->$modelname, 'Crud')) {
-			throw new Exception('model is not a crud: make sure the correct name of the model is entered');
+			throw new Exception($this->lang->line('no_model_crud'));
 			return false;
 		}
 		if (!$this->validateAccess($modelname)) {
-			throw new Exception("access denied");
+			throw new Exception($this->lang->line('access_denied'));
 			return false;
 		}
 		return true;

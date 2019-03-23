@@ -126,6 +126,11 @@ class ViewController extends CI_Controller{
 
   }
 
+  private function adminDashboard(&$data)
+  {
+   $data = array_merge($data,$this->adminData->loadDashboardData());
+  }
+
   private function adminPermission(&$data)
   {
     if (!isset($data['id']) || !$data['id'] || $data['id']==1) {
@@ -141,13 +146,13 @@ class ViewController extends CI_Controller{
     $data['allStates']=$data['role']->getPermissionArray();
   }
 
-  private function adminDashboard(&$data)
+  private function adminProfile(&$data)
   {
-   $data = array_merge($data,$this->adminData->loadDashboardData());
-  }
-
-  private function adminProfile(&$data){
-    return $data;
+    loadClass($this->load,'admin');
+    $admin = new Admin();
+    $admin->ID=$this->webSessionManager->getCurrentUserProp('user_table_id');
+    $admin->load();
+    $data['admin']=$admin;
   }
 
   private function lecturer($page,&$data){
@@ -202,11 +207,10 @@ class ViewController extends CI_Controller{
         show_404();exit;
       }
       $data['lecturer']=$lect;
-
-      // $lecturerData = new LecturerData($data['id']); 
       $data = array_merge($data,$this->lecturerData->loadAllData($data['id']));
       
     }else{
+
       $data = array_merge($data,$this->lecturerData->loadAllData());
     }
       
@@ -314,7 +318,7 @@ class ViewController extends CI_Controller{
       $this->lecturer->load();
       // $role = $this->lecturer->role;
       $role= true;
-      $data['checkExists'] = $this->lecturer->checkLecturerExist();
+      // $data['checkExists'] = $this->lecturer->checkLecturerExist();
       $data['lecturer']=$this->lecturer;
     }
     else{
@@ -378,28 +382,32 @@ class ViewController extends CI_Controller{
       }
 
       if($this->user->find($id)){
-        $check = $this->hash_created->decode_password(trim($curr_password), $this->user->data()[0]['password']);
+        $check = md5(trim($curr_password)) == $this->user->data()[0]['password'];
+        // $check = $this->hash_created->decode_password(trim($curr_password), $this->user->data()[0]['password']);
         if(!$check){
-          echo createJsonMessage('status',false,'message','Current Password is not correct...');
+          echo createJsonMessage('status',false,'message','your current password is not correct.','flagAction',false);
           return;
         }
       }
 
       if ($new !==$confirm) {
-        echo createJsonMessage('status',false,'message','new password does not match with the confirmation password');exit;
+        echo createJsonMessage('status',false,'message','new password does not match with the confirmation password','flagAction',false);exit;
       }
-      $new = $this->hash_created->encode_password($new);
+      $new = md5($new);
+      // $new = $this->hash_created->encode_password($new);
         $query = "update user set password = '$new' where ID=?";
         if ($this->db->query($query,array($id))) {
           $arr['status']=true;
           $arr['message']= 'operation successfull';
-          echo  json_encode($arr);
+          $arr['flagAction'] = true;
+          echo json_encode($arr);
           return;
         }
         else{
           $arr['status']=false;
-          $arr['message']= 'error occured during operation';
-          echo  json_encode($arr);
+          $arr['message']= 'error occured during operation...';
+          $arr['flagAction'] = false;
+          echo json_encode($arr);
           return;
         }
     }

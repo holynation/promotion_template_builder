@@ -75,6 +75,7 @@ class LecturerData extends CI_Model
 		$result['article_journal'] = $this->lecturer->getFromDbClass('article_appear_in_journal','order by journal_year asc');
 		$result['accepted_book'] = $this->lecturer->getFromDbClass('accepted_books','order by accepted_year asc');
 		$result['tech_report'] = $this->lecturer->getFromDbClass('technical_report','order by report_year asc');
+		// ended publication
 		$result['major_conf'] = $this->lecturer->getFromDbClass('major_conf_attended','order by year_attended asc');
 		if($userid != ''){
 			$check = $this->checkPublication($userid);

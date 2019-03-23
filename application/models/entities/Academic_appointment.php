@@ -50,7 +50,7 @@ function getLecturer_idFormField($value = ''){
 			<label for='first_academic_appointment'>First Academic Appointment</label>";
 			$option = $this->loadOption($fk,$value,'','appointment_order',true);
 			//load the value from the given table given the name of the table to load and the display field
-			$result.="<select name='first_academic_appointment' id='first_academic_appointment' class='form-control' required>
+			$result.="<select name='first_academic_appointment' id='first_academic_appointment' class='form-control autoload' data-load='checkAppointment' data-child='present_post' required>
 						$option
 					</select>";
 		}
@@ -64,26 +64,29 @@ function getLecturer_idFormField($value = ''){
 			</div>";
 } 
  function getPresent_postFormField($value = ''){
-	$fk=array('table'=>'appointment_category','display'=>'category_name'); 
+	// $fk=array('table'=>'appointment_category','display'=>'category_name'); 
  	//change the value of this variable to array('table'=>'department','display'=>'department_name'); if you want to preload the value from the database where the display key is the name of the field to use for display in the table.[i.e the display key is a column name in the table specify in that array it means select id,'department_name' as value from 'department' meaning the display name must be a column name in the table model].It is important to note that the table key can be in this format[array('table' => array('department', 'another table name'))] provided that their is a relationship between these tables. The value param in the function is set to true if the form model is used for editing or updating so that the option value can be selected by default;
 
-		if(is_null($fk)){
-			return $result = "<input type='hidden' name='present_post' id='present_post' value='$value' class='form-control' />";
-		}
-
-		if(is_array($fk)){
+		// if(is_array($fk)){
 			
-			$result ="<div class='form-group'>
-			<label for='present_post'>Present Post</label>";
-			$option = $this->loadOption($fk,$value,'','appointment_order',true);
-			//load the value from the given table given the name of the table to load and the display field
-			$result.="<select name='present_post' id='present_post' class='form-control autoload'
-			data-load='checkAppointment' data-depend='first_academic_appointment' required>
+		// 	$result ="<div class='form-group'>
+		// 	<label for='present_post'>Present Post</label>";
+		// 	$option = $this->loadOption($fk,$value,'','appointment_order',true);
+		// 	//load the value from the given table given the name of the table to load and the display field
+		// 	$result.="<select name='present_post' id='present_post' class='form-control'
+		// 	 required>
+		// 		$option
+		// 	</select>";
+		// }
+		// $result.="</div>";
+		$option='';
+		return "<div class='form-group'>
+			<label for='present_post'>Present Post</label>
+				<select type='text' name='present_post' id='present_post' value='$value' class='form-control'  >
+				<option value=''></option>
 				$option
-			</select>";
-		}
-		$result.="</div>";
-		return $result;
+				</select>
+			</div> ";
 } 
  function getDate_of_present_postFormField($value = ''){
 	return "<div class='form-group'>

@@ -8,7 +8,7 @@
                 <?php
                 $lect_path='';
                   if($lecturer){
-                    $lect_path = $lecturer->img_path;
+                    $lect_path = ($lecturer->img_path != '') ? $lecturer->img_path : 'assets/images/default-profile.jpg';
                   }
                 ?>
                 <img src="<?php echo base_url($lect_path); ?>" alt="profile image">

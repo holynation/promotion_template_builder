@@ -14,6 +14,7 @@ class Crud extends CI_Model
 		}
 		$this->array = $array;
 		$this->load->helper('string');
+		$this->load->helper('text');
 		static::$baseurl = base_url();
 	}
 	/**
@@ -435,7 +436,8 @@ class Crud extends CI_Model
 			$checkMsg = $this->checkExist();
 			if(is_array($checkMsg)){
 				$string = implode(",", $checkMsg);
-				$message = " '$string' already exists...";
+				$string = ellipsize($string,40,1);
+				$message = "'$string' already exists";
 			}else{
 				$message='Duplicate entry row already exist...';
 			}

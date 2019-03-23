@@ -85,11 +85,12 @@ class Auth extends CI_Controller
 				echo "empty field detected . please fill all required field and try again";
 				return;
 			}
-
+			
 			$find = $this->user->find($email);
-			$checkPass = $this->hash_created->decode_password(trim($password), $this->user->data()[0]['password']);
-			if($checkPass){
-				$array = array('username'=>$email,'status'=>1);
+			// $checkPass = md5(trim($password)) == $this->user->data()[0]['password'];
+			// $checkPass = $this->hash_created->decode_password(trim($password), $this->user->data()[0]['password']);
+			// if($checkPass){
+				$array = array('username'=>$email,'password'=>md5($password),'status'=>1);
 				$user = $this->user->getWhere($array,$count,0,null,false," order by field('user_type','admin','lecturer')");
 				if($user == false) {	
 					if ($isAjax) {
@@ -117,11 +118,11 @@ class Auth extends CI_Controller
 						redirect($baseurl);exit;
 					}
 				}
-			}else{
-				$arr['status']=false;
-				$arr['message'] = 'invalid username or password';
-				echo json_encode($arr);exit;
-			}
+			// }else{
+			// 	$arr['status']=false;
+			// 	$arr['message'] = 'invalid username or password';
+			// 	echo json_encode($arr);exit;
+			// }
 		}
 
 		$this->login();

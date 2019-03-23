@@ -1,10 +1,12 @@
 <?php
+// print_r(getPageCookie());exit;
+// print_r($this->webSessionManager->getAllData());exit;
  $userType = $this->webSessionManager->getCurrentUserProp('user_type');
  if($userType == 'lecturer'){
  	include_once 'template/sidebar_lecturer.php';
  }
 ?>
-<?php if ($userType=='admin'): ?>
+<?php if ($userType=='admin'):?>
 <div class="container-fluid page-body-wrapper">
   <nav class="sidebar sidebar-offcanvas" id="sidebar">
       <ul class="nav">
@@ -12,24 +14,25 @@
           <div class="nav-link">
             <div class="user-wrapper">
               <div class="profile-image">
-                <img src="<?php echo base_url($admin->img_path); ?>" alt="profile image">
+                <img src="<?php echo base_url(@$admin->img_path); ?>" alt="profile image">
               </div>
               <div class="text-wrapper">
-                <p class="profile-name"><?php echo $admin->firstname .' '.$admin->lastname; ?></p>
+                <p class="profile-name"><?php echo @$admin->firstname .' '.@$admin->lastname; ?></p>
                 <div>
                   <small class="designation text-muted"><?php echo $this->webSessionManager->getCurrentUserProp('user_type'); ?></small>
                   <span class="status-indicator online"></span>
                 </div>
               </div>
             </div>
-            <!-- <button class="btn btn-success btn-block" style="margin-top:-10px;">Subscribe
-              <i class="mdi mdi-plus"></i>
-            </button> -->
+            <a class="btn btn-success btn-block" href="<?php echo base_url('auth/logout'); ?>" style="color:#fff;">Logout <i class="mdi mdi-logout"></i> </a>
+              
           </div>
         </li>
         <!-- this is the beginning of the nav bar -->
 
-        <?php foreach ($canView as $key => $value): ?>
+      <?php 
+          if(isset($canView)){
+            foreach ($canView as $key => $value): ?>
 	       <?php 
 	           $state='';
 	            if ($canView[$key]['state']===0) {
@@ -60,8 +63,8 @@
               </ul>
             </div>
           </li>
-        <?php endif; ?>
-    <?php endforeach; ?>
+          <?php endif; ?>
+      <?php endforeach; }?>
       </ul>
   </nav>
 <?php endif; ?>

@@ -29,7 +29,7 @@ static $documentField = array('img_path'=>array(array('jpeg','jpg','png','gif'),
 static $relation=array('role'=>array( 'role_id', 'ID')
 );
 
-static $tableAction=array('enable'=>'getEnabled','delete'=>'delete/admin','edit'=>'edit/admin');
+static $tableAction=array('enable'=>'getEnabled','delete'=>'delete/admin','edit'=>'edit/admin','profile'=>'vc/admin/profile');
 function __construct($array = array())
 {
 	parent::__construct($array);

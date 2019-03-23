@@ -29,6 +29,15 @@
 		}
 		return $result;
 	}
+	function dropDownYear($earliest_yr=''){
+  		$earliest_year = ($earliest_yr != '') ? $earliest_yr : 1950;
+  		$lastest_year = date('Y');
+  		$result = array();
+  		foreach(range($lastest_year, $earliest_year) as $year){
+  			$result[] = $year;
+  		}
+  		return $result;
+	}
 	function getDropDays($value=''){
 		$result = '';
 		foreach(dropDays() as $i){
@@ -66,15 +75,6 @@
 		$result = substr($result, 0,-1);
 		$result = explode(",", $result);
 		return $result;
-	}
-	function dropDownYear(){
-  		$earliest_year = 1950;
-  		$lastest_year = date('Y');
-  		$result = array();
-  		foreach(range($lastest_year, $earliest_year) as $year){
-  			$result[] = $year;
-  		}
-  		return $result;
 	}
 	function getTitlePage(){
 		return 'CV-Format';
@@ -130,7 +130,7 @@
 			}
 			
 			if($extract != $append){
-				$result.= $result ? "$string" : "$append $string";
+				$result.= $result ? "$string" : "$append$string";
 			}else{
 				$result = $string;
 			}
@@ -141,8 +141,9 @@
 		$result='';
 		if($string){
 			$result=$string;
-			if(substr(trim($string), -strlen($append)) != $append){
-				$result.= " $append";
+			$condition = substr(trim($string), -strlen($append));
+			if($condition != $append || $condition != strtolower($append)){
+				$result.= "$append";
 			}else{
 				$result = $string;
 			}
@@ -192,7 +193,7 @@
 	function boldUser($names, $user=''){
 		$result='';
 		if($user != ''){
-			$buildStr = punctuateStr($user->surname,',') .' '. punctuateStr(ucfirst(getFirstString($user->firstname)),'.') .' '. punctuateStr(ucfirst(getFirstString($user->middlename)),'.') .'';
+			$buildStr = punctuateStr(rtrim($user->surname),',') .' '. punctuateStr(ucfirst(getFirstString($user->firstname)),'.') .' '. punctuateStr(ucfirst(getFirstString($user->middlename)),'.') .'';
 			if(stristr(trim($names),$buildStr) !== false){
 				$first = stristr(trim($names), $buildStr);
 				$buildLen = strlen($buildStr);
@@ -498,6 +499,35 @@
         }
 	}
 
+	function calc_size($file_size){
+		$_size = '';
+ 		$kb = 1024;
+		$mb = 1048576;
+ 		$gb = 1073741824;
+
+		if(empty($file_size)){
+		  	return '' ;
+		}
+
+	 	else if($file_size < $kb ) {
+	 		return $_size . "B";
+
+	 	}elseif($file_size > $kb AND $file_size < $mb ) {
+	 		$_size = round($file_size/$kb, 2);
+	 		return $_size . "KB";
+
+	 	}elseif($file_size >= $mb AND $file_size < $gb) {
+	 		$_size = round($file_size/$mb, 2);
+	 		return $_size . "MB";
+
+	 	}else if($file_size >= $gb ) {
+	 		$_size = round($file_size/$gb, 2);
+	 		return $_size . "GB";
+	 	}else{
+	 		return NULL;
+	 	}
+	 }
+
 	// function to send download request of a file to the browser
 	function sendDownload($content,$header,$filename){
 		$content = trim($content);
@@ -573,11 +603,17 @@
 	    return $result;
 	}
 
+	function appBuildName($key = 'cookie'){
+		$result = array('cookie' => 'edu_cv', 'userType' => 'cv');
+		return $result[$key];
+	}
+
 	//function to get the recent page cookie information
 	function getPageCookie(){
 		$result = array();
-		if (isset($_COOKIE['edu_cv'])) {
-			$content = $_COOKIE['edu_cv'];
+		$cookie = appBuildName('cookie');
+		if (isset($_COOKIE[$cookie])) {
+			$content = $_COOKIE[$cookie];
 			$result = explode('-', $content);
 		}
 		return $result;
@@ -585,8 +621,9 @@
 
 	//function to save the page cookie
 	function sendPageCookie($module,$page){
+		$cookie = appBuildName('cookie');
 		$content = $module.'-'.$page;
-		setcookie('edu_cv',$content,0,'/','',false,true);
+		setcookie($cookie,$content,0,'/','',false,true);
 	}
 	function show_access_denied(){
 		include_once('application/views/access_denied.php');exit;

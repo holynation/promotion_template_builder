@@ -15,6 +15,7 @@
 		{
 			parent::__construct();
 			$this->load->model('crud');
+			$this->lang->load('table_model');
 		}
 		public function buildOrdinaryTable($data,$action=array(),$header=null){
 			return $this->buildHtmlAndAction($data,$action,$header);
@@ -32,7 +33,7 @@
 		 */
 		public function getHtmlTableWithQuery($query,$queryData=NULL, &$totalLength,$actionArray=array(),$header=null,$paged=true,$lower=0, $length=NULL,$parentModel=null,$excludeArray=array(),$appendForm=array()){
 			if (empty($query)) {
-				throw new Exception("you must specify query to be used.");
+				throw new Exception($this->lang->line('no_query'));
 			}
 			$limit="";
 			$array = array();
@@ -52,7 +53,7 @@
 
 			//check that the query is a select query and the there an id field specified is query array is not empty
 			if (!empty($actionArray) && ( strpos($query, "ID") ===false || strpos($query, " * ")===false)  && strpos(strtolower($query), "select") ===false) {
-				throw new Exception("the query must be a select query and the an id field must be set");
+				throw new Exception($this->lang->line('no_select_query'));
 			}
 			$query.=$limit;
 			//merge the array
@@ -152,7 +153,7 @@
 
 					}
 				}else{
-					echo "NO RECORD FOUND";
+					echo $this->lang->line('no_record_found');
 				}
 
 				$queryString = implode(",", $data);
@@ -187,7 +188,7 @@
 		}
 		private function buildHtmlAndAction($data,$action,$header=null,$appendForm=array()){
 			if (empty($data)) {
-				return "<div class='empty-data alert alert-primary text-light'>NO RECORD FOUND </div>";	
+				return "<div class='empty-data alert alert-primary text-light'>" .$this->lang->line('no_record_found') . "</div>";	
 			}
 			$result = $this->openTableTag();
 			$result.= $this->extractheader(empty($header)?array_keys($data[0]):$header,!empty($action),$appendForm);
@@ -258,10 +259,11 @@
 				$current = $data[$keys[$i]];
 
 				if (isFilePath($current)) {
-					$ext = getFileExtension($current);
-					if($ext == 'jpg' || $ext== 'jpeg' || $ext == 'png'){
+					$ext = getFileExtension(strtolower($current));
+					$img_ext = array('gif', 'jpg', 'jpeg', 'jpe', 'png');
+					if(in_array($ext, $img_ext)){
 						$link = base_url($current);
-						$current = "<a href='$link' target='_blank' class='btn btn-info'>View</a>";
+						$current = "<a href='$link' target='_blank' class='btn btn-info'>View Image</a>";
 					}else{
 						$link = base_url($current);
 						$current = "<a href='$link' target='_blank' class='btn btn-info'>Download</a>";

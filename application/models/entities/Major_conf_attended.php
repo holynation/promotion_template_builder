@@ -10,8 +10,8 @@ class Major_conf_attended extends Crud {
 
 public static $tablename = "Major_conf_attended"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('date_created','end_date');
-static $compositePrimaryKey = array();
+static $nullArray = array('date_created','end_date','country_of_conf');
+static $compositePrimaryKey = array('conf_name','start_date','end_date','month','year_attended');
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = 'conf_name';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
@@ -39,7 +39,7 @@ function getLecturer_idFormField($value = ''){
  function getConf_nameFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='conf_name'>Conference Name</label>
-				<input type='text' name='conf_name' id='conf_name' value='$value' class='form-control' required />
+				<textarea name='conf_name' id='conf_name' class='form-control' required>$value</textarea
 			</div>";
 } 
  function getStart_dateFormField($value = ''){
@@ -55,7 +55,7 @@ function getLecturer_idFormField($value = ''){
 } 
  function getEnd_dateFormField($value = ''){
  	$result = "<div class='form-group'>
-				<label for='end_date'>End Date (choose only if necessary)</label>";
+				<label for='end_date'>End Date (choose only if applicable)</label>";
 				$option = getDropDays($value);
 	$result.="<select name='end_date' id='end_date' class='form-control'>
 			<option value=''>..choose....</option>
@@ -94,7 +94,7 @@ function getLecturer_idFormField($value = ''){
  function getCountry_of_confFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='country_of_conf'>Country Of Conf</label>
-				<input type='text' name='country_of_conf' id='country_of_conf' value='$value' class='form-control' required />
+				<input type='text' name='country_of_conf' id='country_of_conf' value='$value' class='form-control' />
 			</div>";
 } 
  function getDate_createdFormField($value = ''){

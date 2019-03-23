@@ -72,7 +72,7 @@ else{
                                     </div>
                                     <div class="form-group">
                                       <label for="total_person">Number of persons</label>
-                                      <input type="number" min="0" name="total_person" id="total_person" class="form-control" placeholder="number of person that took the course" required/>
+                                      <input type="number" min="0" value="1" name="total_person" id="total_person" class="form-control" placeholder="number of person that taught the course" required/>
                                     </div>
                                     <?php 
                                     $arr =array('Undergraduate','Postgraduate');
@@ -242,8 +242,8 @@ include "template/footer.php";
         inserted=true;
       }
       showNotification(data.status,data.message);
-      if (typeof target ==='undefined') {
-        location.reload();
-      }
+      // if (typeof target ==='undefined') {
+      //   location.reload();
+      // }
     }
 </script>

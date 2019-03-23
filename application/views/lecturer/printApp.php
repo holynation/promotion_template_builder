@@ -13,8 +13,14 @@ else{
     <div class="content-wrapper">
 		<div class="page print-content">
 <style type="text/css">
-  	 body{font-family: 'Times New Roman';font-size: 1.125rem;}
-	table {width:100%; background-color: #fff;font-size:1.125rem;font-family: 'Times New Roman';}
+	/****
+	Note: text-align property use not be use on the body or the parent element
+	****  in this printing format because it disorder the format.
+	However,width,margin,padding and @print was use to align the document itself.
+	*****
+	*****/
+  	 body{font-family: 'Times New Roman'!important;font-size: 1.125rem;}
+	table {width:100%; background-color: #fff;font-size:1.125rem;font-family:'Times New Roman'!important;}
  .table1Data {padding: 0px}
  .table1DataHeader {text-decoration: underline solid;}
  .tableDataHeader {padding-bottom: 0}
@@ -27,12 +33,12 @@ else{
 	    margin-bottom: 1.2rem;
 	  }
 	  ul li{
-	  	margin-bottom: 13px;
+	  	margin-bottom: 10px;
 	  	line-height: 1.4;
 	  }
 
 	  #push-left{
-	  	padding-left: 45px;
+	  	padding-left: 40px;
 	  }
 	  td > span{
 	  	text-decoration: underline;
@@ -40,13 +46,6 @@ else{
 	  #push-edu{
 	  	padding:1% 10% 0%;
 	  }
-/*	
-	@counter-style bracketAlpha{
-	  system: alphabetic;
-	  symbols: (a) (b) (c) (d) (e) (f) (g) (h) (i) (j) (k) (l) (m) (n) (o) (p) (q) (r) (s) (t) (u) (v) (w) (x) (y) (z);
-	  suffix: " ";
-	  fallback: lower-alpha;
-	}*/
 
 	  .divDataHeader{
 	  	margin:0;
@@ -54,7 +53,7 @@ else{
 	  }
 	  .divDataHead > p, .divDataSubHead > p,.divDataSubHead > li > p{
 		text-decoration: underline solid;
-		font-size: 1.05rem;
+		font-size: 1.125rem;
 	  }
 	  .divData > ul,.divData1 > ul{
 	  	list-style: lower-roman;
@@ -63,17 +62,18 @@ else{
 	  }
 	  .divData > ul > li,.divData1 > ul > li{
 	  	padding-bottom:8px;
-	  	font-size: 1rem;
+	  	font-size: 1.125rem;
 	  	padding-left: 3.4%;
 	  	margin-left:-10px;
 	  }
 	  .divData>ul>li{
 	  	color:inherit;
-	  	font-size: 1.09rem;
+	  	font-size: 1.125rem;
+	  	margin-bottom: 0;
 	  }
 	  .divData1 > ul > li{
 	  	padding-bottom: 0px;
-	  	font-size: 1.09rem;
+	  	font-size: 1.125rem;
 	  }
 	  .divDataSubHead > li > p{
 	  	padding-left:3.4%;
@@ -81,21 +81,21 @@ else{
 	  .divDataSubHead > li >ul>li{
 	  	padding-left:2%;
 	  	padding-top: -10px;
-	  	line-height: 0.6;
+	  	line-height: 1.5;
 	  }
 	  .divDataSubHead >li>ul>#listSub{
-	  	font-size: 1.09rem;
-	  	line-height: 1;
+	  	/*font-size: 1rem;*/
+	  	line-height: 1.5;
 	  }
 	  .divDataSubHead >li>ul>#listSub>p,.divDataSubHead>ol>#listSub>p,.divData>ul>#listSub>p{
-	  	font-size: 1.09rem;
-	  	line-height: 1;
+	  	font-size: 1.125rem;
+	  	line-height: 1.5;
 	  }
 	  .divData>ul>#listSub>p{
 	  	margin-bottom: 0px;
 	  }
 	  .divDataSubHead >ol>#listSub{
-	  	font-size: 1rem;
+	  	font-size: 1.125rem;
 	  	padding-left:2%;
 	  	margin-left: 1%;
 	  	padding-top: 10px;
@@ -103,7 +103,7 @@ else{
 	  #single-listSub{
 	  	padding-left: 2%;
 	  	padding-top: 1.8%;
-	  	font-size: 1.09rem;
+	  	font-size: 1.125rem;
 	  	margin-left: 1%;
 	  }
 	  #asterisks-id{
@@ -141,6 +141,9 @@ else{
 		.date-sign{
 			margin-right: 5%;
 		}
+		#clearfix{
+			margin-bottom: 15px;
+		}
 		@page{
 			margin-top:40px;
 			margin-left:30px;
@@ -152,7 +155,7 @@ else{
 	    		<h4 class="p-header"><?php echo date('Y'); ?> promotions exercise</h4>
 	    		<h4>Curriculum Vitae</h4>
 	    	</div>
-	    	<div>
+	    	<div style="text-align: justify-all;">
 	    		<?php
 		    		$lecturer=array();
 		    		if(isset($lecturers)){
@@ -163,48 +166,48 @@ else{
 	    			<li>
 	    				<table width="750" border="0" cellpadding="0" cellspacing="0">
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (a)</td>
+								<td class="table1Data" id="push-left" width="90"> (a)</td>
 								<td class="table1DataHeader" width="450">Name:</td>
 								<td class="table1Data"><?php echo ucwords($lecturer->firstname .' '.$lecturer->middlename); ?> <span><?php echo ucwords($lecturer->surname); ?></span></td>
 							</tr>
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (b)</td>
+								<td class="table1Data" id="push-left" width="90"> (b)</td>
 								<td class="table1DataHeader" width="450">Date Of Birth:</td>
 								<td class="table1Data"><?php echo dateFormatter(@$lecturer->dob); ?></td>
 							</tr>
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (c)</td>
+								<td class="table1Data" id="push-left" width="90"> (c)</td>
 								<td class="table1DataHeader" width="450">Department:</td>
-								<td class="table1Data"><?php echo ucwords(@$lecturer->department->department_name); ?></td>
+								<td class="table1Data"><?php echo @$lecturer->department->department_name; ?></td>
 							</tr>
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (d)</td>
+								<td class="table1Data" id="push-left" width="90"> (d)</td>
 								<td class="table1DataHeader" width="450">Faculty:</td>
-								<td class="table1Data"><?php echo ucwords(@$lecturer->department->faculty->faculty_name); ?></td>
+								<td class="table1Data"><?php echo @$lecturer->department->faculty->faculty_name; ?></td>
 							</tr>
 						</table>
 	    			</li>
 	    			<li>
 	    				<table width="750" border="0" cellpadding="0" cellspacing="0">
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (a)</td>
+								<td class="table1Data" id="push-left" width="90"> (a)</td>
 								<td class="table1DataHeader">First Academic Appointment:</td>
 								<td class="table1Data"><?php echo ucwords(@$appointment->first_academic_appointment); ?> (<?php echo dateFormatter(@$appointment->date_of_appointment); ?>)</td>
 							</tr>
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (b)</td>
+								<td class="table1Data" id="push-left" width="90"> (b)</td>
 								<td class="table1DataHeader" width="350">Present Post:</td>
 								<td class="table1Data"><?php echo ucwords(@$appointment->present_post); ?> (<?php echo dateFormatter(@$appointment->date_of_present_post); ?>)</td>
 							</tr>
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (c)</td>
+								<td class="table1Data" id="push-left" width="90"> (c)</td>
 								<td class="table1DataHeader" width="250">Date of last Promotion:</td>
 								<td class="table1Data"><?php echo dateFormatter(@$appointment->date_of_last_promotion); ?></td>
 							</tr>
 							<tr>
-								<td class="table1Data" id="push-left" width="95"> (d)</td>
+								<td class="table1Data" id="push-left" width="90"> (d)</td>
 								<td class="table1DataHeader" width="450">Date last considered (in cases where promotion was not through:</td>
-								<td class="table1Data"><?php echo (@$appointment->date_last_considered)?  dateFormatter(@$appointment->date_last_considered): 'Not Applicable' ; ?></td>
+								<td class="table1Data"><?php echo (!emptyDate(@$appointment->date_last_considered))?  dateFormatter(@$appointment->date_last_considered): 'Not Applicable'; ?></td>
 							</tr>
 						</table>
 	    			</li>
@@ -249,21 +252,28 @@ else{
 	    			</li>
 	    			<!-- this is the professional qualification and diplomas -->
 	    			<li>
-	    				<table width="750" border="0" cellpadding="0" cellspacing="0">
-	    					<tr>
-	    						<td class="table1DataHeader" id="push-left" width="95">Professional qualifications and Diplomas (with date): </td>
-	    					</tr>
+	    				<div class="divDataHeader">
+    						<div class="divDataHead" id="push-left">
+    						 	<p>Professional qualifications and Diplomas (with dates):</p>
+    						</div>
+    						<div class="divData">
+	    						<ul>
 	    					<?php
 	    						if(!empty($professional)){
-	    							foreach($professional as $profess){ ?>
-										<tr>
-											<td class="table1Data breakWord narrow" width="500" id="push-edu"><?php echo ucfirst($profess->qualifications); ?>; <?php echo ucfirst($profess->school_granted); ?>; <?php echo $profess->date_granted; ?></td>
-										</tr>
-	    							<?php }
-	    						}else{ ?>
-	    							<tr><td class="table1Data" width="450" style="padding:0 10%;">Nil</td></tr>
-	    						<?php } ?>
-	    				</table>
+	    							foreach($professional as $profess){
+	    							?>
+									<li class="breakWord narrow">
+										<?php echo punctuateStr(ucfirst($profess->qualifications),';'); ?>
+										<?php echo punctuateStr(ucfirst($profess->school_granted),';'); ?>
+										<?php echo $profess->date_granted; ?>
+									</li>
+						<?php } ?>
+	    				<?php } else{ ?>
+	    							<p id="nil-value">Nil</p>
+	    				<?php } ?>
+			    				</ul>
+			    			</div>
+	    				</div>
 	    			</li>
 	    			<!-- this is scholarship section -->
 	    			<li>
@@ -277,9 +287,13 @@ else{
 	    						if(!empty($scholarships)){
 	    							foreach($scholarships as $scholar){
 	    							?>
-									<li class="breakWord narrow"><?php echo ucfirst($scholar->title_name); ?>
+									<li class="breakWord narrow"><?php echo punctuateStr(ucfirst($scholar->title_name),','); ?>
+									<?php echo ucfirst($scholar->granting_bodies); ?>
 										<?php 
-											echo ($scholar->start_date && $scholar->end_date) ? " - ". $scholar->start_date ." <span id='to-span'>to</span> ". $scholar->end_date : ' ';
+											$punct = ($scholar->end_date) ? "- " : '';
+											$end_date = ($punct != '') ? " <span id='to-span'>to</span> " .$scholar->end_date : '';
+											$start_date = ($punct == '') ? addParenthesis($scholar->start_date,'(',')') : $scholar->start_date;
+											echo ($scholar->start_date) ? $punct .''. $start_date .$end_date : '';
 										?>
 									</li>
 						<?php } ?>
@@ -327,7 +341,7 @@ else{
     						<div class="divDataHead" id="push-left">
     						 	<p>Details of Teaching / Work Experience:</p>
     						</div>
-    						<ul style="list-style-type: lower-alpha;margin-left:5%;font-size: 1.035rem;">
+    						<ul style="list-style-type: lower-alpha;margin-left:5%;font-size: 1.09rem;text-align: justify;">
     							<div class="divDataSubHead">
 	    							<li>
 			    						<p>Work Experience:</p>
@@ -355,18 +369,17 @@ else{
 	    							?>
 	    							<li>
 			    						<p>Courses taught at Undergraduate:</p>
-			    						<ul>
+			    						<ul style="text-align: left;font-size: 1rem;">
 			    						<?php
 				    						if(!empty($teachData)){
 				    							foreach($teachData as $teach){ ?>
 				    							<?php
 				    							if(strtolower($teach->category) == 'undergraduate'){ ?>
 			    									<li id="listSub">
-														<table width="750" border="0" cellpadding="0" cellspacing="0">
-															<tr>
-															<td class="divData1" width="90"><?php echo ucfirst($teach->course_code); ?></td>
-															<td class="divData1" width="300"><?php echo ucfirst($teach->course_title); ?></td>
-															<td class="divData1">
+														<div class="row" style="font-size: 1.125rem;">
+															<div class="col-2"><?php echo ucfirst($teach->course_code); ?></div>
+															<div class="col-6"><?php echo ucfirst($teach->course_title); ?></div>
+															<div class="col-3">
 															<?php 
 															$session = $teach->session_name;
 															$last = strrchr($session,",");
@@ -385,9 +398,8 @@ else{
 																echo $session;
 																echo ($teach->total_person > 1) ? $teach->total_person ." persons" : $teach->total_person.  " person";
 															 ?>
-															 </td>
-														</tr>
-														</table>
+															 </div>
+														</div>
 													</li> 
 												
 										<?php } } }else{ echo '<p id="nil-value">Nil</p>'; } ?>
@@ -395,7 +407,7 @@ else{
 	    							</li>
 	    							<li style="page-break-before: always;">
 			    						<p>Courses taught at Postgraduate:</p>
-			    						<ul>
+			    						<ul style="font-size: 1rem;">
 			    						<?php
 				    						if(!empty($teachData)){
 				    							foreach($teachData as $teach){
@@ -403,11 +415,10 @@ else{
 				    							<?php
 				    								if(strtolower($teach->category) == 'postgraduate'){ ?>
 				    									<li id="listSub">
-															<table width="750" border="0" cellpadding="0" cellspacing="0">
-																<tr>
-																<td class="divData1" width="90"><?php echo ucfirst($teach->course_code); ?></td>
-																<td class="divData1" width="300"><?php echo ucfirst($teach->course_title); ?></td>
-																<td class="divData1">
+															<div class="row" style="font-size: 1.125rem;">
+																<div class="col-2"><?php echo ucfirst($teach->course_code); ?></div>
+																<div class="col-6"><?php echo ucfirst($teach->course_title); ?></div>
+																<div class="col-3">
 																<?php 
 																$session = $teach->session_name;
 																$last = strrchr($session,",");
@@ -426,13 +437,14 @@ else{
 																	echo $session;
 																	echo ($teach->total_person > 1) ? $teach->total_person ." persons" : $teach->total_person.  " person";
 																 ?>
-																 </td>
-															</tr>
-															</table>
+																 	
+																</div>
+															</div>
 														</li> 
 				    								<?php } ?>
 												
-										<?php  } }else{ echo '<p id="nil-value">Nil</p>'; } ?>
+										<?php  }  //echo '<p id="nil-value">Nil</p>';  
+										 } else{ echo '<p id="nil-value">Nil</p>'; } ?>
 										</ul>
 	    							</li>
 	    							<li>
@@ -441,43 +453,43 @@ else{
 	    									<?php 
 	    										$superData = array();
 	    										if(!empty($supervision)){
-	    											$superData = $supervision;
-	    										}
-	    									 ?>
-	    									<li>
-	    										<table width="750" border="0" cellpadding="6" cellspacing="0">
-													<tr>
-													<?php
-					    								foreach($superData as $super){
-					    							?>
-														<?php if($super->category == 'completed'): ?>
-														<td class="divData1" width="100">M.Sc.</td>
-														<td class="divData1" width="100">Completed:</td>
-														<td class="divData1" width="80"><?php echo ($super->msc_total != '')? $super->msc_total: 'Nil'; ?></td>
-														<?php else: ?>
-														<td class="divData1" width="100">M.Sc.</td>
-														<td class="divData1" width="100">Ongoing:</td>
-														<td class="divData1"><?php echo ($super->msc_total != '') ? $super->msc_total : 'Nil'; ?></td>
-														<?php endif; ?>
-														<?php } ?>
-													</tr>
-													<tr>
-														<?php
-						    								foreach($superData as $super){
-						    							?>
-						    							<?php if($super->category == 'completed'): ?>
-														<td class="divData1" width="90">M.Phil/PhD</td>
-														<td class="divData1" width="95">Completed:</td>
-														<td class="divData1" width="80"><?php echo ($super->phd_total != '') ? $super->phd_total : 'Nil'; ?></td>
-														<?php else: ?>
-														<td class="divData1" width="90">M.Phil/PhD</td>
-														<td class="divData1" width="85">Ongoing:</td>
-														<td class="divData1"><?php echo ($super->phd_total != '') ? $super->phd_total : 'Nil'; ?></td>
-														<?php endif; ?>
-														<?php } ?>
-													</tr>
-												</table>
-	    									</li>
+	    											$superData = $supervision; ?>
+	    											<li>
+			    										<table width="750" border="0" cellpadding="6" cellspacing="0">
+															<tr>
+															<?php
+							    								foreach($superData as $super){
+							    							?>
+																<?php if($super->category == 'completed'): ?>
+																<td class="divData1" width="100">M.Sc.</td>
+																<td class="divData1" width="100">Completed:</td>
+																<td class="divData1" width="80"><?php echo ($super->msc_total != '')? $super->msc_total: 'Nil'; ?></td>
+																<?php else: ?>
+																<td class="divData1" width="100">M.Sc.</td>
+																<td class="divData1" width="100">Ongoing:</td>
+																<td class="divData1"><?php echo ($super->msc_total != '') ? $super->msc_total : 'Nil'; ?></td>
+																<?php endif; ?>
+																<?php } ?>
+															</tr>
+															<tr>
+																<?php
+								    								foreach($superData as $super){
+								    							?>
+								    							<?php if($super->category == 'completed'): ?>
+																<td class="divData1" width="90">M.Phil/PhD</td>
+																<td class="divData1" width="95">Completed:</td>
+																<td class="divData1" width="80"><?php echo ($super->phd_total != '') ? $super->phd_total : 'Nil'; ?></td>
+																<?php else: ?>
+																<td class="divData1" width="90">M.Phil/PhD</td>
+																<td class="divData1" width="85">Ongoing:</td>
+																<td class="divData1"><?php echo ($super->phd_total != '') ? $super->phd_total : 'Nil'; ?></td>
+																<?php endif; ?>
+																<?php } ?>
+															</tr>
+														</table>
+			    									</li>
+	    										<?php }else{ echo '<p id="nil-value">Nil</p>'; }?>
+	    									
 	    								</ul>
 	    							</li>
 	    							<li>
@@ -486,7 +498,7 @@ else{
 				    						 	<p>Community Service and Administrative Responsibilities:</p>
 				    						</div>
 			    							<div class="divDataSubHead">
-				    							<ul style="margin-left:6%;font-size: 1.035rem;">
+				    							<ul style="margin-left:6%;font-size: 1.125rem;">
 			    									<div class="divDataHead" style="margin-left: -4.4%;margin-top:-5px;">
 						    						 	<p>Community Service:</p>
 						    						</div>
@@ -496,7 +508,7 @@ else{
 							    						?>
 								    					<div class="row" style="margin-left:-2%;">
 								    						<div class="col-sm-12" style="margin-left:-5.4%;">
-								    							<li style="padding-left:13px;font-size: 1.09rem;margin-bottom: 15px;margin-top: -15px;">
+								    							<li style="padding-left:13px;font-size: 1.125rem;margin-bottom: 15px;margin-top: -15px;">
 								    								<?php echo punctuateStr($comm->office_held,','); ?>
 								    								<?php echo $comm->society_name; ?>
 								    								<?php echo $comm->session_period; ?>
@@ -510,7 +522,7 @@ else{
 												</ul>
 			    							</div>
 			    							<div class="divDataSubHead">
-				    							<ul style="margin-left:6%;font-size: 1.035rem;">
+				    							<ul style="margin-left:6%;font-size: 1.125rem;text-align: justify;">
 			    									<div class="divDataHead" style="margin-left: -4.4%;">
 						    						 	<p>Administrative duties:</p>
 						    						</div>
@@ -520,7 +532,7 @@ else{
 							    						?>
 								    					<div class="row" style="margin-left:-2%;">
 								    						<div class="col-sm-12" style="margin-left:-5.4%;">
-								    							<li style="padding-left:13px;font-size: 1.09rem;margin-bottom: 15px;margin-top: -15px;">
+								    							<li style="padding-left:13px;font-size: 1.125rem;margin-bottom: 1.3rem;margin-top: -15px;">
 								    								<?php echo punctuateStr($admini->office_held,','); ?>
 								    								<?php echo $admini->society_name; ?>
 								    								<?php echo $admini->session_period; ?>
@@ -545,35 +557,35 @@ else{
     						<div class="divDataHead" id="push-left">
     						 	<p>Research:</p>
     						</div>
-    						<ul style="list-style-type: lower-alpha;margin-left:5%;font-size: 1.035rem;">
+    						<ul style="list-style-type: lower-alpha;margin-left:5%;font-size: 1.125rem;text-align: justify;">
     							<div class="divDataSubHead">
 	    							<li>
 			    						<p>Completed:</p>
-			    						<ul style="list-style-type: lower-roman;">
+			    						<ul style="list-style-type: lower-roman;font-size: inherit;">
 			    						<?php
 				    						if(!empty($research_com)){
 				    							foreach($research_com as $complete){
 				    						?>
-											<li id="listSub" class="breakWord narrow"><p><?php echo ucfirst($complete->topic_name); ?></p></li> 
+											<li id="listSub" class="breakWord narrow" style="margin-bottom: -10px;"><p><?php echo punctuateStr(ucfirst($complete->topic_name),'.'); ?></p></li> 
 										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
 										<?php }  ?>
 										</ul>
 	    							</li>
 	    							<li>
-			    						<p>In Progess:</p>
-			    						<ul style="list-style-type: lower-roman;">
+			    						<p>In Progress:</p>
+			    						<ul style="list-style-type: lower-roman;font-size: inherit;">
 			    						<?php
 				    						if(!empty($research_in)){
 				    							foreach($research_in as $progress){
 				    						?>
 											<li id="listSub" class="breakWord narrow">
-												<p>
-												<?php echo ucfirst($progress->topic_name); ?><br/>
-												<?php echo ucfirst($progress->importance); ?> 
-												<?php echo ucfirst($progress->current_doing); ?>
-												<?php echo ($progress->significance) ? ucfirst($progress->significance): " " ; ?>
-												<?php echo ucfirst($progress->progress_of_research); ?>
+												<p style="font-size: 1.125rem;line-height: 1.5;">
+												<?php echo punctuateStr(ucfirst($progress->topic_name),':'); ?><br/>
+												<?php echo punctuateStr(ucfirst($progress->importance),'.'); ?> 
+												<?php echo punctuateStr(ucfirst($progress->current_doing),'.'); ?>
+												<?php echo ($progress->significance) ? punctuateStr(ucfirst($progress->significance),'.'): " " ; ?>
+												<?php echo punctuateStr(ucfirst($progress->progress_of_research),'.'); ?>
 												</p>
 											</li> 
 										<?php } }else{ ?>
@@ -583,18 +595,22 @@ else{
 	    							</li>
 	    							<li>
 	    								<p>Project, Dissertation and Thesis:</p>
-			    						<ul style="list-style-type: lower-roman;">
+			    						<ul style="list-style-type: lower-roman;font-size: inherit;">
 			    						<?php
 			    						$userId = (@$user_id) ? @$user_id : '';
 			    						$userInitial = $this->webSessionManager->getNameInitial($userId);
 				    						if(!empty($project_thesis)){
 				    							foreach($project_thesis as $project){
 				    						?>
-											<li id="listSub" class="breakWord narrow">
-												<?php echo $userInitial; ?> <?php echo "(" .$project->year_research .")." ; ?>
-												<?php echo $project->research_name; ?>
-												<?php echo $project->research_category; ?>
-												<?php echo $project->sch_of_research; ?>
+											<li id="listSub" class="breakWord narrow" style="font-size: 1.09rem;">
+												<?php echo $userInitial; ?>
+												<?php
+												$word = appendAtEnd(appendAtFront(trim($project->year_research),'('),')'); 
+												echo punctuateStr($word,'.');
+												?>
+												<?php echo punctuateStr($project->research_name,'.'); ?>
+												<?php echo punctuateStr($project->research_category,'.'); ?>
+												<?php echo punctuateStr($project->sch_of_research,'.'); ?>
 											</li> 
 										<?php } }else{ ?>
 											<p id="nil-value">Nil</p>
@@ -611,7 +627,7 @@ else{
     						<div class="divDataHead" id="push-left">
     						 	<p>Publications:</p>
     						</div>
-    						<ul style="list-style-type: lower-alpha;margin-left:5%;font-size: 1.035rem;">
+    						<ul style="list-style-type: lower-alpha;margin-left:5%;font-size: 1.125rem;text-align: justify;">
     							<div class="divDataSubHead">
 	    							<ol>
     									<table style="margin-left: -34px;" width="750" border="0" cellpadding="0" cellspacing="0">
@@ -696,8 +712,8 @@ else{
 													 	<?php echo boldUser(ucfirst($chapters->author_names),$lecturer); ?>
 													 	<?php echo punctuateStr(addParenthesis($chapters->year_of_publication,'(',')')); ?>
 													 	<?php echo punctuateStr($chapters->title_of_chapter,'.'); ?>
-													 	<?php $editors = "In $chapters->editor_names (Eds.)";
-													 		echo ($editors)?$editors : " ";
+													 	<?php $editors = ($chapters->editor_names != '') ? $chapters->editor_names : " ";
+													 		echo appendAtEnd(appendAtFront($editors,'In',true),'(Eds.)');
 													 	?>
 													 	<?php echo "<i>". punctuateStr($chapters->title_of_book,'.') ."</i>"; ?>
 													 	<?php echo punctuateStr($chapters->city_of_publication,':') ?>
@@ -963,7 +979,7 @@ else{
     						 	<p>Major Conferences Attended with Papers Read (in the last 5 years):</p>
     						</div>
     						<div class="divData">
-	    						<ul>
+	    						<ul style="text-align: justify;">
 	    					<?php
 	    						if(!empty($major_conf)){
 	    							foreach($major_conf as $conf){
@@ -980,16 +996,33 @@ else{
 										 ?>
 										 <?php echo punctuateStr($conf->city_of_conf,','); ?>
 										 <?php echo punctuateStr($conf->country_of_conf,'.'); ?>
-										 <br/>
+										 <div id="clearfix"></div>
 										 <?php
 										 	loadClass($this->load,'paper_read');
 										 	$paper_read = new Paper_read();
 										 	$papers = $paper_read->getWhere(array('major_conf_attended_id'=>$conf->ID,'lecturer_id'=>$conf->lecturer_id),$c,0,null,false);
-										 	if(!empty($papers)){
-										 		foreach($papers as $paper){ ?>
-										 		<b>Paper presented:</b> <?php echo $paper->title_of_paper. " (with $paper->author_names)"; ?> 
-										 		<br>
-										<?php } } ?>
+										 	if(!empty($papers)){ ?>
+										 		<b>Paper Read:</b>
+										 		 <?php if(count($papers) > 1) : ?>
+										 			<ul style="list-style-type: lower-roman;">
+										 				<?php
+											 			foreach($papers as $paper){ 
+											 			$presented = ($paper->author_names != '') ? " (with $paper->author_names)" : "";
+											 			?>
+										 				<li style="line-height:1.5;margin-left: 10px;margin-top: 10px;font-size:1.125rem;">
+										 					<p style="font-size: 1.125rem;"><?php echo $paper->title_of_paper. $presented; ?></p>
+										 				</li>
+										 				<?php } ?>
+										 			</ul>
+										 		 
+										 		<?php else: ?>
+										 		 	<?php
+										 			foreach($papers as $paper){ 
+										 			$presented = ($paper->author_names != '') ? " (with $paper->author_names)" : "";
+										 			?>
+										 			<?php echo $paper->title_of_paper. $presented; }?>
+										 		<?php endif; ?>
+										<?php }  ?>
 									</li>
 							<?php } ?>
 		    				<?php } else{ ?>
@@ -1006,7 +1039,7 @@ else{
     						 	<p>Ten Best Publications that Reflect the Totality of My Contribution to Scholarship:</p>
     						</div>
     						<div class="divData">
-	    						<ul style="list-style-type: decimal;">
+	    						<ul style="list-style-type: decimal;text-align: justify;">
 	    					<?php if(!empty($best_publish_bp)){
 	    							foreach($best_publish_bp as $bp){
 	    							?>
@@ -1091,7 +1124,7 @@ else{
 									 		$pub_yr = (!emptyDate($publish_yr)) ? $formatDate : '';
 
 									 		$current_vol = appendAtFront($aaj->extra_volume,'Vol.',true); 
-									 			echo ($current_vol || $current_yr) ? " ($current_vol $current_yr) $pub_yr." : ".";
+									 			echo ($current_vol || $current_yr) ? " ($current_vol $current_yr) $pub_yr." : "";
 									 		?>
 									 	</p>
 									</li>

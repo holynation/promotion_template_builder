@@ -42,28 +42,40 @@
 			echo $this->returnJSONFromNonAssocArray($result);
 		}
 
-		public function checkAppointment($dateAppointId,$firstAppointmentId){
-			// i wanna use sql to perform the check between this parameters,read more about
-			// $sql = "select appointment_order as appoint_order from appointment_category ac where ac.category_name = ? and ac.appointment_order >= (select appointment_order from appointment_category ac2 where ac2.category_name = ?)";
-			$sql = "select appointment_order as orderFirst from appointment_category ac where ac.id = ?";
-			$query = $this->db->query($sql, array($dateAppointId));
-			$sql1 = "select appointment_order as orderSecond from appointment_category ac where ac.id = ?";
-			$query1 = $this->db->query($sql1, array($firstAppointmentId));
-			if($query->num_rows() > 0 and $query1->num_rows() > 0){
-				$orderFirst = $query->result_array()[0]['orderFirst'];
-				$orderSecond = $query1->result_array()[0]['orderSecond'];
-				rterur
-
-				// echo $orderFirst ."||".$orderSecond;
-				// if($orderFirst < $orderSecond){
-				// 	echo createJsonMessage('status',false,'message','Sorry your Present Post cannot be lesser than your First Academic appointment...','flagAction',false);exit;
-				// }
+		public function checkAppointment($firstAppointment){
+			$firstAppointment = urldecode($firstAppointment);
+			$sql = "select appointment_order as orderAppoint from appointment_category ac where ac.category_name = ?";
+			$query = $this->db->query($sql,array($firstAppointment));
+			if($query->num_rows() > 0){
+				$result = $query->result_array()[0]['orderAppoint'];
+				$sql1 = "select id,category_name as value from appointment_category ac where ac.appointment_order >= ?";
+				echo $this->returnJSONTransformArray($sql1,array($result));
 			}
+			
 		}
 
 		public function validateWorkDate($end,$start){
 			if($end == $start){
-				echo createJsonMessage('status',true,'message',"<label>testing</label>");exit;
+				echo createJsonMessage('status',true,'attribute','disabled','value','true');
+			}else if($end < $start){
+				echo createJsonMessage('status',false,'message','Sorry the start date can\'t be greater than the end date...','flagAction',false);
+			}else{
+				echo createJsonMessage('status',false,'attribute','disabled','value','false');
+			}
+		}
+
+		private function returnJSONTransformArray($query,$data=array()){
+			$newResult=array();
+			$result = $this->db->query($query,$data);
+			if($result->num_rows() > 0){
+				$result = $result->result_array();
+				foreach($result as $value){
+					$value['id'] = $value['value'];
+					$newResult[] = $value;
+				}
+				return json_encode($newResult);
+			}else{
+				return "";
 			}
 		}
 
@@ -123,10 +135,8 @@
 			}
 			else{
 				if($message != ''){
-					$dataParam = array(
-						'value' => $message
-					);
-					return  json_encode(array($dataParam));
+					$dataParam = array('value' => $message);
+					return json_encode(array($dataParam));
 				}
 				return "";
 			}
@@ -142,7 +152,7 @@
 				$confirm = $_POST['confirmPassword'];
 				if ($new !==$confirm) {
 					// $this->application_log->log('profile module','password does not match');
-					echo createJsonMessage('status',false,'message','new password does not match with the confirmaton','flagAction',true);exit;
+					echo createJsonMessage('status',false,'message','new password does not match with the confirmaton','flagAction',false);exit;
 				}
 				//check that this user owns the password
 				loadClass($this->load,'user');

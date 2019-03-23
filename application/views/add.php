@@ -17,59 +17,93 @@ $page_hint = ($configData && array_key_exists('page_hint', $configData))?$config
 $form_hint = ($configData && array_key_exists('form_hint', $configData))?$configData['form_hint']:'';
 $showAppendForm = ($configData && array_key_exists('showAppendForm', $configData))?$configData['showAppendForm']:false;
 $showAsteriskInfo = ($configData && array_key_exists('asterisk_info', $configData))?$configData['asterisk_info']:false;
+$removeMultipleCheckbox = ($configData && array_key_exists('removeMultipleCheckbox', $configData))?$configData['removeMultipleCheckbox']:false;
 // $showStatus = ($configData && array_key_exists('show_add', $configData))?$configData['show_add']:true;
 
-$show_add = '';
-if($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer' && $model == 'lecturer'){
-  $show_add = false;
-}else{
-  $show_add = true;
+$show_add = ($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer' && $model == 'lecturer') ? false : true;
+$append = ($showAppendForm) ? array('type'=>'checkbox','class'=>'form-control','name'=>'bp_list') : '';
+
+$search = ($configData && array_key_exists('search', $configData))?$configData['search']:"";
+$filter = ($configData && array_key_exists('filter', $configData))?$configData['filter']:"";
+$where ='';
+
+if ($filter) {
+  foreach ($filter as $item) {
+    $display = (isset($item['filter_display'])&&$item['filter_display'])?$item['filter_display']:$item['filter_label'];
+
+    if (isset($_GET[$display]) && $_GET[$display]) {
+      $value = $this->db->conn_id->escape_string($_GET[$display]);
+      $where.= $where?" and {$item['filter_label']}='$value' ":"where {$item['filter_label']}='$value' ";
+    }
+  }
 }
 
-$append='';
-if($showAppendForm){
-$append = array('type'=>'checkbox','class'=>'form-control','name'=>'bp_list');
+if ($search) {
+   $val = isset($_GET['q'])?$_GET['q']:'';
+   $val = $this->db->conn_id->escape_string($val);
+   if (isset($_GET['q']) && $_GET['q']) {
+        $temp=$where?" and (":" where (";
+        $count =0;
+        foreach ($search as $criteria) {
+          $temp.=$count==0?" $criteria like '%$val%'":" or $criteria like '%$val%' ";
+          $count++;
+        }
+        $temp.=')';
+        $where.=$temp;
+   }
+}
+
+if (isset($_GET['export'])) {
+    $this->queryHtmlTableModel->export=true;
+    $this->tableViewModel->export=true;
 }
 
 // this are the empty parameter for the model
 $tableData = '';
-$where='';
 $dataId='';
 $parentModel='';
 //  end parameter model
-if($model == 'lecturer'){
-$dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
-// $where.= " where lecturer.id = $dataId";
-$where = " where lecturer.id = $dataId";
-$count = 1;
-$query .= ' '. $where;
-$parentModel='';
-}else{
-  $dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
-$where = " where lecturer.id = $dataId";
-}
-
-if($model == 'chapter_in_book_published' && $this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'){
-  $tableExclude = array('editors_id');
-}
 
 // this is the lecturer section
 if($this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'){
 // $tableData= $this->queryHtmlTableModel->getHtmlTableWithQuery($query,array($dataId),$count,$tableAction,null,true,0,50,$parentModel,$tableExclude);
-if(!empty($tableExclude)){
-  $tableExclude = array_merge(array('date_created','lecturer_id'),$tableExclude);
-}else{
-  $tableExclude = array('date_created','lecturer_id');
+
+    if($model == 'lecturer')
+    {
+      $dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
+      $where .= $where ? " and lecturer.id = $dataId" : " where lecturer.id = $dataId";
+      $count = 1;
+      $query .= ' '. $where;
+      $parentModel='';
+    }
+    else
+    {
+      $dataId = $this->webSessionManager->getCurrentUserProp('user_table_id');
+      $where .= $where ? " and lecturer.id = $dataId" : " where lecturer.id = $dataId";
+    }
+
+    if($model == 'chapter_in_book_published' && $this->webSessionManager->getCurrentUserProp('user_type') == 'lecturer'){
+      $tableExclude = array('editors_id');
+    }
+
+    if(!empty($tableExclude)){
+      $tableExclude = array_merge(array('date_created','lecturer_id'),$tableExclude);
+    }else{
+      $tableExclude = array('date_created','lecturer_id');
+    }
+    $order = " order by ID desc ";
+    $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true,$order,$where,$append,!$removeMultipleCheckbox);
 }
-$order = " order by ID desc ";
-$tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true,$order,$where,$append,true);
-}
+
 // this is for the admin section
-else{
+else
+{
   if ($model == 'role') {
     $tableData= $this->queryHtmlTableModel->getHtmlTableWithQuery($query,array($dataId),$count,$tableAction);
   }else{
-    $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,20,true,'order by ID desc','',array(),true);
+    // $where = ' ';
+    $where .= $where ? " order by ID desc" : " order by ID desc";
+    $tableData = $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,20,true,$where,'',array(),!$removeMultipleCheckbox);
   }
 }
 
@@ -80,6 +114,7 @@ else{
     $formContent= $this->modelFormBuilder->start($model.'_table')
     ->appendInsertForm($model,true,$hidden,'',$showStatus,$exclude)
     ->addSubmitLink()
+    ->appendResetButton('Reset','btn-danger')
     ->appendSubmitButton($submitLabel,'btn btn-success')
     ->build();
 ?>
@@ -90,36 +125,90 @@ else{
     	<?php if($page_hint != ''): ?>
     	<div class="alert alert-info"><?php echo $page_hint; ?></div>
     <?php endif; ?>
+
     <?php if($append): ?>
-      <div class="alert alert-info">
-        <p>
-          Note: Click the checkbox to choose the best publication amidst other publications.<br/>
-          Note: However, make sure to click the save as best button to save what you have checked.
-        </p>
-    </div>
+      <div class="row alert alert-info">
+        <div class="col-6">
+          <p>
+            <b>Note:</b> Click the checkbox to choose the best publication amidst other publications.<br/>
+            <b>Note:</b> However, make sure to click the save as best button to save what you have checked.
+          </p>
+        </div>
+        <div class="col-6">
+          <?php if($showAsteriskInfo): ?>
+          <ul>
+            <li><b>Note:</b> Use One asterisk for publications appearing after last promotion.</li>
+            <li><b>Note:</b> Use Two asterisks for publications appearing since last failed attempt.</li>
+          </ul>
+        <?php endif; ?>
+        </div>
+      </div>
     <?php endif; ?>
+
     	<div class="row purchace-popup">
 	        <div class="col-12">
-	          <span class="d-flex alifn-items-center">
-	            <p>Administrative <?php echo removeUnderscore($model); ?></p>
-              <?php 
-              // $disable = '';
-              //   if(isset($checkExists)){
-              //     $disable = ($checkExists && $model=='lecturer') ? "disabled" : '';
-              //   }
-               ?>
-               <?php if($show_add): ?>
-	            <div class="col-md-3 col-sm-3">
-		            <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#basic_modal" data-animate-modal="zoomInDown">Add
-		            </button>
-		          </div>
-            <?php endif; ?>
-              <?php if($showAsteriskInfo): ?>
-                <div class="col-md-6 col-sm-6 alert alert-info">
-                  <ul>
-                    <li>One asterisk for publications appearing after last promotion.</li>
-                    <li>Two asterisks for publications appearing since last failed attempt.</li>
-                  </ul>
+            <h4>Administrative <?php echo removeUnderscore($model); ?></h4>
+	          <span class="d-flex align-items-center">
+              <?php if($show_add): ?>
+              <div class="col-7">
+                <div class="row">
+                    <?php 
+                      $where='';
+                     ?>
+                     <?php if ($filter): ?>
+                    <form action="">
+                      <div class="d-flex flex-row justify-content-between" style="">
+                        <?php foreach ($filter as $item): ?>
+                           <?php $display = (isset($item['filter_display'])&&$item['filter_display'])?$item['filter_display']:$item['filter_label']; ?>
+                          <?php 
+                            if (isset($_GET[$display]) && $_GET[$display]) {
+                              $value = $this->db->conn_id->escape_string($_GET[$display]);
+                              $where.= $where?" and {$item['filter_label']}='$value' ":"where {$item['filter_label']}='$value' ";
+                            }
+                          ?>
+                          <select class="form-control <?php echo isset($item['child'])?'autoload':'' ?>" name="<?php echo $display; ?>" id="<?php echo $display; ?>" <?php echo isset($item['child'])?"data-child='{$item['child']}'":""?> <?php echo isset($item['load'])?"data-load='{$item['load']}'":""?> >
+                            <option value="">..select <?php echo removeUnderscore(rtrim($display,'_id')) ?>...</option>
+                            <?php if (isset($item['preload_query'])&& $item['preload_query']): ?>
+                              <?php echo buildOptionFromQuery($this->db,$item['preload_query'],null,isset($_GET[$display])?$_GET[$display]:''); ?>
+                            <?php endif; ?>
+                          </select>
+                        <?php endforeach; ?>
+                      <?php endif; ?>
+
+                    <?php if ($search): ?>
+
+                      <?php 
+                        $placeholder=" search by : ".implode(',', $search);
+                        $val = isset($_GET['q'])?$_GET['q']:'';
+                        $val = $this->db->conn_id->escape_string($val);
+                       ?>
+                      <input class="form-control" type="text" name="q" placeholder="<?php echo $placeholder; ?>" value="<?php echo $val; ?>">
+                     
+                    <?php endif; ?>
+                    
+                        <?php if ($search || $filter): ?>
+                         <input type="submit" value="Filter" class="btn btn-primary">
+                      </div>
+                    </form>
+                <?php endif; ?>
+                    <!-- <div style="margin-top: 15px;" class="alert alert-info">Load the data to export with the necessary parameter before clicking export button</div>
+                    <?php 
+                      //$queryString= $_SERVER['QUERY_STRING'];
+                     ?>
+                   <a target="_blank" href="<?php //echo $queryString?('?'.$queryString.'&export=yes'):'?export=yes'; ?>" style="margin-top: 15px;" class="btn btn-primary pull-right" id="export-btn">Export Data</a>
+                   <div class="clear"></div> -->
+                   <br>
+                </div>
+              </div>
+              
+                <div class="row col-5 justify-content-end">
+                  <div class="col-md-3 col-sm-3">
+                    <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#basic_modal" data-animate-modal="zoomInDown">Add
+                    </button>
+                  </div>
+                  <!-- <div class="col-md-3 col-sm-3">
+                    <button type="button" class="btn btn-dark" data-toggle='modal' data-target='#modal-upload' data-animate-modal="zoomInDown">Batch Upload</button>
+                  </div> -->
                 </div>
               <?php endif; ?>
 	          </span>
@@ -151,6 +240,41 @@ else{
 	            </div>
 	        </div>
       	</div>	
+
+        <?php if ($configData==false || array_key_exists('has_upload', $configData)==false || $configData['has_upload']): ?>
+          <div class="modal modal-default fade" id="modal-upload">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title"><?php echo removeUnderscore($model) ?> Batch Upload</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div >
+                      <a  class='btn btn-info' href="<?=base_url("mc/template/$model?exc=name")?>">Download Template</a>
+                    </div>
+                    <br/>
+                    <h3>Upload <?php echo removeUnderscore($model) ?></h3>
+                    <form method="post" action="<?php echo base_url('mc/sFile/'.$model) ?>" enctype="multipart/form-data">
+                    <div class="form-group">
+                      <input type="file" name="bulk-upload" class="form-control">
+                      <input type="hidden" name="MAX_FILE_SIZE" value="300000">
+                    </div>
+                     <div class="form-group">
+                        <input type="submit" class='btn btn-success' name="submit" value="Upload">
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- /.modal-content -->
+              </div>
+              <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        <?php endif ?>
+
         <!-- this is for the edit -->
       	<div class="row">
       		<div id="modal-edit" class="modal fade animated" role="dialog">
@@ -312,8 +436,10 @@ else{
 
         var updateString = JSON.stringify(update);
         $('#perm_update').val(updateString);
-        submitAjaxForm($(this));
-
+        if (confirm("are you sure you want to save best publication (s) ?")) {
+          submitAjaxForm($(this));
+        }
+        
       });
 
       $('.modal').on('hidden.bs.modal', function (e) {

@@ -15,7 +15,7 @@ static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = 'category_name'; // this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
-static $uniqueArray = array();
+static $uniqueArray = array('category_name','appointment_order');
 /* this is an associative array containing the fieldname and the type of the field*/ 
 static $typeArray = array('category_name' => 'varchar','appointment_order' => 'int','status' => 'tinyint');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
@@ -41,7 +41,7 @@ function getCategory_nameFormField($value = ''){
  function getAppointment_orderFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='appointment_order'>Appointment Order</label>
-				<input type='number' name='appointment_order' id='appointment_order' value='$value' class='form-control' required />
+				<input type='number' min='0' name='appointment_order' id='appointment_order' value='$value' class='form-control' required />
 			</div>";
 } 
  function getStatusFormField($value = ''){

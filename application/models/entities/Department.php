@@ -66,10 +66,10 @@ function getDepartment_nameFormField($value = ''){
 
 protected function getFaculty(){
 	$query ='SELECT * FROM faculty WHERE id=?';
-	if (!isset($this->array['ID'])) {
+	if (!isset($this->array['faculty_id'])) {
 		return null;
 	}
-	$id = $this->array['ID'];
+	$id = $this->array['faculty_id'];
 	$result = $this->db->query($query,array($id));
 	$result = $result->result_array();
 	if (empty($result)) {

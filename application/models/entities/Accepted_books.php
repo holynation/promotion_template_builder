@@ -10,7 +10,7 @@ class Accepted_books extends Crud {
 
 protected static $tablename = "Accepted_books"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('date_created','asterisks');
+static $nullArray = array('date_created','asterisks','contribution','country');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
@@ -63,13 +63,13 @@ function getLecturer_idFormField($value = ''){
  function getCountryFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='country'>Country</label>
-				<input type='text' name='country' id='country' value='$value' class='form-control' required />
+				<input type='text' name='country' id='country' value='$value' class='form-control' />
 			</div>";
 } 
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' required />
+				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control'  />
 			</div>";
 }
 function getAsterisksFormField($value=''){

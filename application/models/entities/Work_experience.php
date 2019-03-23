@@ -63,8 +63,7 @@ function getLecturer_idFormField($value = ''){
 	$result = "<div class='form-group'>
 				<label for='end_date'>End Date</label>";
 			$option = getDropDownYear($value);
-	// $result.="<select name='end_date' id='end_date' class='form-control autoload' data-load='validateWorkDate' data-depend='start_date' data-child='within_a_year'>
-			$result.="<select name='end_date' id='end_date' class='form-control'>
+	$result.="<select name='end_date' id='end_date' class='form-control autoload' data-load='validateWorkDate' data-depend='start_date' data-child='within_a_year' data-child-change='true'>
 			<option value=''>..choose....</option>
 					 $option
 				</select>";
@@ -75,7 +74,7 @@ function getLecturer_idFormField($value = ''){
 function getWithin_a_yearFormField($value=''){
 	return "<div class='form-group'>
 				<label for='within_a_year'>Within a year (only state if it is within a year)</label>
-				<input type='text' name='within_a_year' id='within_a_year' value='$value' class='form-control' data-range=\"true\" data-multiple-dates-separator=\" - \" data-language=\"en\" placeholder='e.g (Jan 2012 - Aug 2012)' />
+				<input type='text' name='within_a_year' id='within_a_year' value='$value' class='form-control' placeholder='e.g (Jan 2012 - Aug 2012)' disabled/>
 			</div>";
 }
 

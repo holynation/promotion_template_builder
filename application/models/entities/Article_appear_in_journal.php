@@ -10,14 +10,14 @@ class Article_appear_in_journal extends Crud {
 
 protected static $tablename = "Article_appear_in_journal"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array('extra_volume','extra_vol_year','date_of_publication','date_created','journal_num','page_range','asterisks');
+static $nullArray = array('extra_volume','extra_vol_year','date_of_publication','date_created','journal_num','page_range','asterisks','contribution','country');
 static $compositePrimaryKey = array('article_title','journal_name');
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
 static $displayField = '';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array('article_title');
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','journal_year' => 'varchar','article_title' => 'varchar','journal_name' => 'varchar','volume_no' => 'int','journal_num' => 'int','page_range' => 'varchar','country' => 'varchar','contribution' => 'varchar','asterisks'=>'int','extra_volume' => 'varchar','extra_vol_year' => 'varchar','date_of_publication' => 'datetime','date_created' => 'timestamp');
+static $typeArray = array('lecturer_id' => 'int','author_names' => 'varchar','journal_year' => 'varchar','article_title' => 'varchar','journal_name' => 'varchar','volume_no' => 'int','journal_num' => 'varchar','page_range' => 'varchar','country' => 'varchar','contribution' => 'varchar','asterisks'=>'int','extra_volume' => 'varchar','extra_vol_year' => 'varchar','date_of_publication' => 'datetime','date_created' => 'timestamp');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
 static $labelArray = array('ID' => '','lecturer_id' => '','author_names' => '','journal_year' => '','article_title' => '','journal_name' => '','volume_no' => '','journal_num' => '','page_range' => '','country' => '','contribution' => 'Contribution(%)','asterisks'=>'','extra_volume' => '','extra_vol_year' => '','date_of_publication' => '','date_created' => '');
 /*associative array of fields that have default value*/ 
@@ -73,7 +73,7 @@ function getLecturer_idFormField($value = ''){
 } 
  function getJournal_numFormField($value = ''){
 	return "<div class='form-group'>
-				<label for='journal_num'>Journal Num (just state the number)</label>
+				<label for='journal_num'>Journal Num (just state the number excluding 'No.')</label>
 				<input type='text' name='journal_num' id='journal_num' value='$value' class='form-control' placeholder='e.g No. 1' />
 			</div>";
 } 
@@ -86,13 +86,13 @@ function getLecturer_idFormField($value = ''){
  function getCountryFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='country'>Country (In full)</label>
-				<input type='text' name='country' id='country' value='$value' class='form-control' placeholder='e.g Nigeria ' required />
+				<input type='text' name='country' id='country' value='$value' class='form-control' placeholder='e.g Nigeria ' />
 			</div>";
 } 
  function getContributionFormField($value = ''){
 	return "<div class='form-group'>
 				<label for='contribution'>Contribution (Contribution in percentage excluding the sign(%))</label>
-				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' required />
+				<input type='number' min='0' name='contribution' id='contribution' value='$value' class='form-control' />
 			</div>";
 } 
 function getAsterisksFormField($value=''){

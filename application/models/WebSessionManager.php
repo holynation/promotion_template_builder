@@ -4,12 +4,14 @@
 */
 class WebSessionManager extends CI_Model
 {
+   private $defaultType = array("admin","lecturer");
 	// private $defaultRole = array('applicant','student','lecturer','staff');
 	function __construct()
 	{
 		parent::__construct();
 		// $this->load->library('session');
 		$this->load->model('crud');
+      $this->load->helper('string');
 	}
 	/**
 	 * This functio save the current user into the session
@@ -31,11 +33,30 @@ class WebSessionManager extends CI_Model
       $moreInfo = $moreInfo[0];
       $userArray = $moreInfo->toArray();
       $temp =$user->toArray();
+      // $new_temp = $this->switchType($temp);
+      // print_r($new_temp);exit;
       // unset($temp['ID']);
       $all = array_merge($userArray,$temp);
-      // print_r($all);exit;
       $this->session->set_userdata($all);
 	}
+
+   private function switchType($userArray){
+      $userTypeList = $this->defaultType;
+      $old_user = $userArray;
+      $new_user = array();
+      $name = appBuildName('userType');
+      $admin = $name . "_admin";
+      $lecturer = $name . "_lecturer";
+      foreach($old_user as $key => $value){
+         if($value == $userTypeList[0]){
+            $value = $admin;
+         }else if($value == $userTypeList[1]){
+            $value = $lecturer;
+         }
+         $new_user[$key] = $value;
+      }
+      return $new_user;
+   } 
 
 	public function getCurrentUserDefaultRole(){
 		$rolename = $this->getCurrentUserProp('usertype');
@@ -76,39 +97,39 @@ class WebSessionManager extends CI_Model
 	 */
 	public function getCurrentUserProp($propname){
 		return $this->session->userdata($propname);
-   	}
-   	/**
-   	 * checks if the session is active or not
-   	 * @return boolean [true if the session is active or false otherwise]
-   	 */
-   	public function isSessionActive(){
-   		$userid = $this->session->userdata('ID');
-   		if (!empty($userid)) {
-   			return true;
-   		}
-   		else{
-   			return false;
-   		}
-   	}
+   }
+	/**
+	 * checks if the session is active or not
+	 * @return boolean [true if the session is active or false otherwise]
+	 */
+	public function isSessionActive(){
+		$userid = $this->session->userdata('ID');
+		if (!empty($userid)) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 
-   	public function getFlashMessage($name){
-   		return $this->session->flashdata($name);
-   	}
+	public function getFlashMessage($name){
+		return $this->session->flashdata($name);
+	}
 
-   	public function setFlashMessage($name,$value){
-   		$this->session->set_flashData($name,$value);
-   	}
+	public function setFlashMessage($name,$value){
+		$this->session->set_flashData($name,$value);
+	}
 
-   	public function isApplicantSessionActive(){
-   		$userid = $this->getCurrentUserProp('ID');
-   		$application = $this->getCurrentUserProp('admission_Application_ID');
-   		if (!(empty($userid) || empty($application))) {
-   			return true;
-   		}
-   		else{
-   			return false;
-   		}
-   	}
+	public function isApplicantSessionActive(){
+		$userid = $this->getCurrentUserProp('ID');
+		$application = $this->getCurrentUserProp('admission_Application_ID');
+		if (!(empty($userid) || empty($application))) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 
 //this function is used to set content on the session. This is delegating to the default session function on codeigniter
    	public function setContent($name,$value){

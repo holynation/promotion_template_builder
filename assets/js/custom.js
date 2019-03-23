@@ -1,15 +1,15 @@
 var _asyncTime = 3000;
 
 function reportAndRefresh(target,data,action,timeOut){
-  var _timeOut = timeOut || _asyncTime;
-	if(action != ''){
-		var _parseData = data.trim(),
-			_parseData = $.parseJSON(_parseData);
-		showNotification(_parseData.status,_parseData.message,_timeOut);
+  	var _timeOut = timeOut || _asyncTime;
+  	var data = data.trim(),
+		data = $.parseJSON(data);
+	if(action){
+		showNotification(data.status,data.message,_timeOut);
 		timeOutReload(_timeOut);
 	}else{
 		showNotification(data.status,data.message,_timeOut);
-		timeOutReload(_timeOut);
+		// timeOutReload(_timeOut);
 	}
 }
 
@@ -53,7 +53,6 @@ function showToastNotification(status,data,asyncTime){
 
     var getMessage = function () {
     	const _checkStatusMsg = status ? 'operation successful' : 'error in performing the operation';
-
         return _checkStatusMsg;
     };
 
@@ -356,7 +355,7 @@ $(document).ready(function(){
                   $parse = jQuery.parseJSON(_parseData);
 
                   if($parse.flagAction){
-                    reportAndRefresh(null,data,'flagAction',5000);
+                    reportAndRefresh(null,data,$parse.flagAction,5000);
                     return true;
                   }else{
                     showNotification($parse.status,$parse.message,4000);
@@ -553,7 +552,7 @@ function showNotifications(status,data){//a boolean value for success or failure
 function animateTop(element){
 	element.show();
 	element.animate({
-		top: '10%',
+    bottom: '2%',
 		opacity: 1},
 		"slow", function() {
 		fadeTimer(element);
@@ -565,7 +564,7 @@ function fadeTimer(element){
 }
 function reverseAnimateTop(element){
 	element.animate({
-		top: -50,
+    bottom: -50,
 		opacity: 0
 	},
 		"slow",function() {
@@ -630,7 +629,7 @@ function sendAjax(target,url,data,type,success, failure){
         		$parse = jQuery.parseJSON(_parseData);
 
         	if((typeof $parse.flagAction !== 'undefined')){
-        		reportAndRefresh(target,data,'flagAction');
+        		reportAndRefresh(target,data,$parse.flagAction);
         		return true;
         	}
 
@@ -827,6 +826,7 @@ function bindDropDown(className){
 		var path = $(this).attr('data-load');
 		var child =  $(this).attr('data-child');
 		var depend =$(this).attr('data-depend');
+		var childChange = $(this).attr('data-child-change');
 		//check if this has a form parent
 		var selector = '#'+child;
 		var par = $(this).parents('form');
@@ -847,25 +847,40 @@ function bindDropDown(className){
 			dp = temp.join('/');
 		}
 		var target =currentChild;
+		var loadFunction = '';
+		loadFunction = (childChange == 'true') ? childInputChangeAttr : childLoad;
 		url = $('#baseurl').val()+'ajaxData/'+path+'/'+val+'/'+dp;
-		sendAjax(target,url,data,'get',childLoad);
+		sendAjax(target,url,data,'get',loadFunction);
 	});
 }
 
+function childInputChangeAttr(target,data){
+	if(target[0].tagName.toLowerCase() == 'input'){
+		if(data.trim() == ""){target.html('');return;}
+		var fromServer = jQuery.parseJSON(data),
+			_attribute = fromServer.attribute,
+			_value = fromServer.value;
+			if(_value == 'true'){
+				// this means that the attribute default value should be changed
+				if(target[0].attributes.getNamedItem(_attribute) !== "null"){
+					target[0].attributes.removeNamedItem(_attribute);
+				}
+			}else{
+				var setAttr = document.createAttribute(_attribute);
+				setAttr.value = _value;
+				target[0].attributes.setNamedItem(setAttr);
+			}
+	}
+}
+
 function childLoad(target,data){
+	console.log('got here 3');
 	if (target[0].tagName.toLowerCase()=='select') {
 		if (data.trim()=="") {target.html('');return;}
 		var fromServer = jQuery.parseJSON(data);
 		loadSelect(target,fromServer);
 		return;
 	}
-	// else if(target[0].tagName.toLowerCase() == 'input'){
-	// 	// console.log(target[0].attributes);
-	// 	var currentElement = target[0];
-	// 	console.log(currentElement);
-	// 	var attr = ;
-	// 	console.log(attr);
-	// }
 	// if not select just
 	target.html(data);
 }

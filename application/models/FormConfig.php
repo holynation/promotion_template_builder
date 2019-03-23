@@ -62,7 +62,7 @@ class FormConfig extends CI_Model
 				'table_action' => $this->alternateAction(),
 				'submit_label' => 'Save',
 				'table_title' => 'Lecuturer Table',
-				'search'=>array('firstname','surname','middlename','email','phone_number'),
+				'search'=>array('firstname','surname','middlename','email','staff_no'),
 				'show_status' => true,
 				'query' => 'select distinct lecturer.ID,title_name,staff_no,surname,firstname,middlename,maiden_name,faculty_name,department_name,email,phone_number,dob as date_of_birth,gender,marital_status,address,state_of_origin,lga_of_origin,religion,nationality,img_path,disability,lecturer.status from lecturer left join department on department.id = lecturer.department_id left join faculty on faculty.id=department.faculty_id left join title on title.id = lecturer.title_id'
 			),
@@ -91,13 +91,15 @@ class FormConfig extends CI_Model
 			(
 				'form_hint' => 'Names must be in the same orders as in the book.',
 				'showAppendForm' => true,
-				'asterisk_info' => true
+				'asterisk_info' => true,
+				'removeMultipleCheckbox' => true
 			),
 			'chapter_in_book_published' => array
 			(
 				'table_action' => array('delete' => 'delete/chapter_in_book_published', 'edit' => 'edit/chapter_in_book_published'),
 				'showAppendForm' => true,
-				'asterisk_info' => true
+				'asterisk_info' => true,
+				'removeMultipleCheckbox' => true
 			),
 			'article_in_conference' => array
 			(
@@ -105,25 +107,29 @@ class FormConfig extends CI_Model
 				'table_action' => array('delete' => 'delete/article_in_conference', 'edit' => 'edit/article_in_conference'),
 				'page_hint' => 'This page is for Articles that have Already Appeared in Refereed Conference Proceedings',
 				'showAppendForm' => true,
-				'asterisk_info' => true
+				'asterisk_info' => true,
+				'removeMultipleCheckbox' => true
 			),
 			'article_appear_in_journal' => array
 			(
 				'page_hint' => 'This page is for Articles that have already appeared in learned journals',
 				'showAppendForm' => true,
-				'asterisk_info' => true
+				'asterisk_info' => true,
+				'removeMultipleCheckbox' => true
 			),
 			'accepted_books' => array
 			(
 				'page_hint' => 'This page is for Books, Chapters in Books and Articles Already Accepted for Publication',
 				'showAppendForm' => true,
-				'asterisk_info' => true
+				'asterisk_info' => true,
+				'removeMultipleCheckbox' => true
 			),
 			'technical_report' => array
 			(
 				'page_hint' => 'This page is for Technical Reports and Monographs',
 				'showAppendForm' => true,
-				'asterisk_info' => true
+				'asterisk_info' => true,
+				'removeMultipleCheckbox' => true
 			),
 			'major_conf_attended' => array
 			(
@@ -147,8 +153,9 @@ class FormConfig extends CI_Model
 					'preload_query'=>"select id,department_name as value from department ",
 					'filter_display'=>'department'
 				),
-			),
+			)
 		);
+
 		if (array_key_exists($tablename, $result)) {
 			return $result[$tablename];
 		}

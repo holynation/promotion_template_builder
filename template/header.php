@@ -90,7 +90,7 @@
                 if($this->webSessionManager->getCurrentUserProp('user_type') == 'admin'):
                   if(isset($admin)){
                     $fullname =  $admin->firstname .' '.$admin->lastname;
-                    $path = $admin->img_path;
+                    $path = ($admin->img_path != '') ? $admin->img_path : 'assets/images/default-profile.jpg';
                   }
               ?>
               <span class="profile-text">Hello, <?php echo $fullname; ?> !</span>
@@ -98,7 +98,7 @@
               <?php else: 
                   if(isset($lecturer)):
                   $fullname = $lecturer->surname .' '.$lecturer->firstname;
-                  $path = $lecturer->img_path;
+                  $path = ($lecturer->img_path != '') ? $lecturer->img_path : 'assets/images/default-profile.jpg';
                   endif;
                 ?>
                 <span class="profile-text"><?php echo $fullname ; ?> !</span>
@@ -146,11 +146,12 @@
   <style type="text/css">
     #notification{
       display: none;
-      position: absolute;
-      z-index: 2000;
+      position: fixed;
+      z-index: 1100;
       text-align: center;
-      width: 50%;
-      top: -5px;
+      width: 40%;
+      bottom: 0px;
+      left:1%;
       cursor: pointer;
     }
   </style>
