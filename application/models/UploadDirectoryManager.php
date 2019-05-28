@@ -1,6 +1,8 @@
 <?php 
 /**
-* Helper class for generating the right directory for the upload process based on the model the entity is using
+|	Helper class for generating the right directory for the upload process 
+|	based on the model the entity is using.
+|	Thus, it is useful for dynamic naming of directory for a model
 */
 class UploadDirectoryManager extends CI_Model
 {
@@ -24,6 +26,11 @@ class UploadDirectoryManager extends CI_Model
 		$assignment->ID = $asid;
 		$result =$assignment->getCourseCode();
 		$result="/".str_replace(' ', "_", $result).'/';
+		return $result;
+	}
+
+	function getAdminDirectory($parameter){
+		$result = "admin/";
 		return $result;
 	}
 }

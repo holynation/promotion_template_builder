@@ -24,7 +24,7 @@ static $labelArray = array('ID' => '','app_name' => '','app_logo' => '','slogan'
 static $defaultArray = array();
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
 //the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.
-static $documentField = array('app_logo'=>array(array('jpeg','jpg','png','gif','ico'),'10000888','app/logo/')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
+static $documentField = array('app_logo'=>array('type'=>array('jpeg','jpg','png','gif','ico'),'size'=>'10000888','directory'=>'app/logo/')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
 static $relation = array();
 static $tableAction = array('delete' => 'delete/dev_app', 'edit' => 'edit/dev_app');
 function __construct($array = array())

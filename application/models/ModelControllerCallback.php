@@ -37,7 +37,7 @@
 			//the user type should be student_biodata
 			loadClass($this->load,'user');
 			if ($type=='insert') {
-				$param = array('user_type'=>'admin','username'=>$data['email'],'password'=>$this->hash_created->encode_password($data['lastname']),'user_table_id'=>$data['LAST_INSERT_ID']);
+				$param = array('user_type'=>'admin','username'=>$data['email'],'password'=>md5($data['firstname']),'user_table_id'=>$data['LAST_INSERT_ID']);
 				$std = new User($param);
 				if ($std->insert($db,$message)) {
 					return true;

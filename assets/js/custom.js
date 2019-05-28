@@ -698,6 +698,38 @@ function loadFormData(form){
 	data.append(subName,subValue);
 	return data;
 }
+// this is function is to preview an image
+function filePreview(form){
+  if(form && form[0]){
+    var preview;
+    var formId = form.attr('id'),
+       preview = document.querySelector("input[type='file'] ~ img"),
+       file    = document.querySelector('input[type=file]').files[0];
+       if(preview == null){
+        var tempPreview = document.querySelector("input[type='file']").previousElementSibling;
+         if(tempPreview.tagName.toLowerCase() == 'img'){
+          preview = tempPreview;
+         }else{
+            $("input[type='file']").after("<img src='' alt='image' width ='80%' height='50%' style='margin-top:10px;' />");
+            preview = document.querySelector("input[type='file'] ~ img");
+         }
+       }
+
+    if(preview !== null){
+      var reader = new FileReader();
+      reader.onload = function (e){
+        preview.src = reader.result;
+      }
+      // reader.addEventListener("load", function () {
+      //   preview.src = reader.result;
+      // }, false);
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+}
 //function to clear the content of a form
 function clearForm(form){
 	formItems = form.find("input, select, textarea");

@@ -6,6 +6,7 @@
 
 class ModelController extends CI_Controller
 {
+	private $_rootUploadsDirectory = "uploads/";
 
 	function __construct()
 	{
@@ -257,14 +258,15 @@ class ModelController extends CI_Controller
 		}
 		foreach ($paramFile as $name => $value) {
 			// $this->log($model,"uploading file $name");
-			if (in_array($name, $fields)) {//if the field name is present in the fields the upload the document
-				// print_r($value);exit;
+			//if the field name is present in the fields the upload the document
+			if (in_array($name, $fields)) {
 
 				// list($type,$size,$directory,$preserve,@$max_width,@$max_height) = $value;
 				// this is a precaution if no keys of this name are not set in the array
 				$preserve=false;
 				$max_width = 0;
 				$max_height = 0;
+				$directory="";
 				extract($value);
 
 				$method ="get".ucfirst($model)."Directory";
@@ -272,10 +274,11 @@ class ModelController extends CI_Controller
 				if (method_exists($this->uploadDirectoryManager, $method)) {
 					$dir  = $this->uploadDirectoryManager->$method($parameter);
 					if ($dir===false) {
-						showUploadErrorMessage($this->webSessionManager,"Error while uploading file",false);
+						showUploadErrorMessage($this->webSessionManager,"Error while uploading file",false,true);
 					}
 					$directory.=$dir;
 				}
+
 				$currentUpload = $this->uploadFile($model,$name,$type,$size,$directory,$message,$insertType,$preserve,$max_width,$max_height);
 				if ($currentUpload==false) {
 					return $parameter;
@@ -303,8 +306,7 @@ class ModelController extends CI_Controller
 				$calcsize = calc_size($maxSize);
 				exit(createJsonMessage('status',false,'message',"The file you are attempting to upload is larger than the permitted size ($calcsize)"));
 			}
-
-			$destination='uploads/'.$destination;
+			$destination=$this->_rootUploadsDirectory.$destination;
 			if (!is_dir($destination)) {
 				mkdir($destination,0777,true);
 			}
@@ -541,7 +543,7 @@ class ModelController extends CI_Controller
 	// 	$this->application_log->log($model,$description);
 	// }
 
-	function update($model,$id='',$filter=false){
+	function update($model,$id='',$filter=false,$flagAction = false){
 		if (empty($id) || empty($model)) {
 			echo createJsonMessage('status',false,'message','an error occured while processing information','description','the model parameter is null so it must not be null');
 			return;
@@ -549,12 +551,12 @@ class ModelController extends CI_Controller
 		if ($model=='many') {
 			$this->updateMany($filter);
 		} else {
-			$this->updateSingle($model,$id,__METHOD__,$filter);
+			$this->updateSingle($model,$id,__METHOD__,$filter,$flagAction);
 		}
 
 	}
 
-	private function updateSingle($model,$id,$method,$filter){
+	private function updateSingle($model,$id,$method,$filter,$flagAction=false){
 		$this->modelCheck($model,'u');
 		$this->load->model("entities/$model");
 		$filter = (bool)$filter;
@@ -568,30 +570,52 @@ class ModelController extends CI_Controller
 			$this->$model->setArray($parameter);
 			if (!$this->$model->update($id,$this->db)) {
 				$this->db->trans_rollback();
-				$message="cannot perform update";
-				 echo createJsonMessage('status',false,'message',$message);
+				// $message="cannot perform update";
+				$arr['status']=false;
+		        $arr['message']= 'cannot perform update';
+		        if($flagAction){
+		        	$arr['flagAction'] = $flagAction;
+		        }
+		        echo json_encode($arr);
+				 // echo createJsonMessage('status',false,'message',$message);
 				return ;
 			}
-			;
 			$data['ID']=$id;
-		if($this->DoAfterInsertion($model,'update',$data,$this->db,$message)){
-			$this->db->trans_commit();
-			$message = empty($message)?'operation successfull':$message;
+			if($this->DoAfterInsertion($model,'update',$data,$this->db,$message)){
+				$this->db->trans_commit();
+				$message = empty($message)?'operation successfull':$message;
+				$arr['status'] = true;
+		        $arr['message']= $message;
+		        if($flagAction){
+		        	$arr['flagAction'] = $flagAction;
+		        }
+		        echo json_encode($arr);
 
-			echo createJsonMessage('status',true,'message',$message);
+				// echo createJsonMessage('status',true,'message',$message);
+				return;
+			}
+			else{
+				$this->db->trans_rollback();
+				$arr['status']=false;
+		        $arr['message']= $message;
+		        if($flagAction){
+		        	$arr['flagAction'] = $flagAction;
+		        }
+		        echo json_encode($arr);
+				 // echo createJsonMessage('status',false,'message',$message);
+				return;
+			}
+		}
+		else{
+			$this->db->trans_rollback();
+			$arr['status']=false;
+	        $arr['message']= $message;
+	        if($flagAction){
+	        	$arr['flagAction'] = $flagAction;
+	        }
+	        echo json_encode($arr);
+			 // echo createJsonMessage('status',false,'message',$message);
 			return;
-		}
-		else{
-			$this->db->trans_rollback();
-			 echo createJsonMessage('status',false,'message',$message);
-			return ;
-		}
-		}
-		else{
-
-			$this->db->trans_rollback();
-			 echo createJsonMessage('status',false,'message',$message);
-			return ;
 		}
 	}
 

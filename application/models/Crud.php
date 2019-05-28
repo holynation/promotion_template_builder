@@ -887,9 +887,12 @@ class Crud extends CI_Model
 	private function isSqlSafeInput($value){
 		return true;
 	}
-//function for exporting data into csv
-	//perform join query based on the template 
-	function export($condition= null){
+
+	/*
+	|	this function will export data to .csv extension format.
+	|	@return the .csv data exported for download even if a where clause is stated as a condition
+	*/
+	public function export($condition= null){
 		$data = $this->getExportData($condition);
 		if (!$data) {
 			exit("no data found to export.");
@@ -900,6 +903,11 @@ class Crud extends CI_Model
 		sendDownload($content,$header,$filename);
 	}
 
+	/*
+	|	this function will get the necessary data to be use as content in the exported file
+	|	NOTE: it also accomomdate a conditional statement (i.e a where clause)
+	|	@return the necessary data from the db
+	*/
 	private function getExportData($condition= null){
 		$fields = $this->getModelTemplateHeader(true,true);
 		$fieldList = implode(',', $fields);
@@ -910,6 +918,10 @@ class Crud extends CI_Model
 		$result = $this->query($query,$data);
 		return $result;
 	}
+	/*
+	|	this  function is use to resolve any foreign table in a model
+	|	@return a proper formal result for a join string statement to be use in query 
+	*/
 	private function getExportJoinString($mainTable){
 		$tables = $this->getModelTemplateHeader(false,false,$ending);
 		//reverse the array
@@ -917,7 +929,7 @@ class Crud extends CI_Model
 		$tables = array_keys($temp);
 		array_unshift($tables, $mainTable);
 		if (empty($tables)) {
-			throw new Exception("error while processing kindly check you code and the model file.", 1);
+			throw new Exception("error while processing kindly check your code and the model file.", 1);
 		}
 		$parents = empty($ending)?array():array_keys($ending);
 		$result = $tables[0];
@@ -954,6 +966,11 @@ class Crud extends CI_Model
 	}
 
 	//function to get the upload template for a table
+	/*
+	|	this function is use to return a list of header for the template
+	|	@return lists of template header for the model,
+	|	resolving any foreign table or an array of tables (i.e multiple table if stated in the entity model)
+	*/
 	private function getModelTemplateHeader($resolve=true,$isSql=false,&$ending=''){
 		$tables = $this->getTemplateTables();
 		if (is_array($tables)) {
@@ -964,6 +981,12 @@ class Crud extends CI_Model
 		}
 	}
 
+	/*
+	|	this function get the necessary table needed for the template
+	|	NOTE: if static::uploadDependency is stated in the entity model,
+	|	array of table name will be returned
+	|	@return either a single table name or an array of table name for the template
+	*/
 	private function getTemplateTables(){
 		$tablename =$this->getTableName();
 		if (isset(static::$uploadDependency)) {
@@ -974,23 +997,31 @@ class Crud extends CI_Model
 		}
 		return $tablename;
 	}
+	/*
+	|	this function is use to generate a list of field containing an array of table name
+	|	@return a list of array field since it involves an array of table
+	*/
 	private function combineFields($tables,$resolve=true,$isSql=false,&$ending=''){
 		$result = array();
 		$ending = array();
 		$previousCount =0;
 		for ($i=0; $i < count($tables); $i++) { 
 			$temp = $this->getTemplates($tables[$i],$resolve,$isSql);
-			;
 			$ending[$tables[$i]]=count($temp) +$previousCount;
 			$previousCount +=count($temp);
 			$result =array_merge($result,$temp);
 		}
 		return $result;
 	}
-	//just return the list of fields needed to perform this update.
+
+	/*
+	|	this function is use to get the field needed for the template download
+	|	@return a list of array field needed for the template
+	*/
 	private function getTemplates($table,$resolve=true,$isSql=false){
 		$fields='';
 		loadclass($this->load,$table);
+		// static::$uploadFields contain the fields you want to include only in the template with the name of the fields to be included as the values for the array element
 		if (isset($table::$uploadFields)) {
 			$fields = $table::$uploadFields;
 		}
@@ -999,6 +1030,11 @@ class Crud extends CI_Model
 		}
 		return $fields;
 	}
+	/**
+	|	this function is used to download model template for batch uploading.
+	|	This function is dynamic in nature and not hard-coded.
+	|	@return .csv file extension is returned for download
+	*/
 	function downloadTemplate($exception= null){
 		$fields = $this->getModelTemplateHeader();
 		if ($exception!= null) {
@@ -1010,6 +1046,12 @@ class Crud extends CI_Model
 		$header = 'text/csv';
 		sendDownload($content,$header,$filename);
 	}
+	/**
+	|	this is use to generate the fields to be included in the download template,
+	|	provided the static::uploadFields is not stated in the entity file model
+	|	It will resolve any foreign key in the model to their respective table.
+	|	@return an array of list of generated field resolving any foreign key issue 
+	*/
 	private function buildTemplate($model='',$resolve=true,$isSql=false){
 		if (empty($model)) {
 			$model =$this->getTableName();

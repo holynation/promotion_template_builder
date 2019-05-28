@@ -19,9 +19,7 @@ static $typeArray = array('role_title'=>'varchar','status'=>'tinyint');
 static $labelArray=array('ID'=>'','role_title'=>'','status'=>'');
 /*associative array of fields that have default value*/
 static $defaultArray = array('status'=>'1');
-//populate this array with fields that are meant to be displayed as document in the format array('fieldname'=>array('filetype','maxsize',foldertosave','preservefilename'))
-//the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.
-static $documentField = array();//array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.
+//populate this array with fields that are meant to be disphpssociative array of field that should be regareded as document field. it will contain the setting for max size and data type.
 		
 static $relation=array('admin'=>array(array( 'ID', 'role_id', 1))
 ,'permission'=>array(array( 'ID', 'role_id', 1))

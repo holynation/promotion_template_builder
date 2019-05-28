@@ -14,7 +14,7 @@ include "template/sidebar.php";
       <!-- Main row -->
             <h4>System Modules</h4>
 
-            <div class="alert alert-info"><b>NOTE:</b> Write permission means the user can both read and and make changes on the page. It is therefore the highest permission a user can have on a page. <br>
+            <div class="alert alert-info"><b>NOTE:</b> Write permission means the user can both read and write to make changes on the page. It is therefore the highest permission a user can have on a page. <br>
             <b>NOTE:</b> Also that your update only take effect when your changes is saved by clicking the save button below.
             </div>
             <div style="border-bottom: solid 2px #ccc;margin-bottom: 15px;"></div>

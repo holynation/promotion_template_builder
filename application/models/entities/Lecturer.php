@@ -24,7 +24,7 @@ static $labelArray = array('ID' => '','title_id' => '','surname' => '','firstnam
 static $defaultArray = array('status' => '1');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
 //the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.
-static $documentField = array('img_path'=>array(array('jpeg','jpg','png','gif'),'1048576','lecturer/')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
+static $documentField = array('img_path'=>array('type'=>array('jpeg','jpg','png','gif'),'size'=>'1048576','directory'=>'lecturer/','preserve'=>false)); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
 static $relation = array('title' => array('title_id','id')
 ,'department' => array('department_id','id')
 );

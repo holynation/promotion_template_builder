@@ -368,7 +368,7 @@ else{
     								}
 	    							?>
 	    							<li>
-			    						<p>Courses taught at Undergraduate:</p>
+			    						<p>Courses Taught at Undergraduate:</p>
 			    						<ul style="text-align: left;font-size: 1rem;">
 			    						<?php
 				    						if(!empty($teachData)){
@@ -406,7 +406,7 @@ else{
 										</ul>
 	    							</li>
 	    							<li style="page-break-before: always;">
-			    						<p>Courses taught at Postgraduate:</p>
+			    						<p>Courses Taught at Postgraduate:</p>
 			    						<ul style="font-size: 1rem;">
 			    						<?php
 				    						if(!empty($teachData)){

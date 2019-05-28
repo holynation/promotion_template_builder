@@ -26,7 +26,7 @@
   <script src="<?php echo base_url('assets/js/jquery-2.1.4.min.js'); ?>"></script>
 
 </head>
-<body>
+<body oncontextmenu="return true">
 <div class="container-scroller">
   <input type="hidden" value="<?php echo base_url(); ?>" id='baseurl'>
 <!-- this is the navbar -->

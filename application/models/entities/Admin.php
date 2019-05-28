@@ -24,7 +24,7 @@ static $labelArray = array('ID' => '','firstname' => '','middlename' => '','last
 static $defaultArray = array('status' => '1');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array("filetype","maxsize",foldertosave","preservefilename"))
 //the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.
-static $documentField = array('img_path'=>array(array('jpeg','jpg','png','gif'),'10000888','admin/')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
+static $documentField = array('img_path'=>array('type'=>array('jpeg','jpg','png','gif'),'size'=>'10000888','directory'=>'','preserve'=>false)); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
 
 static $relation=array('role'=>array( 'role_id', 'ID')
 );
@@ -107,11 +107,13 @@ function getRole_idFormField($value=''){
 	</div> ";
 } 
  function getImg_pathFormField($value = ''){
- 	$logo= base_url($value);
+ 	$path=  ($value != '') ? base_url($value) : "";
 	return "<div class='form-group'>
-	<img src='$logo' alt='logo' class='img-responsive' width='25%'/> <br>
-				<label for='img_path'>Img Path</label>
+				<label for='img_path'>Upload Pic</label>
+				<img src='$path' alt='admin pic' class='img-responsive' width='25%'/>
 				<input type='file' name='img_path' id='img_path' value='$value' class='form-control' />
+				
+				
 			</div>";
 }
 
