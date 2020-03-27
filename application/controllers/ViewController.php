@@ -369,18 +369,18 @@ class ViewController extends CI_Controller{
 
   function changePassword()
   {
-    $id=$this->webSessionManager->getCurrentUserProp('ID');
-    $this->load->model('entities/user');
     if(isset($_POST) && count($_POST) > 0 && !empty($_POST)){
       $curr_password = trim($_POST['data_current_password']);
       $new = trim($_POST['data_password']);
       $confirm = trim($_POST['data_confirm_password']);
 
       if (!isNotEmpty($curr_password,$new,$confirm)) {
-        echo "empty field detected . please fill all required field and try again";
+        echo createJsonMessage('status',false,'message',"empty field detected.please fill all required field and try again");
         return;
       }
-
+      
+      $id=$this->webSessionManager->getCurrentUserProp('ID');
+      $this->load->model('entities/user');
       if($this->user->find($id)){
         $check = md5(trim($curr_password)) == $this->user->data()[0]['password'];
         // $check = $this->hash_created->decode_password(trim($curr_password), $this->user->data()[0]['password']);

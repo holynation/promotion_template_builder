@@ -190,7 +190,6 @@ else{
 <!-- note this must not be remove so as to balance the div element -->
 </div>
 <!-- page-body-wrapper ends -->
-<?php include "template/footer.php"; ?>
 <script>
      function addMoreEvent() {
       $('.showupload').click(function(event) {
@@ -207,3 +206,4 @@ else{
     reportAndRefresh(target,data);
   }
  </script>
+<?php include "template/footer.php"; ?>

@@ -23,33 +23,5 @@ class ModelControllerDataValidator extends CI_Model
 		}
 		return true;
 	}
-
-	public function validateCourse_scoreData(&$data,$type,&$message)
-	{
-		if (!$data['ca_score'] && !$data['exam_score']) {
-			$message='empty value  not allowed';
-			return false;
-		}
-		loadClass($this->load,'course_score');
-		$_POST['previous']='_,_';
-		if ($type=='update') {
-			$temp = $this->course_score->getWhere(array('student_course_registration_id'=>$data['student_course_registration_id']),$c,0,null,false);
-			$temp = @$temp[0];
-			if ($temp->ca_score==$data['ca_score'] && $temp->exam_score==$data['exam_score']) {
-				$message='no changes made';
-				return false;
-			}
-			$_POST['previous']=$temp->ca_score.','.$temp->exam_score;
-		}
-		$ca = $data['ca_score'];
-		$exam = $data['exam_score'];
-		$total=$ca+$exam;
-		if ($total > 100) {
-			$message="invalid result score, score must not be more than 100";
-			return false;
-		}
-		$data['score']=$total;
-		return true;
-	}
 }
  ?>

@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = '';
+$config['base_url'] = "http://".$_SERVER["HTTP_HOST"].dirname($_SERVER["SCRIPT_NAME"]);
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +90,26 @@ $config['language']	= 'english';
 |
 */
 $config['charset'] = 'UTF-8';
+/*
+|-------------------------------------------------------------------
+|  Mail  Salt
+|-------------------------------------------------------------------
+|
+|	
+|
+|
+*/
+$config['salt'] = '_~2y~12~T31xd7x7b67FO';
+/*
+|--------------------------------------------------------------------------
+| Default Character Set
+|--------------------------------------------------------------------------
+|
+| This is the config for the mail functionality
+|
+*/
+$config['userAuth'] = 'holynationdevelopment@gmail.com';
+$config['forwardAuth'] = 'sincefeb2015';
 
 /*
 |--------------------------------------------------------------------------

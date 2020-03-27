@@ -22,7 +22,7 @@
   <!-- this is the toast notification css -->
   <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/toast.css'); ?>">
   <!-- end of the toastr -->
-  <link rel="shortcut icon" href="<?php echo $base; ?>assets/images/favicon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="<?php echo $base; ?>assets/images/favicon-32x32.png" />
   <script src="<?php echo base_url('assets/js/jquery-2.1.4.min.js'); ?>"></script>
 
 </head>
@@ -34,24 +34,18 @@
       <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
         <?php 
           $userType = $this->webSessionManager->getCurrentUserProp('user_type');
-          if($userType == 'lecturer'):
+          $path =  ($userType == 'lecturer') ? base_url('vc/lecturer/dashboard') : base_url('vc/admin/dashboard');
+          $src = base_url('assets/images/logo.jpg');
+          $srcMini = base_url('assets/images/logo-mini.jpg');
         ?>
-        <a class="navbar-brand brand-logo" href="<?php echo base_url('vc/lecturer/dashboard'); ?>">
-          <img src="<?php echo base_url('assets/images/logo.svg'); ?>" alt="logo" />
+        <a class="navbar-brand brand-logo" href="<?php echo (isSessionActive()) ? $path : 'javascript:void(0)'; ?>">
+          <img src="<?php echo $src; ?>" alt="logo" />
         </a>
-        <a class="navbar-brand brand-logo-mini" href="<?php echo base_url('vc/lecturer/dashboard'); ?>">
-          <img src="<?php echo base_url('assets/images/logo-mini.svg'); ?>" alt="logo" />
+        <a class="navbar-brand brand-logo-mini" href="<?php echo $path; ?>">
+          <img src="<?php echo $srcMini; ?>" alt="logo" />
         </a>
-        <?php else: ?>
-            <a class="navbar-brand brand-logo" href="<?php echo base_url('vc/admin/dashboard'); ?>">
-              <img src="<?php echo base_url('assets/images/logo.svg'); ?>" alt="logo" />
-            </a>
-            <a class="navbar-brand brand-logo-mini" href="<?php echo base_url('vc/admin/dashboard'); ?>">
-              <img src="<?php echo base_url('assets/images/logo-mini.svg'); ?>" alt="logo" />
-            </a>
-        <?php endif; ?>
       </div>
-      <!-- this is section deals with the header for each page -->
+      <!-- this section deals with the header for each page -->
       <?php if(isSessionActive()): ?>
       <div class="navbar-menu-wrapper d-flex align-items-center">
         <ul class="navbar-nav navbar-nav-left header-links d-none d-md-flex">

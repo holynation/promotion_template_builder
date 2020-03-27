@@ -18,7 +18,7 @@
   <!-- inject:css -->
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/style.css">
   <!-- endinject -->
-  <link rel="shortcut icon" href="<?php echo base_url(); ?>assets/images/favicon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="<?php echo $base; ?>assets/images/favicon-32x32.png" />
 </head>
 
 <body>
@@ -29,7 +29,8 @@
           <div class="col-lg-4 mx-auto">
             <div class="auto-form-wrapper">
               <!-- this is the notification div -->
-              <div id="notify"></div> 
+              
+              <div id="notify"></div>
               <form action="<?php echo base_url('auth/web'); ?>" method="post" role="form" id="signInForm">
                 <div class="form-group">
                   <label class="label">Username</label>
@@ -59,10 +60,10 @@
                 <div class="form-group d-flex justify-content-between">
                   <div class="form-check form-check-flat mt-0">
                     <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" checked id="remember" name="remember"> Keep me signed in
+                      <!-- <input type="checkbox" class="form-check-input" checked id="remember" name="remember"> Keep me signed in -->
                     </label>
                   </div>
-                  <!-- <a href="#" class="text-small forgot-password text-black">Forgot Password</a> -->
+                  <a href="<?php echo base_url('auth/forget'); ?>" class="text-small forgot-password text-black">Forgot Password</a>
                 </div>
                 
                 <!-- <div class="text-block text-center my-3">
@@ -74,17 +75,17 @@
               </form>
             </div>
             <ul class="auth-footer">
-              <li>
+              <!-- <li>
                 <a href="#">Conditions</a>
-              </li>
+              </li> -->
               <li>
                 <a href="#">Help</a>
               </li>
-              <li>
+              <!-- <li>
                 <a href="#">Terms</a>
-              </li>
+              </li> -->
             </ul>
-            <p class="footer-text text-center">copyright © 2018 <a href="http://technodesolutions.com/" target="_blank">Technode Solutions</a>. All rights reserved.</p>
+            <p class="footer-text text-center">copyright © <?php echo date('Y'); ?> <a href="http://technodesolutions.com/" target="_blank">Technode Solutions</a>. All rights reserved.</p>
           </div>
         </div>
       </div>

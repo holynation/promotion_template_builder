@@ -121,6 +121,49 @@ protected function getUser_table(){
 	return $resultObject;
 }
 
+public function postUser($email = null,$password = null){
+	if(isset($email,$password)){
+		$password = $this->hash_created->encode_password(trim($password));
+
+		$data = array(
+			'username' => trim($email),
+			'password' => $password
+		);
+
+		$user = $this->find($email); // find this email in the database
+		if($user){
+			return 3;
+		}else{
+			// register user
+			$register = $this->db->insert('user', $data);
+			if($register){
+				return 1; // this shows that user register
+				// return true;
+			}else{
+				return 2; // error in the database
+			}
+		}
+	}
+
+}
+
+public function updatePassword($email=null,$password=null)
+{
+	if(isset($email,$password)){
+		$password = md5(trim($password));
+		$query = "update user set password = '$password' where username=?";
+		$db=$this->db;
+		$db->trans_begin();
+		if($this->query($query,$email)){
+			$db->trans_commit();
+			return true;
+		}else{
+			$db->trans_rollback();
+			return false;
+		}
+	}
+}
+
 public function find($user = null){
 	if($user){
 		$field = (is_numeric($user)) ? 'id' : 'username';

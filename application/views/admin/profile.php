@@ -146,7 +146,6 @@ if ($userType=='admin') {
 <!-- note this must not be remove so as to balance the div element -->
 </div>
 <!-- page-body-wrapper ends -->
-<?php include "template/footer.php"; ?>
 <script>
      function addMoreEvent() {
       $('.showupload').click(function(event) {
@@ -162,4 +161,5 @@ if ($userType=='admin') {
   function ajaxFormSuccess(target,data) {
     reportAndRefresh(target,data);
   }
- </script>
+</script>
+<?php include "template/footer.php"; ?>
